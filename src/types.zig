@@ -95,8 +95,59 @@ pub const Resource = struct {
     resources: ?[]Resource,
 };
 
-pub const Schema = struct {};
-
 pub const Scope = struct {
     id: []const u8,
 };
+
+pub fn tyStrFromJsonValue(obj: *const json.ObjectMap, allocator: Allocator) Allocator.Error![]const u8 {
+    const maybe_ty = obj.get("type");
+    if (maybe_ty) |ty| {
+        return if (std.mem.eql(u8, ty.String, "integer"))
+            if (obj.get("format")) |fmt|
+                if (std.mem.eql(u8, fmt.String, "int32"))
+                    try allocator.dupe(u8, "i32")
+                else
+                    unreachable
+            else
+                try allocator.dupe(u8, "i64")
+        else if (std.mem.eql(u8, ty.String, "string"))
+            try allocator.dupe(u8, "[]const u8")
+        else if (std.mem.eql(u8, ty.String, "boolean"))
+            try allocator.dupe(u8, "bool")
+        else if (std.mem.eql(u8, ty.String, "any"))
+            try allocator.dupe(u8, "*anyopaque")
+        else if (std.mem.eql(u8, ty.String, "number"))
+            if (obj.get("format")) |fmt|
+                return if (std.mem.eql(u8, fmt.String, "double"))
+                    try allocator.dupe(u8, "f64")
+                else if (std.mem.eql(u8, fmt.String, "float"))
+                    try allocator.dupe(u8, "f32")
+                else
+                    unreachable
+            else
+                unreachable
+        else if (std.mem.eql(u8, ty.String, "array")) {
+            var arr = std.ArrayList(u8).init(allocator);
+            const items = obj.get("items").?.Object;
+            const inner = try tyStrFromJsonValue(&items, allocator);
+            defer allocator.free(inner);
+            try arr.appendSlice(inner);
+            return try arr.toOwnedSliceSentinel(0);
+        } else if (std.mem.eql(u8, ty.String, "object")) {
+            var arr = std.ArrayList(u8).init(allocator);
+            try arr.appendSlice("StringHashMap(");
+            try arr.appendSlice(obj.get("additionalProperties").?.Object.get("$ref").?.String);
+            try arr.appendSlice("Schema)");
+            return try arr.toOwnedSliceSentinel(0);
+        } else {
+            std.debug.print("\n{s}\n", .{ty});
+            unreachable;
+        };
+    } else {
+        var ty = std.ArrayList(u8).init(allocator);
+        const ref = obj.get("$ref").?;
+        try ty.appendSlice(ref.String);
+        try ty.appendSlice("Schema");
+        return try ty.toOwnedSliceSentinel(0);
+    }
+}

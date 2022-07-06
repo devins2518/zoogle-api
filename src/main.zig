@@ -97,15 +97,55 @@ pub fn main() !void {
                     \\}};
                     \\
                 , .{});
-                std.debug.print("\n{s}\n", .{resource.key_ptr.*});
+            }
+        } else if (std.mem.eql(u8, name, "schemas")) {
+            var schema_iter = e.value_ptr.Object.iterator();
+            while (schema_iter.next()) |schema_obj| {
+                const schema = schema_obj.value_ptr.Object;
+                if (schema.get("description")) |desc| {
+                    try std.fmt.format(writer,
+                        \\// {s}
+                        \\
+                    , .{desc.String});
+                }
+                try std.fmt.format(writer,
+                    \\const {s}Schema = struct {{
+                    \\
+                , .{schema_obj.key_ptr.*});
+                var prop_iter = schema.get("properties").?.Object.iterator();
+                while (prop_iter.next()) |prop| {
+                    const prop_obj = prop.value_ptr.Object;
+                    if (prop_obj.get("description")) |desc| {
+                        try std.fmt.format(writer,
+                            \\    // {s}
+                            \\
+                        , .{desc.String});
+                    }
+                    const ty_name = try types.tyStrFromJsonValue(&prop_obj, allocator);
+                    defer allocator.free(ty_name);
+                    try std.fmt.format(writer,
+                        \\    {s}: {s}
+                    , .{ prop.key_ptr.*, ty_name });
+                    if (prop_obj.get("default")) |default| {
+                        try std.fmt.format(writer,
+                            \\ = {s}
+                        , .{default.String});
+                    }
+                    try std.fmt.format(writer,
+                        \\,
+                        \\
+                    , .{});
+                }
+                try std.fmt.format(writer,
+                    \\
+                    \\}};
+                    \\
+                , .{});
             }
         } else if (std.mem.eql(u8, name, "parameters") or
-            std.mem.eql(u8, name, "methods") or
-            std.mem.eql(u8, name, "schemas"))
+            std.mem.eql(u8, name, "methods"))
         {
             continue;
-            // std.debug.print("\n{s}\n", .{name});
-            // try e.value_ptr.jsonStringify(.{ .whitespace = .{} }, std.io.getStdOut().writer());
         } else continue;
     }
 }
