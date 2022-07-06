@@ -16,6 +16,11 @@ pub fn build(b: *std.build.Builder) void {
     exe.setBuildMode(mode);
     exe.install();
 
+    const lib = b.addStaticLibrary("zoogle-api", "src/lib.zig");
+    lib.setTarget(target);
+    lib.setBuildMode(mode);
+    lib.install();
+
     const run_cmd = exe.run();
     run_cmd.step.dependOn(b.getInstallStep());
     if (b.args) |args| {
