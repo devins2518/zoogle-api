@@ -1,5 +1,10 @@
 // Auto-generated file. DO NOT EDIT.
 
+const std = @import("std");
+const requestz = @import("requestz");
+const Scope = @import("zoogle-api").Scope;
+const StringHashMap = std.StringHashMap;
+
 // See, edit, create, and delete all of your Google Drive files
 pub const DriveScope = Scope{
     .id = "https://www.googleapis.com/auth/drive",

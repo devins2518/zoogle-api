@@ -21,6 +21,11 @@ pub fn main() !void {
     try writer.writeAll(
         \\// Auto-generated file. DO NOT EDIT.
         \\
+        \\const std = @import("std");
+        \\const requestz = @import("requestz");
+        \\const Scope = @import("zoogle-api").Scope;
+        \\const StringHashMap = std.StringHashMap;
+        \\
         \\
     );
 

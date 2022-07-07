@@ -1,3 +1,4 @@
+const pkgs = @import("deps.zig").pkgs;
 const std = @import("std");
 
 pub fn build(b: *std.build.Builder) void {
@@ -6,10 +7,12 @@ pub fn build(b: *std.build.Builder) void {
     const mode = b.standardReleaseOptions();
 
     const lib = b.addStaticLibrary("zoogle-zheets", "src/main.zig");
+    pkgs.addAllTo(lib);
     lib.setBuildMode(mode);
     lib.install();
 
     const main_tests = b.addTest("src/main.zig");
+    pkgs.addAllTo(main_tests);
     main_tests.setBuildMode(mode);
 
     const test_step = b.step("test", "Run library tests");
