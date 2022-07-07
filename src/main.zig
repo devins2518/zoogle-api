@@ -37,116 +37,11 @@ pub fn main() !void {
     while (iter.next()) |e| {
         const name = e.key_ptr.*;
         if (std.mem.eql(u8, name, "auth")) {
-            const scopes = e.value_ptr.Object.get("oauth2").?.Object.get("scopes").?;
-            var scope_iter = scopes.Object.iterator();
-            while (scope_iter.next()) |scope| {
-                var scope_name = blk: {
-                    const begin = std.mem.lastIndexOfLinear(u8, scope.key_ptr.*, "/") orelse
-                        break :blk try allocator.dupe(u8, scope.key_ptr.*);
-                    var scope_name = try std.ArrayList(u8).initCapacity(allocator, scope.key_ptr.len - (begin + 1));
-                    scope_name.appendSliceAssumeCapacity(scope.key_ptr.*[begin + 1 ..]);
-
-                    // Remove period if present
-                    per: {
-                        const period_idx = std.mem.indexOf(u8, scope_name.items, ".") orelse break :per;
-                        std.debug.assert(scope_name.orderedRemove(period_idx) == '.');
-                        scope_name.items[period_idx] = std.ascii.toUpper(scope_name.items[period_idx]);
-                    }
-                    break :blk scope_name.items;
-                };
-                defer allocator.free(scope_name);
-                scope_name[0] = std.ascii.toUpper(scope_name[0]);
-
-                try std.fmt.format(writer,
-                    \\// {s}
-                    \\pub const {s}Scope = Scope{{
-                    \\    .id = "{s}",
-                    \\}};
-                    \\
-                    \\
-                , .{
-                    scope.value_ptr.Object.get("description").?.String,
-                    scope_name,
-                    scope.key_ptr.*,
-                });
-            }
+            try types.genAuth(e.value_ptr.Object, allocator, writer);
         } else if (std.mem.eql(u8, name, "resources")) {
-            var resource_iter = e.value_ptr.Object.iterator();
-            while (resource_iter.next()) |resource| {
-                const methods = resource.value_ptr.Object.get("methods").?;
-                const resources = resource.value_ptr.Object.get("resources").?;
-                var resource_name = try allocator.dupe(u8, resource.key_ptr.*);
-                defer allocator.free(resource_name);
-                resource_name[0] = std.ascii.toUpper(resource_name[0]);
-                try std.fmt.format(writer,
-                    \\pub const {s} = struct {{
-                    \\
-                , .{resource_name});
-
-                var method_iter = methods.Object.iterator();
-                _ = resources;
-                while (method_iter.next()) |method| {
-                    const value = method.value_ptr.Object;
-                    var m = try Method.init(
-                        allocator,
-                        method.key_ptr.*,
-                        if (value.get("description")) |d| d.String else null,
-                        value.get("httpMethod").?.String,
-                        value.get("scopes").?.Array.items,
-                    );
-                    defer m.deinit(allocator);
-                    try m.print(writer, 4);
-                }
-
-                try std.fmt.format(writer,
-                    \\}};
-                    \\
-                , .{});
-            }
+            try types.genResources(e.value_ptr.Object, allocator, writer);
         } else if (std.mem.eql(u8, name, "schemas")) {
-            var schema_iter = e.value_ptr.Object.iterator();
-            while (schema_iter.next()) |schema_obj| {
-                const schema = schema_obj.value_ptr.Object;
-                if (schema.get("description")) |desc| {
-                    try std.fmt.format(writer,
-                        \\// {s}
-                        \\
-                    , .{desc.String});
-                }
-                try std.fmt.format(writer,
-                    \\const {s}Schema = struct {{
-                    \\
-                , .{schema_obj.key_ptr.*});
-                var prop_iter = schema.get("properties").?.Object.iterator();
-                while (prop_iter.next()) |prop| {
-                    const prop_obj = prop.value_ptr.Object;
-                    if (prop_obj.get("description")) |desc| {
-                        try std.fmt.format(writer,
-                            \\    // {s}
-                            \\
-                        , .{desc.String});
-                    }
-                    const ty_name = try types.tyStrFromJsonValue(&prop_obj, allocator);
-                    defer allocator.free(ty_name);
-                    try std.fmt.format(writer,
-                        \\    {s}: {s}
-                    , .{ prop.key_ptr.*, ty_name });
-                    if (prop_obj.get("default")) |default| {
-                        try std.fmt.format(writer,
-                            \\ = {s}
-                        , .{default.String});
-                    }
-                    try std.fmt.format(writer,
-                        \\,
-                        \\
-                    , .{});
-                }
-                try std.fmt.format(writer,
-                    \\
-                    \\}};
-                    \\
-                , .{});
-            }
+            try types.genSchemas(e.value_ptr.Object, allocator, writer);
         } else if (std.mem.eql(u8, name, "parameters") or
             std.mem.eql(u8, name, "methods"))
         {
