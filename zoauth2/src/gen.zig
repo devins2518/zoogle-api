@@ -5,6 +5,8 @@ const requestz = @import("requestz");
 const Scope = @import("zoogle-api").Scope;
 const StringHashMap = std.StringHashMap;
 
+const base_url = "https://www.googleapis.com/";
+
 pub const Scope = enum {
     // View your email address
     userinfoEmail,
@@ -22,11 +24,31 @@ pub const Scope = enum {
     }
 };
 
-pub const Userinfo = struct {
-    fn get() requestz.Response {
-        
-    }
+pub const Service = struct {
+    client: *requestz.Client,
+    base_path: []const u8 = base_path,
+    user_agent: ?[]const u8 = null,
+
+    userinfo = struct {
+        v2: struct {
+            me: struct {
+                //
+                fn get(
+                    self: *@This(),
+                ) UserinfoSchema {
+                    // TODO: body
+                }
+            },
+        },
+        //
+        fn get(
+            self: *@This(),
+        ) UserinfoSchema {
+            // TODO: body
+        }
+    },
 };
+
 const TokeninfoSchema = struct {
     // Who is the intended audience for this token. In general the same as issued_to.
     audience: []const u8,
@@ -42,7 +64,6 @@ const TokeninfoSchema = struct {
     user_id: []const u8,
     // Boolean flag which is true if the email address is verified. Present only if the email scope is present in the request.
     verified_email: bool,
-
 };
 const UserinfoSchema = struct {
     // The user's email address.
@@ -67,5 +88,4 @@ const UserinfoSchema = struct {
     picture: []const u8,
     // Boolean flag which is true if the email address is verified. Always verified because we only return the user's primary email address.
     verified_email: bool = true,
-
 };

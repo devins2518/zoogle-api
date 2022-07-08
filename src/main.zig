@@ -18,7 +18,11 @@ pub fn main() !void {
     defer gen.close();
     const writer = gen.writer();
 
-    try writer.writeAll(
+    var parser = json.Parser.init(allocator, true);
+    defer parser.deinit();
+    var parsed = try parser.parse(api);
+    defer parsed.deinit();
+    try std.fmt.format(writer,
         \\// Auto-generated file. DO NOT EDIT.
         \\
         \\const std = @import("std");
@@ -26,13 +30,11 @@ pub fn main() !void {
         \\const Scope = @import("zoogle-api").Scope;
         \\const StringHashMap = std.StringHashMap;
         \\
+        \\const base_url = "{s}";
         \\
-    );
+        \\
+    , .{parsed.root.Object.get("baseUrl").?.String});
 
-    var parser = json.Parser.init(allocator, true);
-    defer parser.deinit();
-    var parsed = try parser.parse(api);
-    defer parsed.deinit();
     var iter = parsed.root.Object.iterator();
     var auth_list = std.ArrayList([]const u8).init(allocator);
     defer auth_list.deinit();
@@ -41,7 +43,7 @@ pub fn main() !void {
         if (std.mem.eql(u8, name, "auth")) {
             try types.genAuth(e.value_ptr.Object, allocator, writer, &auth_list);
         } else if (std.mem.eql(u8, name, "resources")) {
-            try types.genResources(e.value_ptr.Object, allocator, writer);
+            try types.genRootResources(e, allocator, writer);
         } else if (std.mem.eql(u8, name, "schemas")) {
             try types.genSchemas(e.value_ptr.Object, allocator, writer);
         } else if (std.mem.eql(u8, name, "parameters") or
@@ -49,9 +51,6 @@ pub fn main() !void {
         {
             continue;
         } else continue;
-    }
-    for (auth_list.items) |auth| {
-        std.debug.print("{s}\n", .{auth});
     }
 }
 
