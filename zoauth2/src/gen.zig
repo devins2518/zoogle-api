@@ -1,18 +1,25 @@
 // Auto-generated file. DO NOT EDIT.
 
-// View your email address
-pub const UserinfoEmailScope = Scope{
-    .id = "https://www.googleapis.com/auth/userinfo.email",
-};
+const std = @import("std");
+const requestz = @import("requestz");
+const Scope = @import("zoogle-api").Scope;
+const StringHashMap = std.StringHashMap;
 
-// See your personal info, including any personal info you've made publicly available
-pub const UserinfoProfileScope = Scope{
-    .id = "https://www.googleapis.com/auth/userinfo.profile",
-};
+pub const Scope = enum {
+    // View your email address
+    userinfoEmail,
+    // See your personal info, including any personal info you've made publicly available
+    userinfoProfile,
+    // Associate you with your personal info on Google
+    openid,
 
-// Associate you with your personal info on Google
-pub const OpenidScope = Scope{
-    .id = "openid",
+    fn toStr(self: @This()) []const u8 {
+        return switch (self) {
+            userinfoEmail => "https://www.googleapis.com/auth/userinfo.email",
+            userinfoProfile => "https://www.googleapis.com/auth/userinfo.profile",
+            openid => "openid",
+        };
+    }
 };
 
 pub const Userinfo = struct {

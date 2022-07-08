@@ -34,10 +34,12 @@ pub fn main() !void {
     var parsed = try parser.parse(api);
     defer parsed.deinit();
     var iter = parsed.root.Object.iterator();
+    var auth_list = std.ArrayList([]const u8).init(allocator);
+    defer auth_list.deinit();
     while (iter.next()) |e| {
         const name = e.key_ptr.*;
         if (std.mem.eql(u8, name, "auth")) {
-            try types.genAuth(e.value_ptr.Object, allocator, writer);
+            try types.genAuth(e.value_ptr.Object, allocator, writer, &auth_list);
         } else if (std.mem.eql(u8, name, "resources")) {
             try types.genResources(e.value_ptr.Object, allocator, writer);
         } else if (std.mem.eql(u8, name, "schemas")) {
@@ -47,6 +49,9 @@ pub fn main() !void {
         {
             continue;
         } else continue;
+    }
+    for (auth_list.items) |auth| {
+        std.debug.print("{s}\n", .{auth});
     }
 }
 

@@ -5,29 +5,27 @@ const requestz = @import("requestz");
 const Scope = @import("zoogle-api").Scope;
 const StringHashMap = std.StringHashMap;
 
-// See, edit, create, and delete all of your Google Drive files
-pub const DriveScope = Scope{
-    .id = "https://www.googleapis.com/auth/drive",
-};
+pub const Scope = enum {
+    // See, edit, create, and delete all of your Google Drive files
+    drive,
+    // See, edit, create, and delete only the specific Google Drive files you use with this app
+    driveFile,
+    // See and download all your Google Drive files
+    driveReadonly,
+    // See, edit, create, and delete all your Google Sheets spreadsheets
+    spreadsheets,
+    // See all your Google Sheets spreadsheets
+    spreadsheetsReadonly,
 
-// See, edit, create, and delete only the specific Google Drive files you use with this app
-pub const DriveFileScope = Scope{
-    .id = "https://www.googleapis.com/auth/drive.file",
-};
-
-// See and download all your Google Drive files
-pub const DriveReadonlyScope = Scope{
-    .id = "https://www.googleapis.com/auth/drive.readonly",
-};
-
-// See, edit, create, and delete all your Google Sheets spreadsheets
-pub const SpreadsheetsScope = Scope{
-    .id = "https://www.googleapis.com/auth/spreadsheets",
-};
-
-// See all your Google Sheets spreadsheets
-pub const SpreadsheetsReadonlyScope = Scope{
-    .id = "https://www.googleapis.com/auth/spreadsheets.readonly",
+    fn toStr(self: @This()) []const u8 {
+        return switch (self) {
+            drive => "https://www.googleapis.com/auth/drive",
+            driveFile => "https://www.googleapis.com/auth/drive.file",
+            driveReadonly => "https://www.googleapis.com/auth/drive.readonly",
+            spreadsheets => "https://www.googleapis.com/auth/spreadsheets",
+            spreadsheetsReadonly => "https://www.googleapis.com/auth/spreadsheets.readonly",
+        };
+    }
 };
 
 pub const Spreadsheets = struct {

@@ -151,9 +151,18 @@ fn tyStrFromJsonValue(obj: *const json.ObjectMap, allocator: Allocator) Allocato
         return try ty.toOwnedSliceSentinel(0);
     }
 }
-pub fn genAuth(values: json.ObjectMap, allocator: Allocator, writer: anytype) !void {
+pub fn genAuth(values: json.ObjectMap, allocator: Allocator, writer: anytype, list: *std.ArrayList([]const u8)) !void {
     const scopes = values.get("oauth2").?.Object.get("scopes").?;
     var scope_iter = scopes.Object.iterator();
+    var scope_names = std.ArrayList([]const u8).init(allocator);
+    defer {
+        for (scope_names.items) |item| allocator.free(item);
+        scope_names.deinit();
+    }
+    try std.fmt.format(writer,
+        \\pub const Scope = enum {{
+        \\
+    , .{});
     while (scope_iter.next()) |scope| {
         var scope_name = blk: {
             const begin = std.mem.lastIndexOfLinear(u8, scope.key_ptr.*, "/") orelse
@@ -169,22 +178,37 @@ pub fn genAuth(values: json.ObjectMap, allocator: Allocator, writer: anytype) !v
             }
             break :blk scope_name.items;
         };
-        defer allocator.free(scope_name);
-        scope_name[0] = std.ascii.toUpper(scope_name[0]);
 
         try std.fmt.format(writer,
-            \\// {s}
-            \\pub const {s}Scope = Scope{{
-            \\    .id = "{s}",
-            \\}};
-            \\
+            \\    // {s}
+            \\    {s},
             \\
         , .{
             scope.value_ptr.Object.get("description").?.String,
             scope_name,
-            scope.key_ptr.*,
         });
+        try scope_names.append(scope_name);
+        try list.append(scope.key_ptr.*);
     }
+    try std.fmt.format(writer,
+        \\
+        \\    fn toStr(self: @This()) []const u8 {{
+        \\        return switch (self) {{
+        \\
+    , .{});
+    for (scope_names.items) |name, i| {
+        try std.fmt.format(writer,
+            \\            {s} => "{s}",
+            \\
+        , .{ name, list.items[i] });
+    }
+    try std.fmt.format(writer,
+        \\        }};
+        \\    }}
+        \\}};
+        \\
+        \\
+    , .{});
 }
 pub fn genSchemas(values: json.ObjectMap, allocator: Allocator, writer: anytype) !void {
     var schema_iter = values.iterator();
