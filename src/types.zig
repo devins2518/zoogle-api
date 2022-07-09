@@ -2,7 +2,6 @@ const std = @import("std");
 const json = std.json;
 const main = @import("main.zig");
 const Allocator = std.mem.Allocator;
-const ParameterHashMap = std.StringHashMap(Parameter);
 
 pub const Method = struct {
     const Self = @This();
@@ -55,10 +54,11 @@ pub const Method = struct {
             \\
         , .{ .pre = pre.items });
     }
-    fn from(value: json.ObjectMap.Entry, allocator: Allocator) anyerror!Self {
+    fn from(value: json.ObjectMap.Entry, allocator: Allocator, parent_fields: *std.ArrayList(Parameter)) anyerror!Self {
+        _ = parent_fields;
         var params = std.ArrayList(Parameter).init(allocator);
         const obj = value.value_ptr.Object;
-        if (obj.get("parameter")) |param| {
+        if (obj.get("parameters")) |param| {
             var iter = param.Object.iterator();
             while (iter.next()) |p| {
                 const pobj = p.value_ptr.Object;
@@ -177,6 +177,7 @@ pub const Resource = struct {
 
     fn from(value: json.ObjectMap.Entry, allocator: Allocator) anyerror!Self {
         const obj = value.value_ptr.Object;
+        var fields = std.ArrayList(Parameter).init(allocator);
         // Generate resources
         var resources_list = std.ArrayList(Resource).init(allocator);
         if (obj.get("resources")) |resources| {
@@ -190,7 +191,7 @@ pub const Resource = struct {
         if (obj.get("methods")) |methods| {
             var method_iter = methods.Object.iterator();
             while (method_iter.next()) |method| {
-                try method_list.append(try Method.from(method, allocator));
+                try method_list.append(try Method.from(method, allocator, &fields));
             }
         }
 
@@ -431,7 +432,7 @@ pub fn genRootResources(values: json.ObjectMap, allocator: Allocator, writer: an
     if (values.get("methods")) |m| {
         var method_iter = m.Object.iterator();
         while (method_iter.next()) |method| {
-            try methods.append(try Method.from(method, allocator));
+            try methods.append(try Method.from(method, allocator, &fields));
         }
     }
     var root = Resource{

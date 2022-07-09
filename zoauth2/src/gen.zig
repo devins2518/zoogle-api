@@ -103,9 +103,13 @@ pub const Service = struct {
     }
     fn tokeninfo(
         self: *@This(),
+        access_token: []const u8,
+        id_token: []const u8,
     ) TokeninfoSchema {
         // TODO: body
         _ = self;
+        _ = access_token;
+        _ = id_token;
     }
 };
 test "static analysis" {

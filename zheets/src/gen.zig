@@ -2808,17 +2808,26 @@ pub const Service = struct {
             // Returns the developer metadata with the specified ID. The caller must specify the spreadsheet ID and the developer metadata's unique metadataId.
             fn get(
                 self: *@This(),
+                // The ID of the developer metadata to retrieve.
+                metadataId: i32,
+                // The ID of the spreadsheet to retrieve metadata from.
+                spreadsheetId: []const u8,
             ) DeveloperMetadataSchema {
                 // TODO: body
                 _ = self;
+                _ = metadataId;
+                _ = spreadsheetId;
             }
             // Returns all developer metadata matching the specified DataFilter. If the provided DataFilter represents a DeveloperMetadataLookup object, this will return all DeveloperMetadata entries selected by it. If the DataFilter represents a location in a spreadsheet, this will return all developer metadata associated with locations intersecting that region.
             fn search(
                 self: *@This(),
+                // The ID of the spreadsheet to retrieve metadata from.
+                spreadsheetId: []const u8,
                 schema: SearchDeveloperMetadataRequestSchema,
             ) SearchDeveloperMetadataResponseSchema {
                 // TODO: body
                 _ = self;
+                _ = spreadsheetId;
                 _ = schema;
             }
         },
@@ -2826,10 +2835,16 @@ pub const Service = struct {
             // Copies a single sheet from a spreadsheet to another spreadsheet. Returns the properties of the newly created sheet.
             fn copyTo(
                 self: *@This(),
+                // The ID of the sheet to copy.
+                sheetId: i32,
+                // The ID of the spreadsheet containing the sheet to copy.
+                spreadsheetId: []const u8,
                 schema: CopySheetToAnotherSpreadsheetRequestSchema,
             ) SheetPropertiesSchema {
                 // TODO: body
                 _ = self;
+                _ = sheetId;
+                _ = spreadsheetId;
                 _ = schema;
             }
         },
@@ -2837,97 +2852,190 @@ pub const Service = struct {
             // Appends values to a spreadsheet. The input range is used to search for existing data and find a "table" within that range. Values will be appended to the next row of the table, starting with the first column of the table. See the [guide](/sheets/api/guides/values#appending_values) and [sample code](/sheets/api/samples/writing#append_values) for specific details of how tables are detected and data is appended. The caller must specify the spreadsheet ID, range, and a valueInputOption. The `valueInputOption` only controls how the input data will be added to the sheet (column-wise or row-wise), it does not influence what cell the data starts being written to.
             fn append(
                 self: *@This(),
+                // Determines if the update response should include the values of the cells that were appended. By default, responses do not include the updated values.
+                includeValuesInResponse: bool,
+                // How the input data should be inserted.
+                insertDataOption: []const u8,
+                // The [A1 notation](/sheets/api/guides/concepts#cell) of a range to search for a logical table of data. Values are appended after the last row of the table.
+                range: []const u8,
+                // Determines how dates, times, and durations in the response should be rendered. This is ignored if response_value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
+                responseDateTimeRenderOption: []const u8,
+                // Determines how values in the response should be rendered. The default render option is FORMATTED_VALUE.
+                responseValueRenderOption: []const u8,
+                // The ID of the spreadsheet to update.
+                spreadsheetId: []const u8,
+                // How the input data should be interpreted.
+                valueInputOption: []const u8,
                 schema: ValueRangeSchema,
             ) AppendValuesResponseSchema {
                 // TODO: body
                 _ = self;
+                _ = includeValuesInResponse;
+                _ = insertDataOption;
+                _ = range;
+                _ = responseDateTimeRenderOption;
+                _ = responseValueRenderOption;
+                _ = spreadsheetId;
+                _ = valueInputOption;
                 _ = schema;
             }
             // Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges. Only values are cleared -- all other properties of the cell (such as formatting and data validation) are kept.
             fn batchClear(
                 self: *@This(),
+                // The ID of the spreadsheet to update.
+                spreadsheetId: []const u8,
                 schema: BatchClearValuesRequestSchema,
             ) BatchClearValuesResponseSchema {
                 // TODO: body
                 _ = self;
+                _ = spreadsheetId;
                 _ = schema;
             }
             // Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges matching any of the specified data filters will be cleared. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept.
             fn batchClearByDataFilter(
                 self: *@This(),
+                // The ID of the spreadsheet to update.
+                spreadsheetId: []const u8,
                 schema: BatchClearValuesByDataFilterRequestSchema,
             ) BatchClearValuesByDataFilterResponseSchema {
                 // TODO: body
                 _ = self;
+                _ = spreadsheetId;
                 _ = schema;
             }
             // Returns one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges.
             fn batchGet(
                 self: *@This(),
+                // How dates, times, and durations should be represented in the output. This is ignored if value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
+                dateTimeRenderOption: []const u8,
+                // The major dimension that results should use. For example, if the spreadsheet data is: `A1=1,B1=2,A2=3,B2=4`, then requesting `ranges=["A1:B2"],majorDimension=ROWS` returns `[[1,2],[3,4]]`, whereas requesting `ranges=["A1:B2"],majorDimension=COLUMNS` returns `[[1,3],[2,4]]`.
+                majorDimension: []const u8,
+                // The [A1 notation or R1C1 notation](/sheets/api/guides/concepts#cell) of the range to retrieve values from.
+                ranges: []const u8,
+                // The ID of the spreadsheet to retrieve data from.
+                spreadsheetId: []const u8,
+                // How values should be represented in the output. The default render option is ValueRenderOption.FORMATTED_VALUE.
+                valueRenderOption: []const u8,
             ) BatchGetValuesResponseSchema {
                 // TODO: body
                 _ = self;
+                _ = dateTimeRenderOption;
+                _ = majorDimension;
+                _ = ranges;
+                _ = spreadsheetId;
+                _ = valueRenderOption;
             }
             // Returns one or more ranges of values that match the specified data filters. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges that match any of the data filters in the request will be returned.
             fn batchGetByDataFilter(
                 self: *@This(),
+                // The ID of the spreadsheet to retrieve data from.
+                spreadsheetId: []const u8,
                 schema: BatchGetValuesByDataFilterRequestSchema,
             ) BatchGetValuesByDataFilterResponseSchema {
                 // TODO: body
                 _ = self;
+                _ = spreadsheetId;
                 _ = schema;
             }
             // Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more ValueRanges.
             fn batchUpdate(
                 self: *@This(),
+                // The ID of the spreadsheet to update.
+                spreadsheetId: []const u8,
                 schema: BatchUpdateValuesRequestSchema,
             ) BatchUpdateValuesResponseSchema {
                 // TODO: body
                 _ = self;
+                _ = spreadsheetId;
                 _ = schema;
             }
             // Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more DataFilterValueRanges.
             fn batchUpdateByDataFilter(
                 self: *@This(),
+                // The ID of the spreadsheet to update.
+                spreadsheetId: []const u8,
                 schema: BatchUpdateValuesByDataFilterRequestSchema,
             ) BatchUpdateValuesByDataFilterResponseSchema {
                 // TODO: body
                 _ = self;
+                _ = spreadsheetId;
                 _ = schema;
             }
             // Clears values from a spreadsheet. The caller must specify the spreadsheet ID and range. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept.
             fn clear(
                 self: *@This(),
+                // The [A1 notation or R1C1 notation](/sheets/api/guides/concepts#cell) of the values to clear.
+                range: []const u8,
+                // The ID of the spreadsheet to update.
+                spreadsheetId: []const u8,
                 schema: ClearValuesRequestSchema,
             ) ClearValuesResponseSchema {
                 // TODO: body
                 _ = self;
+                _ = range;
+                _ = spreadsheetId;
                 _ = schema;
             }
             // Returns a range of values from a spreadsheet. The caller must specify the spreadsheet ID and a range.
             fn get(
                 self: *@This(),
+                // How dates, times, and durations should be represented in the output. This is ignored if value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
+                dateTimeRenderOption: []const u8,
+                // The major dimension that results should use. For example, if the spreadsheet data is: `A1=1,B1=2,A2=3,B2=4`, then requesting `range=A1:B2,majorDimension=ROWS` returns `[[1,2],[3,4]]`, whereas requesting `range=A1:B2,majorDimension=COLUMNS` returns `[[1,3],[2,4]]`.
+                majorDimension: []const u8,
+                // The [A1 notation or R1C1 notation](/sheets/api/guides/concepts#cell) of the range to retrieve values from.
+                range: []const u8,
+                // The ID of the spreadsheet to retrieve data from.
+                spreadsheetId: []const u8,
+                // How values should be represented in the output. The default render option is FORMATTED_VALUE.
+                valueRenderOption: []const u8,
             ) ValueRangeSchema {
                 // TODO: body
                 _ = self;
+                _ = dateTimeRenderOption;
+                _ = majorDimension;
+                _ = range;
+                _ = spreadsheetId;
+                _ = valueRenderOption;
             }
             // Sets values in a range of a spreadsheet. The caller must specify the spreadsheet ID, range, and a valueInputOption.
             fn update(
                 self: *@This(),
+                // Determines if the update response should include the values of the cells that were updated. By default, responses do not include the updated values. If the range to write was larger than the range actually written, the response includes all values in the requested range (excluding trailing empty rows and columns).
+                includeValuesInResponse: bool,
+                // The [A1 notation](/sheets/api/guides/concepts#cell) of the values to update.
+                range: []const u8,
+                // Determines how dates, times, and durations in the response should be rendered. This is ignored if response_value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
+                responseDateTimeRenderOption: []const u8,
+                // Determines how values in the response should be rendered. The default render option is FORMATTED_VALUE.
+                responseValueRenderOption: []const u8,
+                // The ID of the spreadsheet to update.
+                spreadsheetId: []const u8,
+                // How the input data should be interpreted.
+                valueInputOption: []const u8,
                 schema: ValueRangeSchema,
             ) UpdateValuesResponseSchema {
                 // TODO: body
                 _ = self;
+                _ = includeValuesInResponse;
+                _ = range;
+                _ = responseDateTimeRenderOption;
+                _ = responseValueRenderOption;
+                _ = spreadsheetId;
+                _ = valueInputOption;
                 _ = schema;
             }
         },
         // Applies one or more updates to the spreadsheet. Each request is validated before being applied. If any request is not valid then the entire request will fail and nothing will be applied. Some requests have replies to give you some information about how they are applied. The replies will mirror the requests. For example, if you applied 4 updates and the 3rd one had a reply, then the response will have 2 empty replies, the actual reply, and another empty reply, in that order. Due to the collaborative nature of spreadsheets, it is not guaranteed that the spreadsheet will reflect exactly your changes after this completes, however it is guaranteed that the updates in the request will be applied together atomically. Your changes may be altered with respect to collaborator changes. If there are no collaborators, the spreadsheet should reflect your changes.
         fn batchUpdate(
             self: *@This(),
+            // The spreadsheet to apply the updates to.
+            spreadsheetId: []const u8,
             schema: BatchUpdateSpreadsheetRequestSchema,
         ) BatchUpdateSpreadsheetResponseSchema {
             // TODO: body
             _ = self;
+            _ = spreadsheetId;
             _ = schema;
         }
         // Creates a spreadsheet, returning the newly created spreadsheet.
@@ -2942,17 +3050,29 @@ pub const Service = struct {
         // Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. By default, data within grids is not returned. You can include grid data in one of 2 ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData URL parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, as a best practice, retrieve only the specific spreadsheet fields that you want. To retrieve only subsets of spreadsheet data, use the ranges URL parameter. Ranges are specified using [A1 notation](/sheets/api/guides/concepts#cell). You can define a single cell (for example, `A1`) or multiple cells (for example, `A1:D5`). You can also get cells from other sheets within the same spreadsheet (for example, `Sheet2!A1:C4`) or retrieve multiple ranges at once (for example, `?ranges=A1:D5&ranges=Sheet2!A1:C4`). Limiting the range returns only the portions of the spreadsheet that intersect the requested ranges.
         fn get(
             self: *@This(),
+            // True if grid data should be returned. This parameter is ignored if a field mask was set in the request.
+            includeGridData: bool,
+            // The ranges to retrieve from the spreadsheet.
+            ranges: []const u8,
+            // The spreadsheet to request.
+            spreadsheetId: []const u8,
         ) SpreadsheetSchema {
             // TODO: body
             _ = self;
+            _ = includeGridData;
+            _ = ranges;
+            _ = spreadsheetId;
         }
         // Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. This method differs from GetSpreadsheet in that it allows selecting which subsets of spreadsheet data to return by specifying a dataFilters parameter. Multiple DataFilters can be specified. Specifying one or more data filters returns the portions of the spreadsheet that intersect ranges matched by any of the filters. By default, data within grids is not returned. You can include grid data one of 2 ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, as a best practice, retrieve only the specific spreadsheet fields that you want.
         fn getByDataFilter(
             self: *@This(),
+            // The spreadsheet to request.
+            spreadsheetId: []const u8,
             schema: GetSpreadsheetByDataFilterRequestSchema,
         ) SpreadsheetSchema {
             // TODO: body
             _ = self;
+            _ = spreadsheetId;
             _ = schema;
         }
     },
