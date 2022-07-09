@@ -5,74 +5,97 @@ const Allocator = std.mem.Allocator;
 const ParameterHashMap = std.StringHashMap(Parameter);
 
 pub const Method = struct {
-    pub fn print(alloc: Allocator, values: json.ObjectMap.Unmanaged.Entry, writer: anytype, indent: u32) !void {
-        const name = values.key_ptr.*;
-        const obj = values.value_ptr.Object;
+    const Self = @This();
+    desc: ?[]const u8,
+    name: []const u8,
+    params: std.ArrayList(Parameter),
+    return_ty: []const u8,
+    return_alloc: bool,
+
+    fn print(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) !void {
         var pre = try std.ArrayList(u8).initCapacity(alloc, indent);
         defer pre.deinit();
         pre.appendNTimesAssumeCapacity(' ', indent);
+        if (self.desc) |d|
+            try std.fmt.format(writer,
+                \\{[pre]s}// {[desc]s}
+                \\
+            , .{
+                .pre = pre.items,
+                .desc = d,
+            });
         try std.fmt.format(writer,
-            \\{[pre]s}// {[desc]s}
             \\{[pre]s}fn {[name]s}(
             \\{[pre]s}    self: *@This(),
             \\
         , .{
-            .desc = if (obj.get("description")) |d| d.String else "",
             .pre = pre.items,
-            .name = name,
+            .name = self.name,
         });
-        var params = std.ArrayList(Parameter).init(alloc);
-        defer {
-            for (params.items) |i| alloc.free(i.ty);
-            params.deinit();
-        }
-        if (obj.get("parameter")) |param| {
-            var iter = param.Object.iterator();
-            while (iter.next()) |p| {
-                const pobj = p.value_ptr.Object;
-                const desc = if (pobj.get("description")) |d| d.String else "";
-                const ty = try tyStrFromJsonValue(&pobj, alloc);
-                // TODO format name in snake_case rather than camelCase
-                const param_name = p.key_ptr.*;
-                const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty };
-                try params.append(parameter);
-                try parameter.print(alloc, writer, indent + 4);
-            }
-        }
-        if (obj.get("request")) |req| {
-            const desc = if (req.Object.get("description")) |d| d.String else "";
-            const ty = try tyStrFromJsonValue(&req.Object, alloc);
-            const param_name = "schema";
-            const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty };
-            try params.append(parameter);
-            try parameter.print(alloc, writer, indent + 4);
-        }
-        const response = obj.get("response");
-        const return_ty = if (response) |res|
-            try tyStrFromJsonValue(&res.Object, alloc)
-        else
-            "requestz.Response";
-        defer if (response != null) alloc.free(return_ty);
+        for (self.params.items) |param|
+            try param.genArg(alloc, writer, indent + 4);
 
         try std.fmt.format(writer,
             \\{[pre]s}) {[ret]s} {{
             \\
-        , .{ .pre = pre.items, .ret = return_ty });
+        , .{ .pre = pre.items, .ret = self.return_ty });
 
         try std.fmt.format(writer,
             \\{[pre]s}    // TODO: body
             \\{[pre]s}    _ = self;
             \\
         , .{ .pre = pre.items });
-        for (params.items) |i|
+        for (self.params.items) |param|
             try std.fmt.format(writer, "{[pre]s}    _ = {[name]s};\n", .{
                 .pre = pre.items,
-                .name = i.name,
+                .name = param.name,
             });
         try std.fmt.format(writer,
             \\{[pre]s}}}
             \\
         , .{ .pre = pre.items });
+    }
+    fn from(value: json.ObjectMap.Entry, allocator: Allocator) anyerror!Self {
+        var params = std.ArrayList(Parameter).init(allocator);
+        const obj = value.value_ptr.Object;
+        if (obj.get("parameter")) |param| {
+            var iter = param.Object.iterator();
+            while (iter.next()) |p| {
+                const pobj = p.value_ptr.Object;
+                const desc = if (pobj.get("description")) |d| d.String else null;
+                const ty = try tyStrFromJsonValue(&pobj, allocator);
+                // TODO format name in snake_case rather than camelCase
+                const param_name = p.key_ptr.*;
+                const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty };
+                try params.append(parameter);
+            }
+        }
+        if (obj.get("request")) |req| {
+            const desc = if (req.Object.get("description")) |d| d.String else null;
+            const ty = try tyStrFromJsonValue(&req.Object, allocator);
+            const param_name = "schema";
+            const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty };
+            try params.append(parameter);
+        }
+        const response = obj.get("response");
+        const return_ty = if (response) |res|
+            try tyStrFromJsonValue(&res.Object, allocator)
+        else
+            "requestz.Response";
+
+        return Self{
+            .desc = if (obj.get("description")) |d| d.String else null,
+            .name = value.key_ptr.*,
+            .params = params,
+            .return_ty = return_ty,
+            .return_alloc = response != null,
+        };
+    }
+
+    fn deinit(self: *Self, allocator: Allocator) void {
+        for (self.params.items) |i| allocator.free(i.ty);
+        self.params.deinit();
+        if (self.return_alloc) allocator.free(self.return_ty);
     }
 };
 
@@ -112,20 +135,32 @@ pub const HttpMethod = enum {
 
 const Parameter = struct {
     const Self = @This();
-    desc: ?[]const u8,
+    desc: ?[]const u8 = null,
     name: []const u8,
     ty: []const u8,
-    fn print(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) !void {
+    default: ?[]const u8 = null,
+    fn genArg(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) !void {
+        var pre = try std.ArrayList(u8).initCapacity(alloc, indent);
+        defer pre.deinit();
+        pre.appendNTimesAssumeCapacity(' ', indent);
+        if (self.desc) |d|
+            try std.fmt.format(writer, "{s}// {s}\n", .{ pre.items, d });
+
+        // TODO format name in snake_case rather than camelCase
+        try std.fmt.format(writer, "{s}{s}: {s},\n", .{ pre.items, self.name, self.ty });
+    }
+
+    fn genSetter(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) !void {
         var pre = try std.ArrayList(u8).initCapacity(alloc, indent);
         defer pre.deinit();
         pre.appendNTimesAssumeCapacity(' ', indent);
         try std.fmt.format(writer,
-            \\{[pre]s}// {[desc]s}
-            \\{[pre]s}{[name]s}: {[ty]s},
+            \\{[pre]s}fn {[name]s}Set(self: *@This(), val: {[ty]s}) void {{
+            \\{[pre]s}    self.name = val;
+            \\{[pre]s}}}
             \\
         , .{
             .pre = pre.items,
-            .desc = self.desc,
             // TODO format name in snake_case rather than camelCase
             .name = self.name,
             .ty = self.ty,
@@ -134,25 +169,85 @@ const Parameter = struct {
 };
 
 pub const Resource = struct {
+    const Self = @This();
     name: []const u8,
-    full_name: []const u8,
-    methods: ?[]Method,
-    resources: ?[]Resource,
+    fields: std.ArrayList(Parameter),
+    resources: std.ArrayList(Resource),
+    methods: std.ArrayList(Method),
 
-    pub fn print(alloc: Allocator, values: json.ObjectMap.Unmanaged.Entry, writer: anytype, indent: u32) !void {
-        const name = values.key_ptr.*;
+    fn from(value: json.ObjectMap.Entry, allocator: Allocator) anyerror!Self {
+        const obj = value.value_ptr.Object;
+        // Generate resources
+        var resources_list = std.ArrayList(Resource).init(allocator);
+        if (obj.get("resources")) |resources| {
+            var resource_iter = resources.Object.iterator();
+            while (resource_iter.next()) |resource|
+                try resources_list.append(try Resource.from(resource, allocator));
+        }
+
+        // Generate methods
+        var method_list = std.ArrayList(Method).init(allocator);
+        if (obj.get("methods")) |methods| {
+            var method_iter = methods.Object.iterator();
+            while (method_iter.next()) |method| {
+                try method_list.append(try Method.from(method, allocator));
+            }
+        }
+
+        return Self{
+            .name = value.key_ptr.*,
+            // TODO
+            .fields = std.ArrayList(Parameter).init(allocator),
+            .resources = resources_list,
+            .methods = method_list,
+        };
+    }
+
+    fn printMember(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) anyerror!void {
         var pre = try std.ArrayList(u8).initCapacity(alloc, indent);
         defer pre.deinit();
         pre.appendNTimesAssumeCapacity(' ', indent);
         try std.fmt.format(writer,
             \\{s}{s}: struct {{
             \\
-        , .{ pre.items, name });
-        genResources(values, alloc, writer, indent) catch unreachable;
+        , .{ pre.items, self.name });
+        for (self.fields.items) |field|
+            try field.genArg(alloc, writer, indent + 4);
+        for (self.resources.items) |resource|
+            try resource.printMember(alloc, writer, indent + 4);
+        for (self.fields.items) |field|
+            try field.genSetter(alloc, writer, indent + 4);
+        for (self.methods.items) |method|
+            try method.print(alloc, writer, indent + 4);
         try std.fmt.format(writer,
-            \\{[pre]s}}},
+            \\{s}}},
             \\
-        , .{ .pre = pre.items });
+        , .{pre.items});
+    }
+    fn printRoot(self: *const Self, alloc: Allocator, writer: anytype) anyerror!void {
+        try std.fmt.format(writer,
+            \\pub const {s} = struct {{
+            \\
+        , .{self.name});
+        for (self.fields.items) |field|
+            try field.genArg(alloc, writer, 4);
+        for (self.resources.items) |resource|
+            try resource.printMember(alloc, writer, 4);
+        for (self.fields.items) |field|
+            try field.genSetter(alloc, writer, 4);
+        for (self.methods.items) |method|
+            try method.print(alloc, writer, 4);
+        try std.fmt.format(writer,
+            \\}};
+            \\
+        , .{});
+    }
+
+    fn deinit(self: *Self, allocator: Allocator) void {
+        for (self.resources.items) |*i| i.deinit(allocator);
+        self.resources.deinit();
+        for (self.methods.items) |*i| i.deinit(allocator);
+        self.methods.deinit();
     }
 };
 
@@ -312,61 +407,39 @@ pub fn genSchemas(values: json.ObjectMap, allocator: Allocator, writer: anytype)
         , .{});
     }
 }
-pub fn genRootResources(values: json.ObjectMap.Unmanaged.Entry, allocator: Allocator, writer: anytype) !void {
-    var iter = values.value_ptr.Object.iterator();
-    std.debug.assert(iter.len == 1);
-    const val = iter.next().?;
-    try std.fmt.format(writer,
-        \\pub const Service = struct {{
-        \\    const Self = @This();
-        \\    client: *requestz.Client,
-        \\    base_url: []const u8 = base_url,
-        \\    root_url: []const u8 = root_url,
-        \\    user_agent: []const u8 = "{s}",
-        \\
-        \\    {s}: struct {{
-        \\
-    , .{ main.api_name ++ "/" ++ main.api_version, val.key_ptr.* });
-    try genResources(val, allocator, writer, 4);
-    try std.fmt.format(writer,
-        \\    }},
-        \\
-        \\    pub fn new(client: *requestz.Client) Self {{
-        \\        return Self{{ .client = client }};
-        \\    }}
-        \\
-        \\    pub fn baseUrl(self: Self, url: []const u8) void {{
-        \\        self.base_url = url;
-        \\    }}
-        \\    pub fn rootUrl(self: Self, url: []const u8) void {{
-        \\        self.root_url = url;
-        \\    }}
-        \\    pub fn userAgent(self: Self, agent: []const u8) void {{
-        \\        self.user_agent = agent;
-        \\    }}
-        \\}};
-        \\
-        \\
-    , .{});
-}
-fn genResources(values: json.ObjectMap.Unmanaged.Entry, allocator: Allocator, writer: anytype, indent: u32) !void {
-    var pre = try std.ArrayList(u8).initCapacity(allocator, indent);
-    defer pre.deinit();
-    pre.appendNTimesAssumeCapacity(' ', indent);
-    const obj = values.value_ptr.Object;
-    // Generate resources
-    if (obj.get("resources")) |resources| {
-        var resource_iter = resources.Object.iterator();
-        while (resource_iter.next()) |resource| {
-            try Resource.print(allocator, resource, writer, indent + 4);
+pub fn genRootResources(values: json.ObjectMap, allocator: Allocator, writer: anytype) !void {
+    var fields = try std.ArrayList(Parameter).initCapacity(allocator, 4);
+    defer fields.deinit();
+    try fields.appendSlice(&.{
+        .{ .name = "client", .ty = "*requestz.Client" },
+        .{ .name = "base_url", .ty = "[]const u8", .default = "base_url" },
+        .{ .name = "root_url", .ty = "[]const u8", .default = "root_url" },
+        .{
+            .name = "user_agent",
+            .ty = "[]const u8",
+            .default = main.api_name ++ "/" ++ main.api_version,
+        },
+    });
+    var resources = try std.ArrayList(Resource).initCapacity(allocator, 4);
+    if (values.get("resources")) |r| {
+        var resource_iter = r.Object.iterator();
+        while (resource_iter.next()) |res| {
+            try resources.append(try Resource.from(res, allocator));
         }
     }
-
-    // Generate methods
-    if (obj.get("methods")) |methods| {
-        var method_iter = methods.Object.iterator();
+    var methods = try std.ArrayList(Method).initCapacity(allocator, 4);
+    if (values.get("methods")) |m| {
+        var method_iter = m.Object.iterator();
         while (method_iter.next()) |method| {
-            try Method.print(allocator, method, writer, indent + 4);
+            try methods.append(try Method.from(method, allocator));
         }
     }
+    var root = Resource{
+        .name = "Service",
+        .fields = fields,
+        .resources = resources,
+        .methods = methods,
+    };
+    defer root.deinit(allocator);
+    try root.printRoot(allocator, writer);
 }

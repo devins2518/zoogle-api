@@ -45,16 +45,20 @@ pub fn main() !void {
         const name = e.key_ptr.*;
         if (std.mem.eql(u8, name, "auth")) {
             try types.genAuth(e.value_ptr.Object, allocator, writer, &auth_list);
-        } else if (std.mem.eql(u8, name, "resources")) {
-            try types.genRootResources(e, allocator, writer);
         } else if (std.mem.eql(u8, name, "schemas")) {
             try types.genSchemas(e.value_ptr.Object, allocator, writer);
-        } else if (std.mem.eql(u8, name, "parameters") or
-            std.mem.eql(u8, name, "methods"))
-        {
+        } else if (std.mem.eql(u8, name, "parameters")) {
             continue;
         } else continue;
     }
+
+    try types.genRootResources(parsed.root.Object, allocator, writer);
+
+    try writer.writeAll(
+        \\test "static analysis" {
+        \\    std.testing.refAllDecls(@This());
+        \\}
+    );
 }
 
 fn printHelpAndExit(arg: []const u8) void {

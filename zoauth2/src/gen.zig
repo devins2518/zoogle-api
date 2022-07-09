@@ -24,49 +24,6 @@ pub const Scope = enum {
     }
 };
 
-pub const Service = struct {
-    const Self = @This();
-    client: *requestz.Client,
-    base_url: []const u8 = base_url,
-    root_url: []const u8 = root_url,
-    user_agent: []const u8 = "zoogle-api-zig-client/0.1.0",
-
-    userinfo: struct {
-        v2: struct {
-            me: struct {
-                // 
-                fn get(
-                    self: *@This(),
-                ) UserinfoSchema {
-                    // TODO: body
-                    _ = self;
-                }
-            },
-        },
-        // 
-        fn get(
-            self: *@This(),
-        ) UserinfoSchema {
-            // TODO: body
-            _ = self;
-        }
-    },
-
-    pub fn new(client: *requestz.Client) Self {
-        return Self{ .client = client };
-    }
-
-    pub fn baseUrl(self: Self, url: []const u8) void {
-        self.base_url = url;
-    }
-    pub fn rootUrl(self: Self, url: []const u8) void {
-        self.root_url = url;
-    }
-    pub fn userAgent(self: Self, agent: []const u8) void {
-        self.user_agent = agent;
-    }
-};
-
 const TokeninfoSchema = struct {
     // Who is the intended audience for this token. In general the same as issued_to.
     audience: []const u8,
@@ -109,3 +66,48 @@ const UserinfoSchema = struct {
     verified_email: bool = true,
 
 };
+pub const Service = struct {
+    client: *requestz.Client,
+    base_url: []const u8,
+    root_url: []const u8,
+    user_agent: []const u8,
+    userinfo: struct {
+        v2: struct {
+            me: struct {
+                fn get(
+                    self: *@This(),
+                ) UserinfoSchema {
+                    // TODO: body
+                    _ = self;
+                }
+            },
+        },
+        fn get(
+            self: *@This(),
+        ) UserinfoSchema {
+            // TODO: body
+            _ = self;
+        }
+    },
+    fn clientSet(self: *@This(), val: *requestz.Client) void {
+        self.name = val;
+    }
+    fn base_urlSet(self: *@This(), val: []const u8) void {
+        self.name = val;
+    }
+    fn root_urlSet(self: *@This(), val: []const u8) void {
+        self.name = val;
+    }
+    fn user_agentSet(self: *@This(), val: []const u8) void {
+        self.name = val;
+    }
+    fn tokeninfo(
+        self: *@This(),
+    ) TokeninfoSchema {
+        // TODO: body
+        _ = self;
+    }
+};
+test "static analysis" {
+    std.testing.refAllDecls(@This());
+}
