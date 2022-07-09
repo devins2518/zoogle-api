@@ -33,9 +33,10 @@ pub fn main() !void {
         \\const StringHashMap = std.StringHashMap;
         \\
         \\const base_url = "{s}";
+        \\const root_url = "{s}";
         \\
         \\
-    , .{parsed.root.Object.get("baseUrl").?.String});
+    , .{ parsed.root.Object.get("baseUrl").?.String, parsed.root.Object.get("rootUrl").?.String });
 
     var iter = parsed.root.Object.iterator();
     var auth_list = std.ArrayList([]const u8).init(allocator);

@@ -5,6 +5,7 @@ const requestz = @import("requestz");
 const StringHashMap = std.StringHashMap;
 
 const base_url = "https://sheets.googleapis.com/";
+const root_url = "https://sheets.googleapis.com/";
 
 pub const Scope = enum {
     // See, edit, create, and delete all of your Google Drive files
@@ -31,8 +32,9 @@ pub const Scope = enum {
 
 pub const Service = struct {
     client: *requestz.Client,
-    base_url: []const u8 = base_url = "zoogle-api-zig-client0.1.0",
-    user_agent: ?[]const u8 = null,
+    base_url: []const u8 = base_url,
+    root_url: []const u8 = root_url,
+    user_agent: []const u8 = "zoogle-api-zig-client/0.1.0",
 
     spreadsheets: struct {
         developerMetadata: struct {

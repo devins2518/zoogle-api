@@ -296,12 +296,13 @@ pub fn genRootResources(values: json.ObjectMap.Unmanaged.Entry, allocator: Alloc
     try std.fmt.format(writer,
         \\pub const Service = struct {{
         \\    client: *requestz.Client,
-        \\    base_url: []const u8 = base_url = "{s}",
-        \\    user_agent: ?[]const u8 = null,
+        \\    base_url: []const u8 = base_url,
+        \\    root_url: []const u8 = root_url,
+        \\    user_agent: []const u8 = "{s}",
         \\
         \\    {s}: struct {{
         \\
-    , .{ main.api_name ++ main.api_version, val.key_ptr.* });
+    , .{ main.api_name ++ "/" ++ main.api_version, val.key_ptr.* });
     try genResources(val, allocator, writer, 4);
     try std.fmt.format(writer,
         \\    }},
