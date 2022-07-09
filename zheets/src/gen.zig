@@ -2804,7 +2804,23 @@ pub const Service = struct {
     root_url: []const u8,
     user_agent: []const u8,
     spreadsheets: struct {
+        // The spreadsheet to apply the updates to.
+        spreadsheetId: []const u8,
+        // True if grid data should be returned. This parameter is ignored if a field mask was set in the request.
+        includeGridData: bool,
+        // The ranges to retrieve from the spreadsheet.
+        ranges: []const u8,
         developerMetadata: struct {
+            // The ID of the developer metadata to retrieve.
+            metadataId: i32,
+            // The ID of the spreadsheet to retrieve metadata from.
+            spreadsheetId: []const u8,
+            fn metadataIdSet(self: *@This(), val: i32) void {
+                self.metadataId = val;
+            }
+            fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
+                self.spreadsheetId = val;
+            }
             // Returns the developer metadata with the specified ID. The caller must specify the spreadsheet ID and the developer metadata's unique metadataId.
             fn get(
                 self: *@This(),
@@ -2832,6 +2848,16 @@ pub const Service = struct {
             }
         },
         sheets: struct {
+            // The ID of the sheet to copy.
+            sheetId: i32,
+            // The ID of the spreadsheet containing the sheet to copy.
+            spreadsheetId: []const u8,
+            fn sheetIdSet(self: *@This(), val: i32) void {
+                self.sheetId = val;
+            }
+            fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
+                self.spreadsheetId = val;
+            }
             // Copies a single sheet from a spreadsheet to another spreadsheet. Returns the properties of the newly created sheet.
             fn copyTo(
                 self: *@This(),
@@ -2849,6 +2875,61 @@ pub const Service = struct {
             }
         },
         values: struct {
+            // Determines if the update response should include the values of the cells that were appended. By default, responses do not include the updated values.
+            includeValuesInResponse: bool,
+            // How the input data should be inserted.
+            insertDataOption: []const u8,
+            // The [A1 notation](/sheets/api/guides/concepts#cell) of a range to search for a logical table of data. Values are appended after the last row of the table.
+            range: []const u8,
+            // Determines how dates, times, and durations in the response should be rendered. This is ignored if response_value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
+            responseDateTimeRenderOption: []const u8,
+            // Determines how values in the response should be rendered. The default render option is FORMATTED_VALUE.
+            responseValueRenderOption: []const u8,
+            // The ID of the spreadsheet to update.
+            spreadsheetId: []const u8,
+            // How the input data should be interpreted.
+            valueInputOption: []const u8,
+            // How dates, times, and durations should be represented in the output. This is ignored if value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
+            dateTimeRenderOption: []const u8,
+            // The major dimension that results should use. For example, if the spreadsheet data is: `A1=1,B1=2,A2=3,B2=4`, then requesting `ranges=["A1:B2"],majorDimension=ROWS` returns `[[1,2],[3,4]]`, whereas requesting `ranges=["A1:B2"],majorDimension=COLUMNS` returns `[[1,3],[2,4]]`.
+            majorDimension: []const u8,
+            // The [A1 notation or R1C1 notation](/sheets/api/guides/concepts#cell) of the range to retrieve values from.
+            ranges: []const u8,
+            // How values should be represented in the output. The default render option is ValueRenderOption.FORMATTED_VALUE.
+            valueRenderOption: []const u8,
+            fn includeValuesInResponseSet(self: *@This(), val: bool) void {
+                self.includeValuesInResponse = val;
+            }
+            fn insertDataOptionSet(self: *@This(), val: []const u8) void {
+                self.insertDataOption = val;
+            }
+            fn rangeSet(self: *@This(), val: []const u8) void {
+                self.range = val;
+            }
+            fn responseDateTimeRenderOptionSet(self: *@This(), val: []const u8) void {
+                self.responseDateTimeRenderOption = val;
+            }
+            fn responseValueRenderOptionSet(self: *@This(), val: []const u8) void {
+                self.responseValueRenderOption = val;
+            }
+            fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
+                self.spreadsheetId = val;
+            }
+            fn valueInputOptionSet(self: *@This(), val: []const u8) void {
+                self.valueInputOption = val;
+            }
+            fn dateTimeRenderOptionSet(self: *@This(), val: []const u8) void {
+                self.dateTimeRenderOption = val;
+            }
+            fn majorDimensionSet(self: *@This(), val: []const u8) void {
+                self.majorDimension = val;
+            }
+            fn rangesSet(self: *@This(), val: []const u8) void {
+                self.ranges = val;
+            }
+            fn valueRenderOptionSet(self: *@This(), val: []const u8) void {
+                self.valueRenderOption = val;
+            }
             // Appends values to a spreadsheet. The input range is used to search for existing data and find a "table" within that range. Values will be appended to the next row of the table, starting with the first column of the table. See the [guide](/sheets/api/guides/values#appending_values) and [sample code](/sheets/api/samples/writing#append_values) for specific details of how tables are detected and data is appended. The caller must specify the spreadsheet ID, range, and a valueInputOption. The `valueInputOption` only controls how the input data will be added to the sheet (column-wise or row-wise), it does not influence what cell the data starts being written to.
             fn append(
                 self: *@This(),
@@ -3026,6 +3107,15 @@ pub const Service = struct {
                 _ = schema;
             }
         },
+        fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
+            self.spreadsheetId = val;
+        }
+        fn includeGridDataSet(self: *@This(), val: bool) void {
+            self.includeGridData = val;
+        }
+        fn rangesSet(self: *@This(), val: []const u8) void {
+            self.ranges = val;
+        }
         // Applies one or more updates to the spreadsheet. Each request is validated before being applied. If any request is not valid then the entire request will fail and nothing will be applied. Some requests have replies to give you some information about how they are applied. The replies will mirror the requests. For example, if you applied 4 updates and the 3rd one had a reply, then the response will have 2 empty replies, the actual reply, and another empty reply, in that order. Due to the collaborative nature of spreadsheets, it is not guaranteed that the spreadsheet will reflect exactly your changes after this completes, however it is guaranteed that the updates in the request will be applied together atomically. Your changes may be altered with respect to collaborator changes. If there are no collaborators, the spreadsheet should reflect your changes.
         fn batchUpdate(
             self: *@This(),
@@ -3077,16 +3167,16 @@ pub const Service = struct {
         }
     },
     fn clientSet(self: *@This(), val: *requestz.Client) void {
-        self.name = val;
+        self.client = val;
     }
     fn base_urlSet(self: *@This(), val: []const u8) void {
-        self.name = val;
+        self.base_url = val;
     }
     fn root_urlSet(self: *@This(), val: []const u8) void {
-        self.name = val;
+        self.root_url = val;
     }
     fn user_agentSet(self: *@This(), val: []const u8) void {
-        self.name = val;
+        self.user_agent = val;
     }
 };
 test "static analysis" {

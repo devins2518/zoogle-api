@@ -71,6 +71,8 @@ pub const Service = struct {
     base_url: []const u8,
     root_url: []const u8,
     user_agent: []const u8,
+    access_token: []const u8,
+    id_token: []const u8,
     userinfo: struct {
         v2: struct {
             me: struct {
@@ -90,16 +92,22 @@ pub const Service = struct {
         }
     },
     fn clientSet(self: *@This(), val: *requestz.Client) void {
-        self.name = val;
+        self.client = val;
     }
     fn base_urlSet(self: *@This(), val: []const u8) void {
-        self.name = val;
+        self.base_url = val;
     }
     fn root_urlSet(self: *@This(), val: []const u8) void {
-        self.name = val;
+        self.root_url = val;
     }
     fn user_agentSet(self: *@This(), val: []const u8) void {
-        self.name = val;
+        self.user_agent = val;
+    }
+    fn access_tokenSet(self: *@This(), val: []const u8) void {
+        self.access_token = val;
+    }
+    fn id_tokenSet(self: *@This(), val: []const u8) void {
+        self.id_token = val;
     }
     fn tokeninfo(
         self: *@This(),

@@ -2,12 +2,13 @@ const std = @import("std");
 const json = std.json;
 const main = @import("main.zig");
 const Allocator = std.mem.Allocator;
+const ParamHashMap = std.ArrayHashMap(Parameter, void, Parameter.Context, true);
 
 pub const Method = struct {
     const Self = @This();
     desc: ?[]const u8,
     name: []const u8,
-    params: std.ArrayList(Parameter),
+    params: ParamHashMap,
     return_ty: []const u8,
     return_alloc: bool,
 
@@ -31,8 +32,9 @@ pub const Method = struct {
             .pre = pre.items,
             .name = self.name,
         });
-        for (self.params.items) |param|
-            try param.genArg(alloc, writer, indent + 4);
+        var iter = self.params.iterator();
+        while (iter.next()) |param|
+            try param.key_ptr.genArg(alloc, writer, indent + 4);
 
         try std.fmt.format(writer,
             \\{[pre]s}) {[ret]s} {{
@@ -44,19 +46,19 @@ pub const Method = struct {
             \\{[pre]s}    _ = self;
             \\
         , .{ .pre = pre.items });
-        for (self.params.items) |param|
+        iter = self.params.iterator();
+        while (iter.next()) |param|
             try std.fmt.format(writer, "{[pre]s}    _ = {[name]s};\n", .{
                 .pre = pre.items,
-                .name = param.name,
+                .name = param.key_ptr.name,
             });
         try std.fmt.format(writer,
             \\{[pre]s}}}
             \\
         , .{ .pre = pre.items });
     }
-    fn from(value: json.ObjectMap.Entry, allocator: Allocator, parent_fields: *std.ArrayList(Parameter)) anyerror!Self {
-        _ = parent_fields;
-        var params = std.ArrayList(Parameter).init(allocator);
+    fn from(value: json.ObjectMap.Entry, allocator: Allocator, parent_fields: *ParamHashMap) anyerror!Self {
+        var params = ParamHashMap.init(allocator);
         const obj = value.value_ptr.Object;
         if (obj.get("parameters")) |param| {
             var iter = param.Object.iterator();
@@ -67,7 +69,8 @@ pub const Method = struct {
                 // TODO format name in snake_case rather than camelCase
                 const param_name = p.key_ptr.*;
                 const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty };
-                try params.append(parameter);
+                try params.put(parameter, .{});
+                try parent_fields.put(parameter, .{});
             }
         }
         if (obj.get("request")) |req| {
@@ -75,7 +78,7 @@ pub const Method = struct {
             const ty = try tyStrFromJsonValue(&req.Object, allocator);
             const param_name = "schema";
             const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty };
-            try params.append(parameter);
+            try params.put(parameter, .{});
         }
         const response = obj.get("response");
         const return_ty = if (response) |res|
@@ -93,7 +96,8 @@ pub const Method = struct {
     }
 
     fn deinit(self: *Self, allocator: Allocator) void {
-        for (self.params.items) |i| allocator.free(i.ty);
+        var iter = self.params.iterator();
+        while (iter.next()) |i| allocator.free(i.key_ptr.ty);
         self.params.deinit();
         if (self.return_alloc) allocator.free(self.return_ty);
     }
@@ -139,6 +143,16 @@ const Parameter = struct {
     name: []const u8,
     ty: []const u8,
     default: ?[]const u8 = null,
+
+    const Context = struct {
+        pub fn hash(_: @This(), param: Self) u32 {
+            return @truncate(u32, std.hash.Wyhash.hash(0, param.name));
+        }
+        pub fn eql(_: @This(), lhs: Self, rhs: Self, _: usize) bool {
+            return std.mem.eql(u8, lhs.name, rhs.name);
+        }
+    };
+
     fn genArg(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) !void {
         var pre = try std.ArrayList(u8).initCapacity(alloc, indent);
         defer pre.deinit();
@@ -156,7 +170,7 @@ const Parameter = struct {
         pre.appendNTimesAssumeCapacity(' ', indent);
         try std.fmt.format(writer,
             \\{[pre]s}fn {[name]s}Set(self: *@This(), val: {[ty]s}) void {{
-            \\{[pre]s}    self.name = val;
+            \\{[pre]s}    self.{[name]s} = val;
             \\{[pre]s}}}
             \\
         , .{
@@ -171,13 +185,13 @@ const Parameter = struct {
 pub const Resource = struct {
     const Self = @This();
     name: []const u8,
-    fields: std.ArrayList(Parameter),
+    fields: ParamHashMap,
     resources: std.ArrayList(Resource),
     methods: std.ArrayList(Method),
 
     fn from(value: json.ObjectMap.Entry, allocator: Allocator) anyerror!Self {
         const obj = value.value_ptr.Object;
-        var fields = std.ArrayList(Parameter).init(allocator);
+        var fields = ParamHashMap.init(allocator);
         // Generate resources
         var resources_list = std.ArrayList(Resource).init(allocator);
         if (obj.get("resources")) |resources| {
@@ -198,7 +212,7 @@ pub const Resource = struct {
         return Self{
             .name = value.key_ptr.*,
             // TODO
-            .fields = std.ArrayList(Parameter).init(allocator),
+            .fields = fields,
             .resources = resources_list,
             .methods = method_list,
         };
@@ -212,12 +226,14 @@ pub const Resource = struct {
             \\{s}{s}: struct {{
             \\
         , .{ pre.items, self.name });
-        for (self.fields.items) |field|
-            try field.genArg(alloc, writer, indent + 4);
+        var key_iter = self.fields.iterator();
+        while (key_iter.next()) |field|
+            try field.key_ptr.genArg(alloc, writer, indent + 4);
         for (self.resources.items) |resource|
             try resource.printMember(alloc, writer, indent + 4);
-        for (self.fields.items) |field|
-            try field.genSetter(alloc, writer, indent + 4);
+        key_iter = self.fields.iterator();
+        while (key_iter.next()) |field|
+            try field.key_ptr.genSetter(alloc, writer, indent + 4);
         for (self.methods.items) |method|
             try method.print(alloc, writer, indent + 4);
         try std.fmt.format(writer,
@@ -230,12 +246,14 @@ pub const Resource = struct {
             \\pub const {s} = struct {{
             \\
         , .{self.name});
-        for (self.fields.items) |field|
-            try field.genArg(alloc, writer, 4);
+        var key_iter = self.fields.iterator();
+        while (key_iter.next()) |field|
+            try field.key_ptr.genArg(alloc, writer, 4);
         for (self.resources.items) |resource|
             try resource.printMember(alloc, writer, 4);
-        for (self.fields.items) |field|
-            try field.genSetter(alloc, writer, 4);
+        key_iter = self.fields.iterator();
+        while (key_iter.next()) |field|
+            try field.key_ptr.genSetter(alloc, writer, 4);
         for (self.methods.items) |method|
             try method.print(alloc, writer, 4);
         try std.fmt.format(writer,
@@ -245,6 +263,8 @@ pub const Resource = struct {
     }
 
     fn deinit(self: *Self, allocator: Allocator) void {
+        // for (self.fields.items) |*i| i.deinit(allocator);
+        self.fields.deinit();
         for (self.resources.items) |*i| i.deinit(allocator);
         self.resources.deinit();
         for (self.methods.items) |*i| i.deinit(allocator);
@@ -324,10 +344,9 @@ pub fn genAuth(values: json.ObjectMap, allocator: Allocator, writer: anytype, li
             scope_name.appendSliceAssumeCapacity(scope.key_ptr.*[begin + 1 ..]);
 
             // Remove period if present
-            per: {
-                const period_idx = std.mem.indexOf(u8, scope_name.items, ".") orelse break :per;
-                std.debug.assert(scope_name.orderedRemove(period_idx) == '.');
-                scope_name.items[period_idx] = std.ascii.toUpper(scope_name.items[period_idx]);
+            if (std.mem.indexOf(u8, scope_name.items, ".")) |idx| {
+                std.debug.assert(scope_name.orderedRemove(idx) == '.');
+                scope_name.items[idx] = std.ascii.toUpper(scope_name.items[idx]);
             }
             break :blk scope_name.items;
         };
@@ -409,18 +428,15 @@ pub fn genSchemas(values: json.ObjectMap, allocator: Allocator, writer: anytype)
     }
 }
 pub fn genRootResources(values: json.ObjectMap, allocator: Allocator, writer: anytype) !void {
-    var fields = try std.ArrayList(Parameter).initCapacity(allocator, 4);
-    defer fields.deinit();
-    try fields.appendSlice(&.{
-        .{ .name = "client", .ty = "*requestz.Client" },
-        .{ .name = "base_url", .ty = "[]const u8", .default = "base_url" },
-        .{ .name = "root_url", .ty = "[]const u8", .default = "root_url" },
-        .{
-            .name = "user_agent",
-            .ty = "[]const u8",
-            .default = main.api_name ++ "/" ++ main.api_version,
-        },
-    });
+    var fields = ParamHashMap.init(allocator);
+    try fields.put(.{ .name = "client", .ty = "*requestz.Client" }, .{});
+    try fields.put(.{ .name = "base_url", .ty = "[]const u8", .default = "base_url" }, .{});
+    try fields.put(.{ .name = "root_url", .ty = "[]const u8", .default = "root_url" }, .{});
+    try fields.put(.{
+        .name = "user_agent",
+        .ty = "[]const u8",
+        .default = main.api_name ++ "/" ++ main.api_version,
+    }, .{});
     var resources = try std.ArrayList(Resource).initCapacity(allocator, 4);
     if (values.get("resources")) |r| {
         var resource_iter = r.Object.iterator();
