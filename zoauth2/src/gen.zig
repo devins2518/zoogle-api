@@ -68,9 +68,9 @@ const UserinfoSchema = struct {
 };
 pub const Service = struct {
     client: *requestz.Client,
-    base_url: []const u8,
-    root_url: []const u8,
-    user_agent: []const u8,
+    base_url: []const u8 = base_url,
+    root_url: []const u8 = root_url,
+    user_agent: []const u8 = "zoogle-api-zig-client/0.1.0",
     access_token: []const u8,
     id_token: []const u8,
     userinfo: struct {

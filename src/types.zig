@@ -65,10 +65,11 @@ pub const Method = struct {
             while (iter.next()) |p| {
                 const pobj = p.value_ptr.Object;
                 const desc = if (pobj.get("description")) |d| d.String else null;
+                const default = if (pobj.get("default")) |d| d.String else null;
                 const ty = try tyStrFromJsonValue(&pobj, allocator);
                 // TODO format name in snake_case rather than camelCase
                 const param_name = p.key_ptr.*;
-                const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty };
+                const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty, .default = default };
                 try params.put(parameter, .{});
                 try parent_fields.put(parameter, .{});
             }
@@ -153,6 +154,19 @@ const Parameter = struct {
         }
     };
 
+    fn genField(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) !void {
+        var pre = try std.ArrayList(u8).initCapacity(alloc, indent);
+        defer pre.deinit();
+        pre.appendNTimesAssumeCapacity(' ', indent);
+        if (self.desc) |d|
+            try std.fmt.format(writer, "{s}// {s}\n", .{ pre.items, d });
+
+        // TODO format name in snake_case rather than camelCase
+        try std.fmt.format(writer, "{s}{s}: {s}", .{ pre.items, self.name, self.ty });
+        if (self.default) |default|
+            try std.fmt.format(writer, " = {s}", .{default});
+        try std.fmt.format(writer, ",\n", .{});
+    }
     fn genArg(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) !void {
         var pre = try std.ArrayList(u8).initCapacity(alloc, indent);
         defer pre.deinit();
@@ -248,7 +262,7 @@ pub const Resource = struct {
         , .{self.name});
         var key_iter = self.fields.iterator();
         while (key_iter.next()) |field|
-            try field.key_ptr.genArg(alloc, writer, 4);
+            try field.key_ptr.genField(alloc, writer, 4);
         for (self.resources.items) |resource|
             try resource.printMember(alloc, writer, 4);
         key_iter = self.fields.iterator();
@@ -435,7 +449,7 @@ pub fn genRootResources(values: json.ObjectMap, allocator: Allocator, writer: an
     try fields.put(.{
         .name = "user_agent",
         .ty = "[]const u8",
-        .default = main.api_name ++ "/" ++ main.api_version,
+        .default = std.fmt.comptimePrint("\"{s}/{s}\"", .{ main.api_name, main.api_version }),
     }, .{});
     var resources = try std.ArrayList(Resource).initCapacity(allocator, 4);
     if (values.get("resources")) |r| {
