@@ -1,5 +1,6 @@
 const std = @import("std");
 const json = std.json;
+const main = @import("main.zig");
 const Allocator = std.mem.Allocator;
 const ParameterHashMap = std.StringHashMap(Parameter);
 
@@ -117,8 +118,6 @@ pub const Resource = struct {
 
     pub fn print(alloc: Allocator, values: json.ObjectMap.Unmanaged.Entry, writer: anytype, indent: u32) !void {
         const name = values.key_ptr.*;
-        const obj = values.value_ptr.Object;
-        _ = obj;
         var pre = try std.ArrayList(u8).initCapacity(alloc, indent);
         defer pre.deinit();
         pre.appendNTimesAssumeCapacity(' ', indent);
@@ -233,7 +232,7 @@ pub fn genAuth(values: json.ObjectMap, allocator: Allocator, writer: anytype, li
     , .{});
     for (scope_names.items) |name, i| {
         try std.fmt.format(writer,
-            \\            {s} => "{s}",
+            \\            .{s} => "{s}",
             \\
         , .{ name, list.items[i] });
     }
@@ -297,12 +296,12 @@ pub fn genRootResources(values: json.ObjectMap.Unmanaged.Entry, allocator: Alloc
     try std.fmt.format(writer,
         \\pub const Service = struct {{
         \\    client: *requestz.Client,
-        \\    base_path: []const u8 = base_path,
+        \\    base_url: []const u8 = base_url = "{s}",
         \\    user_agent: ?[]const u8 = null,
         \\
-        \\    {s} = struct {{
+        \\    {s}: struct {{
         \\
-    , .{val.key_ptr.*});
+    , .{ main.api_name ++ main.api_version, val.key_ptr.* });
     try genResources(val, allocator, writer, 4);
     try std.fmt.format(writer,
         \\    }},

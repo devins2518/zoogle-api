@@ -2,7 +2,6 @@
 
 const std = @import("std");
 const requestz = @import("requestz");
-const Scope = @import("zoogle-api").Scope;
 const StringHashMap = std.StringHashMap;
 
 const base_url = "https://sheets.googleapis.com/";
@@ -21,21 +20,21 @@ pub const Scope = enum {
 
     fn toStr(self: @This()) []const u8 {
         return switch (self) {
-            drive => "https://www.googleapis.com/auth/drive",
-            driveFile => "https://www.googleapis.com/auth/drive.file",
-            driveReadonly => "https://www.googleapis.com/auth/drive.readonly",
-            spreadsheets => "https://www.googleapis.com/auth/spreadsheets",
-            spreadsheetsReadonly => "https://www.googleapis.com/auth/spreadsheets.readonly",
+            .drive => "https://www.googleapis.com/auth/drive",
+            .driveFile => "https://www.googleapis.com/auth/drive.file",
+            .driveReadonly => "https://www.googleapis.com/auth/drive.readonly",
+            .spreadsheets => "https://www.googleapis.com/auth/spreadsheets",
+            .spreadsheetsReadonly => "https://www.googleapis.com/auth/spreadsheets.readonly",
         };
     }
 };
 
 pub const Service = struct {
     client: *requestz.Client,
-    base_path: []const u8 = base_path,
+    base_url: []const u8 = base_url = "zoogle-api-zig-client0.1.0",
     user_agent: ?[]const u8 = null,
 
-    spreadsheets = struct {
+    spreadsheets: struct {
         developerMetadata: struct {
             // Returns the developer metadata with the specified ID. The caller must specify the spreadsheet ID and the developer metadata's unique metadataId.
             fn get(

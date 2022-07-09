@@ -3,6 +3,9 @@ const json = std.json;
 const types = @import("types.zig");
 const Method = types.Method;
 
+pub const api_name = "zoogle-api-zig-client";
+pub const api_version = "0.1.0";
+
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer std.debug.assert(!gpa.deinit());
@@ -27,7 +30,6 @@ pub fn main() !void {
         \\
         \\const std = @import("std");
         \\const requestz = @import("requestz");
-        \\const Scope = @import("zoogle-api").Scope;
         \\const StringHashMap = std.StringHashMap;
         \\
         \\const base_url = "{s}";

@@ -1,13 +1,5 @@
 deps:
   requestz:
-    git:
-      url: "https://github.com/devins2518/requestz.git"
-      ref: b11115b788f40336edb3c1440620fae9c3b9d4a5
-      root: src/main.zig
-  oauth2:
-    git:
-      url: "https://github.com/nektro/zig-oauth2.git"
-      ref: 5278a31e9a4437cfad3fe451051eda736f47b584
-      root: src/lib.zig
+    local: ../../requestz
   zoogle-api:
     local: ..

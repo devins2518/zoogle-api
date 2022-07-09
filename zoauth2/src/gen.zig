@@ -2,7 +2,6 @@
 
 const std = @import("std");
 const requestz = @import("requestz");
-const Scope = @import("zoogle-api").Scope;
 const StringHashMap = std.StringHashMap;
 
 const base_url = "https://www.googleapis.com/";
@@ -17,22 +16,22 @@ pub const Scope = enum {
 
     fn toStr(self: @This()) []const u8 {
         return switch (self) {
-            userinfoEmail => "https://www.googleapis.com/auth/userinfo.email",
-            userinfoProfile => "https://www.googleapis.com/auth/userinfo.profile",
-            openid => "openid",
+            .userinfoEmail => "https://www.googleapis.com/auth/userinfo.email",
+            .userinfoProfile => "https://www.googleapis.com/auth/userinfo.profile",
+            .openid => "openid",
         };
     }
 };
 
 pub const Service = struct {
     client: *requestz.Client,
-    base_path: []const u8 = base_path,
+    base_url: []const u8 = base_url = "zoogle-api-zig-client0.1.0",
     user_agent: ?[]const u8 = null,
 
-    userinfo = struct {
+    userinfo: struct {
         v2: struct {
             me: struct {
-                //
+                // 
                 fn get(
                     self: *@This(),
                 ) UserinfoSchema {
@@ -40,7 +39,7 @@ pub const Service = struct {
                 }
             },
         },
-        //
+        // 
         fn get(
             self: *@This(),
         ) UserinfoSchema {
@@ -64,6 +63,7 @@ const TokeninfoSchema = struct {
     user_id: []const u8,
     // Boolean flag which is true if the email address is verified. Present only if the email scope is present in the request.
     verified_email: bool,
+
 };
 const UserinfoSchema = struct {
     // The user's email address.
@@ -88,4 +88,5 @@ const UserinfoSchema = struct {
     picture: []const u8,
     // Boolean flag which is true if the email address is verified. Always verified because we only return the user's primary email address.
     verified_email: bool = true,
+
 };
