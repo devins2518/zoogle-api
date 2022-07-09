@@ -25,6 +25,7 @@ pub const Scope = enum {
 };
 
 pub const Service = struct {
+    const Self = @This();
     client: *requestz.Client,
     base_url: []const u8 = base_url,
     root_url: []const u8 = root_url,
@@ -38,6 +39,7 @@ pub const Service = struct {
                     self: *@This(),
                 ) UserinfoSchema {
                     // TODO: body
+                    _ = self;
                 }
             },
         },
@@ -46,8 +48,23 @@ pub const Service = struct {
             self: *@This(),
         ) UserinfoSchema {
             // TODO: body
+            _ = self;
         }
     },
+
+    pub fn new(client: *requestz.Client) Self {
+        return Self{ .client = client };
+    }
+
+    pub fn baseUrl(self: Self, url: []const u8) void {
+        self.base_url = url;
+    }
+    pub fn rootUrl(self: Self, url: []const u8) void {
+        self.root_url = url;
+    }
+    pub fn userAgent(self: Self, agent: []const u8) void {
+        self.user_agent = agent;
+    }
 };
 
 const TokeninfoSchema = struct {

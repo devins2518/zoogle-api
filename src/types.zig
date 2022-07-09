@@ -21,15 +21,31 @@ pub const Method = struct {
             .pre = pre.items,
             .name = name,
         });
-        if (obj.get("parameter")) |param|
-            try Parameter.print(alloc, param.Object, writer, indent + 4);
+        var params = std.ArrayList(Parameter).init(alloc);
+        defer {
+            for (params.items) |i| alloc.free(i.ty);
+            params.deinit();
+        }
+        if (obj.get("parameter")) |param| {
+            var iter = param.Object.iterator();
+            while (iter.next()) |p| {
+                const pobj = p.value_ptr.Object;
+                const desc = if (pobj.get("description")) |d| d.String else "";
+                const ty = try tyStrFromJsonValue(&pobj, alloc);
+                // TODO format name in snake_case rather than camelCase
+                const param_name = p.key_ptr.*;
+                const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty };
+                try params.append(parameter);
+                try parameter.print(alloc, writer, indent + 4);
+            }
+        }
         if (obj.get("request")) |req| {
+            const desc = if (req.Object.get("description")) |d| d.String else "";
             const ty = try tyStrFromJsonValue(&req.Object, alloc);
-            defer alloc.free(ty);
-            try std.fmt.format(writer,
-                \\{[pre]s}    schema: {[ty]s},
-                \\
-            , .{ .pre = pre.items, .ty = ty });
+            const param_name = "schema";
+            const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty };
+            try params.append(parameter);
+            try parameter.print(alloc, writer, indent + 4);
         }
         const response = obj.get("response");
         const return_ty = if (response) |res|
@@ -40,11 +56,20 @@ pub const Method = struct {
 
         try std.fmt.format(writer,
             \\{[pre]s}) {[ret]s} {{
-            \\    
+            \\
         , .{ .pre = pre.items, .ret = return_ty });
 
         try std.fmt.format(writer,
-            \\{[pre]s}// TODO: body
+            \\{[pre]s}    // TODO: body
+            \\{[pre]s}    _ = self;
+            \\
+        , .{ .pre = pre.items });
+        for (params.items) |i|
+            try std.fmt.format(writer, "{[pre]s}    _ = {[name]s};\n", .{
+                .pre = pre.items,
+                .name = i.name,
+            });
+        try std.fmt.format(writer,
             \\{[pre]s}}}
             \\
         , .{ .pre = pre.items });
@@ -86,27 +111,25 @@ pub const HttpMethod = enum {
 };
 
 const Parameter = struct {
-    fn print(alloc: Allocator, params: json.ObjectMap, writer: anytype, indent: u32) !void {
-        var params_iter = params.iterator();
+    const Self = @This();
+    desc: ?[]const u8,
+    name: []const u8,
+    ty: []const u8,
+    fn print(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) !void {
         var pre = try std.ArrayList(u8).initCapacity(alloc, indent);
         defer pre.deinit();
         pre.appendNTimesAssumeCapacity(' ', indent);
-        while (params_iter.next()) |param| {
-            const obj = param.value_ptr.Object;
-            const ty = try tyStrFromJsonValue(&obj, alloc);
-            defer alloc.free(ty);
-            try std.fmt.format(writer,
-                \\{[pre]s}// {[desc]s}
-                \\{[pre]s}{[name]s}: {[ty]s},
-                \\
-            , .{
-                .pre = pre.items,
-                .desc = if (obj.get("description")) |d| d.String else "",
-                // TODO format name in snake_case rather than camelCase
-                .name = param.key_ptr.*,
-                .ty = ty,
-            });
-        }
+        try std.fmt.format(writer,
+            \\{[pre]s}// {[desc]s}
+            \\{[pre]s}{[name]s}: {[ty]s},
+            \\
+        , .{
+            .pre = pre.items,
+            .desc = self.desc,
+            // TODO format name in snake_case rather than camelCase
+            .name = self.name,
+            .ty = self.ty,
+        });
     }
 };
 
@@ -295,6 +318,7 @@ pub fn genRootResources(values: json.ObjectMap.Unmanaged.Entry, allocator: Alloc
     const val = iter.next().?;
     try std.fmt.format(writer,
         \\pub const Service = struct {{
+        \\    const Self = @This();
         \\    client: *requestz.Client,
         \\    base_url: []const u8 = base_url,
         \\    root_url: []const u8 = root_url,
@@ -306,6 +330,20 @@ pub fn genRootResources(values: json.ObjectMap.Unmanaged.Entry, allocator: Alloc
     try genResources(val, allocator, writer, 4);
     try std.fmt.format(writer,
         \\    }},
+        \\
+        \\    pub fn new(client: *requestz.Client) Self {{
+        \\        return Self{{ .client = client }};
+        \\    }}
+        \\
+        \\    pub fn baseUrl(self: Self, url: []const u8) void {{
+        \\        self.base_url = url;
+        \\    }}
+        \\    pub fn rootUrl(self: Self, url: []const u8) void {{
+        \\        self.root_url = url;
+        \\    }}
+        \\    pub fn userAgent(self: Self, agent: []const u8) void {{
+        \\        self.user_agent = agent;
+        \\    }}
         \\}};
         \\
         \\
