@@ -7,7 +7,7 @@ pub const api_name = "zoogle-api-zig-client";
 pub const api_version = "0.1.0";
 
 pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{ .stack_trace_frames = 10 }){};
+    var gpa = std.heap.GeneralPurposeAllocator(.{ .stack_trace_frames = 100 }){};
     // defer std.debug.assert(!gpa.deinit());
     var allocator = gpa.allocator();
 
