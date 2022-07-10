@@ -71,53 +71,80 @@ pub const Service = struct {
     base_url: []const u8 = base_url,
     root_url: []const u8 = root_url,
     user_agent: []const u8 = "zoogle-api-zig-client/0.1.0",
-    access_token: []const u8,
-    id_token: []const u8,
-    userinfo: struct {
-        v2: struct {
-            me: struct {
-                fn get(
+    access_token: ?[]const u8 = null,
+    id_token: ?[]const u8 = null,
+    pub const Userinfo = struct {
+        pub const V2 = struct {
+            pub const Me = struct {
+                pub fn get(
                     self: *@This(),
+                    service: *Service,
                 ) UserinfoSchema {
                     // TODO: body
                     _ = self;
+                    _ = service;
+                    @panic("TODO: get");
                 }
-            },
-        },
-        fn get(
+                pub fn init(
+                ) @This() {
+                    return @This(){
+                    };
+                }
+            };
+            pub fn init(
+            ) @This() {
+                return @This(){
+                };
+            }
+        };
+        pub fn get(
             self: *@This(),
+            service: *Service,
         ) UserinfoSchema {
             // TODO: body
             _ = self;
+            _ = service;
+            @panic("TODO: get");
         }
-    },
-    fn clientSet(self: *@This(), val: *requestz.Client) void {
+        pub fn init(
+        ) @This() {
+            return @This(){
+            };
+        }
+    };
+    pub fn clientSet(self: *@This(), val: *requestz.Client) void {
         self.client = val;
     }
-    fn base_urlSet(self: *@This(), val: []const u8) void {
+    pub fn base_urlSet(self: *@This(), val: []const u8) void {
         self.base_url = val;
     }
-    fn root_urlSet(self: *@This(), val: []const u8) void {
+    pub fn root_urlSet(self: *@This(), val: []const u8) void {
         self.root_url = val;
     }
-    fn user_agentSet(self: *@This(), val: []const u8) void {
+    pub fn user_agentSet(self: *@This(), val: []const u8) void {
         self.user_agent = val;
     }
-    fn access_tokenSet(self: *@This(), val: []const u8) void {
+    pub fn access_tokenSet(self: *@This(), val: ?[]const u8) void {
         self.access_token = val;
     }
-    fn id_tokenSet(self: *@This(), val: []const u8) void {
+    pub fn id_tokenSet(self: *@This(), val: ?[]const u8) void {
         self.id_token = val;
     }
-    fn tokeninfo(
+    pub fn tokeninfo(
         self: *@This(),
-        access_token: []const u8,
-        id_token: []const u8,
+        service: *Service,
     ) TokeninfoSchema {
         // TODO: body
         _ = self;
-        _ = access_token;
-        _ = id_token;
+        _ = service;
+        @panic("TODO: tokeninfo");
+    }
+    pub fn init(
+        client: *requestz.Client,
+    ) @This() {
+        return @This(){
+            .client = client,
+        };
     }
 };
 test "static analysis" {

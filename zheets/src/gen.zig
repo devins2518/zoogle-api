@@ -85,7 +85,7 @@ const AddDimensionGroupRequestSchema = struct {
 // The result of adding a group.
 const AddDimensionGroupResponseSchema = struct {
     // All groups of a dimension after adding a group to that dimension.
-    dimensionGroups: DimensionGroupSchema,
+    dimensionGroups: []const DimensionGroupSchema,
 
 };
 // Adds a filter view.
@@ -153,7 +153,7 @@ const AppendCellsRequestSchema = struct {
     // The fields of CellData that should be updated. At least one field must be specified. The root is the CellData; 'row.values.' should not be specified. A single `"*"` can be used as short-hand for listing every field.
     fields: []const u8,
     // The data to append.
-    rows: RowDataSchema,
+    rows: []const RowDataSchema,
     // The sheet ID to append the data to.
     sheetId: i32,
 
@@ -285,7 +285,7 @@ const BasicChartSeriesSchema = struct {
     // The data being visualized in this chart series.
     series: ChartDataSchema,
     // Style override settings for series data points.
-    styleOverrides: BasicSeriesDataPointStyleOverrideSchema,
+    styleOverrides: []const BasicSeriesDataPointStyleOverrideSchema,
     // The minor axis that will specify the range of values for this series. For example, if charting stocks over time, the "Volume" series may want to be pinned to the right with the prices pinned to the left, because the scale of trading volume is different than the scale of prices. It is an error to specify an axis that isn't a valid minor axis for the chart's type.
     targetAxis: []const u8,
     // The type of this series. Valid only if the chartType is COMBO. Different types will change the way the series is visualized. Only LINE, AREA, and COLUMN are supported.
@@ -295,13 +295,13 @@ const BasicChartSeriesSchema = struct {
 // The specification for a basic chart. See BasicChartType for the list of charts this supports.
 const BasicChartSpecSchema = struct {
     // The axis on the chart.
-    axis: BasicChartAxisSchema,
+    axis: []const BasicChartAxisSchema,
     // The type of the chart.
     chartType: []const u8,
     // The behavior of tooltips and data highlighting when hovering on data and chart area.
     compareMode: []const u8,
     // The domain of data this is charting. Only a single domain is supported.
-    domains: BasicChartDomainSchema,
+    domains: []const BasicChartDomainSchema,
     // The number of rows or columns in the data that are "headers". If not set, Google Sheets will guess how many rows are headers based on the data. (Note that BasicChartAxis.title may override the axis title inferred from the header values.)
     headerCount: i32,
     // If some values in a series are missing, gaps may appear in the chart (e.g, segments of lines in a line chart will be missing). To eliminate these gaps set this to true. Applies to Line, Area, and Combo charts.
@@ -311,7 +311,7 @@ const BasicChartSpecSchema = struct {
     // Gets whether all lines should be rendered smooth or straight by default. Applies to Line charts.
     lineSmoothing: bool,
     // The data this chart is visualizing.
-    series: BasicChartSeriesSchema,
+    series: []const BasicChartSeriesSchema,
     // The stacked type for charts that support vertical stacking. Applies to Area, Bar, Column, Combo, and Stepped Area charts.
     stackedType: []const u8,
     // True to make the chart 3D. Applies to Bar and Column charts.
@@ -325,11 +325,11 @@ const BasicFilterSchema = struct {
     // The criteria for showing/hiding values per column. The map's key is the column index, and the value is the criteria for that column. This field is deprecated in favor of filter_specs.
     criteria: StringHashMap(FilterCriteriaSchema),
     // The filter criteria per column. Both criteria and filter_specs are populated in responses. If both fields are specified in an update request, this field takes precedence.
-    filterSpecs: FilterSpecSchema,
+    filterSpecs: []const FilterSpecSchema,
     // The range the filter covers.
     range: GridRangeSchema,
     // The sort order per column. Later specifications are used when values are equal in the earlier specifications.
-    sortSpecs: SortSpecSchema,
+    sortSpecs: []const SortSpecSchema,
 
 };
 // Style override settings for a single series data point.
@@ -347,13 +347,13 @@ const BasicSeriesDataPointStyleOverrideSchema = struct {
 // The request for clearing more than one range selected by a DataFilter in a spreadsheet.
 const BatchClearValuesByDataFilterRequestSchema = struct {
     // The DataFilters used to determine which ranges to clear.
-    dataFilters: DataFilterSchema,
+    dataFilters: []const DataFilterSchema,
 
 };
 // The response when clearing a range of values selected with DataFilters in a spreadsheet.
 const BatchClearValuesByDataFilterResponseSchema = struct {
     // The ranges that were cleared, in [A1 notation](/sheets/api/guides/concepts#cell). If the requests are for an unbounded range or a ranger larger than the bounds of the sheet, this is the actual ranges that were cleared, bounded to the sheet's limits.
-    clearedRanges: []const u8,
+    clearedRanges: []const []const u8,
     // The spreadsheet the updates were applied to.
     spreadsheetId: []const u8,
 
@@ -361,13 +361,13 @@ const BatchClearValuesByDataFilterResponseSchema = struct {
 // The request for clearing more than one range of values in a spreadsheet.
 const BatchClearValuesRequestSchema = struct {
     // The ranges to clear, in [A1 notation or R1C1 notation](/sheets/api/guides/concepts#cell).
-    ranges: []const u8,
+    ranges: []const []const u8,
 
 };
 // The response when clearing a range of values in a spreadsheet.
 const BatchClearValuesResponseSchema = struct {
     // The ranges that were cleared, in A1 notation. If the requests are for an unbounded range or a ranger larger than the bounds of the sheet, this is the actual ranges that were cleared, bounded to the sheet's limits.
-    clearedRanges: []const u8,
+    clearedRanges: []const []const u8,
     // The spreadsheet the updates were applied to.
     spreadsheetId: []const u8,
 
@@ -375,7 +375,7 @@ const BatchClearValuesResponseSchema = struct {
 // The request for retrieving a range of values in a spreadsheet selected by a set of DataFilters.
 const BatchGetValuesByDataFilterRequestSchema = struct {
     // The data filters used to match the ranges of values to retrieve. Ranges that match any of the specified data filters are included in the response.
-    dataFilters: DataFilterSchema,
+    dataFilters: []const DataFilterSchema,
     // How dates, times, and durations should be represented in the output. This is ignored if value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
     dateTimeRenderOption: []const u8,
     // The major dimension that results should use. For example, if the spreadsheet data is: `A1=1,B1=2,A2=3,B2=4`, then a request that selects that range and sets `majorDimension=ROWS` returns `[[1,2],[3,4]]`, whereas a request that sets `majorDimension=COLUMNS` returns `[[1,3],[2,4]]`.
@@ -389,7 +389,7 @@ const BatchGetValuesByDataFilterResponseSchema = struct {
     // The ID of the spreadsheet the data was retrieved from.
     spreadsheetId: []const u8,
     // The requested values with the list of data filters that matched them.
-    valueRanges: MatchedValueRangeSchema,
+    valueRanges: []const MatchedValueRangeSchema,
 
 };
 // The response when retrieving more than one range of values in a spreadsheet.
@@ -397,7 +397,7 @@ const BatchGetValuesResponseSchema = struct {
     // The ID of the spreadsheet the data was retrieved from.
     spreadsheetId: []const u8,
     // The requested values. The order of the ValueRanges is the same as the order of the requested ranges.
-    valueRanges: ValueRangeSchema,
+    valueRanges: []const ValueRangeSchema,
 
 };
 // The request for updating any aspect of a spreadsheet.
@@ -405,17 +405,17 @@ const BatchUpdateSpreadsheetRequestSchema = struct {
     // Determines if the update response should include the spreadsheet resource.
     includeSpreadsheetInResponse: bool,
     // A list of updates to apply to the spreadsheet. Requests will be applied in the order they are specified. If any request is not valid, no requests will be applied.
-    requests: RequestSchema,
+    requests: []const RequestSchema,
     // True if grid data should be returned. Meaningful only if include_spreadsheet_in_response is 'true'. This parameter is ignored if a field mask was set in the request.
     responseIncludeGridData: bool,
     // Limits the ranges included in the response spreadsheet. Meaningful only if include_spreadsheet_in_response is 'true'.
-    responseRanges: []const u8,
+    responseRanges: []const []const u8,
 
 };
 // The reply for batch updating a spreadsheet.
 const BatchUpdateSpreadsheetResponseSchema = struct {
     // The reply of the updates. This maps 1:1 with the updates, although replies to some requests may be empty.
-    replies: ResponseSchema,
+    replies: []const ResponseSchema,
     // The spreadsheet the updates were applied to.
     spreadsheetId: []const u8,
     // The spreadsheet after updates were applied. This is only set if BatchUpdateSpreadsheetRequest.include_spreadsheet_in_response is `true`.
@@ -425,7 +425,7 @@ const BatchUpdateSpreadsheetResponseSchema = struct {
 // The request for updating more than one range of values in a spreadsheet.
 const BatchUpdateValuesByDataFilterRequestSchema = struct {
     // The new values to apply to the spreadsheet. If more than one range is matched by the specified DataFilter the specified values are applied to all of those ranges.
-    data: DataFilterValueRangeSchema,
+    data: []const DataFilterValueRangeSchema,
     // Determines if the update response should include the values of the cells that were updated. By default, responses do not include the updated values. The `updatedData` field within each of the BatchUpdateValuesResponse.responses contains the updated values. If the range to write was larger than the range actually written, the response includes all values in the requested range (excluding trailing empty rows and columns).
     includeValuesInResponse: bool,
     // Determines how dates, times, and durations in the response should be rendered. This is ignored if response_value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
@@ -439,7 +439,7 @@ const BatchUpdateValuesByDataFilterRequestSchema = struct {
 // The response when updating a range of values in a spreadsheet.
 const BatchUpdateValuesByDataFilterResponseSchema = struct {
     // The response for each range updated.
-    responses: UpdateValuesByDataFilterResponseSchema,
+    responses: []const UpdateValuesByDataFilterResponseSchema,
     // The spreadsheet the updates were applied to.
     spreadsheetId: []const u8,
     // The total number of cells updated.
@@ -455,7 +455,7 @@ const BatchUpdateValuesByDataFilterResponseSchema = struct {
 // The request for updating more than one range of values in a spreadsheet.
 const BatchUpdateValuesRequestSchema = struct {
     // The new values to apply to the spreadsheet.
-    data: ValueRangeSchema,
+    data: []const ValueRangeSchema,
     // Determines if the update response should include the values of the cells that were updated. By default, responses do not include the updated values. The `updatedData` field within each of the BatchUpdateValuesResponse.responses contains the updated values. If the range to write was larger than the range actually written, the response includes all values in the requested range (excluding trailing empty rows and columns).
     includeValuesInResponse: bool,
     // Determines how dates, times, and durations in the response should be rendered. This is ignored if response_value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
@@ -469,7 +469,7 @@ const BatchUpdateValuesRequestSchema = struct {
 // The response when updating a range of values in a spreadsheet.
 const BatchUpdateValuesResponseSchema = struct {
     // One UpdateValuesResponse per requested range, in the same order as the requests appeared.
-    responses: UpdateValuesResponseSchema,
+    responses: []const UpdateValuesResponseSchema,
     // The spreadsheet the updates were applied to.
     spreadsheetId: []const u8,
     // The total number of cells updated.
@@ -513,7 +513,7 @@ const BooleanConditionSchema = struct {
     // The type of condition.
     type: []const u8,
     // The values of the condition. The number of supported values depends on the condition type. Some support zero values, others one or two values, and ConditionType.ONE_OF_LIST supports an arbitrary number of values.
-    values: ConditionValueSchema,
+    values: []const ConditionValueSchema,
 
 };
 // A rule that may or may not match, depending on the condition.
@@ -579,7 +579,7 @@ const BubbleChartSpecSchema = struct {
 // A candlestick chart.
 const CandlestickChartSpecSchema = struct {
     // The Candlestick chart data. Only one CandlestickData is supported.
-    data: CandlestickDataSchema,
+    data: []const CandlestickDataSchema,
     // The domain data (horizontal axis) for the candlestick chart. String data will be treated as discrete labels, other data will be treated as continuous values.
     domain: CandlestickDomainSchema,
 
@@ -631,7 +631,7 @@ const CellDataSchema = struct {
     // A pivot table anchored at this cell. The size of pivot table itself is computed dynamically based on its data, grouping, filters, values, etc. Only the top-left cell of the pivot table contains the pivot table definition. The other cells will contain the calculated values of the results of the pivot in their effective_value fields.
     pivotTable: PivotTableSchema,
     // Runs of rich text applied to subsections of the cell. Runs are only valid on user entered strings, not formulas, bools, or numbers. Properties of a run start at a specific index in the text and continue until the next run. Runs will inherit the properties of the cell unless explicitly changed. When writing, the new runs will overwrite any prior runs. When writing a new user_entered_value, previous runs are erased.
-    textFormatRuns: TextFormatRunSchema,
+    textFormatRuns: []const TextFormatRunSchema,
     // The format the user entered for the cell. When writing, the new format will be merged with the existing format.
     userEnteredFormat: CellFormatSchema,
     // The value the user entered in the cell. e.g, `1234`, `'Hello'`, or `=NOW()` Note: Dates, Times and DateTimes are represented as doubles in serial number format.
@@ -723,7 +723,7 @@ const ChartHistogramRuleSchema = struct {
 // Source ranges for a chart.
 const ChartSourceRangeSchema = struct {
     // The ranges of data for a series or domain. Exactly one dimension must have a length of 1, and all sources in the list must have the same dimension with length 1. The domain (if it exists) & all series must have the same number of source ranges. If using more than one source range, then the source range at a given offset must be in order and contiguous across the domain and series. For example, these are valid configurations: domain sources: A1:A5 series1 sources: B1:B5 series2 sources: D6:D10 domain sources: A1:A5, C10:C12 series1 sources: B1:B5, D10:D12 series2 sources: C1:C5, E10:E12
-    sources: GridRangeSchema,
+    sources: []const GridRangeSchema,
 
 };
 // The specifications of a chart.
@@ -743,7 +743,7 @@ const ChartSpecSchema = struct {
     // If present, the field contains data source chart specific properties.
     dataSourceChartProperties: DataSourceChartPropertiesSchema,
     // The filters applied to the source data of the chart. Only supported for data source charts.
-    filterSpecs: FilterSpecSchema,
+    filterSpecs: []const FilterSpecSchema,
     // The name of the font to use by default for all chart text (e.g. title, axis labels, legend). If a font is specified for a specific part of the chart it will override this font name.
     fontName: []const u8,
     // Determines how the charts will use hidden rows or columns.
@@ -759,7 +759,7 @@ const ChartSpecSchema = struct {
     // A scorecard chart specification.
     scorecardChart: ScorecardChartSpecSchema,
     // The order to sort the chart data by. Only a single sort spec is supported. Only supported for data source charts.
-    sortSpecs: SortSpecSchema,
+    sortSpecs: []const SortSpecSchema,
     // The subtitle of the chart.
     subtitle: []const u8,
     // The subtitle text format. Strikethrough, underline, and link are not supported.
@@ -831,7 +831,7 @@ const ConditionalFormatRuleSchema = struct {
     // The formatting will vary based on the gradients in the rule.
     gradientRule: GradientRuleSchema,
     // The ranges that are formatted if the condition is true. All the ranges must be on the same grid.
-    ranges: GridRangeSchema,
+    ranges: []const GridRangeSchema,
 
 };
 // Copies data from the source to the destination.
@@ -903,7 +903,7 @@ const DataFilterValueRangeSchema = struct {
     // The major dimension of the values.
     majorDimension: []const u8,
     // The data to be written. If the provided values exceed any of the ranges matched by the data filter then the request fails. If the provided values are less than the matched ranges only the specified values are written, existing values in the matched ranges remain unaffected.
-    values: *anyopaque,
+    values: []const []const []const u8,
 
 };
 // Settings for one set of data labels. Data labels are annotations that appear next to a set of data, such as the points on a line chart, and provide additional information about what the data represents, such as a text representation of the value behind that point on the graph.
@@ -921,7 +921,7 @@ const DataLabelSchema = struct {
 // Information about an external data source in the spreadsheet.
 const DataSourceSchema = struct {
     // All calculated columns in the data source.
-    calculatedColumns: DataSourceColumnSchema,
+    calculatedColumns: []const DataSourceColumnSchema,
     // The spreadsheet-scoped unique ID that identifies the data source. Example: 1080547365.
     dataSourceId: []const u8,
     // The ID of the Sheet connected with the data source. The field cannot be changed once set. When creating a data source, an associated DATA_SOURCE sheet is also created, if the field is not specified, the ID of the created sheet will be randomly generated.
@@ -977,7 +977,7 @@ const DataSourceObjectReferenceSchema = struct {
 // A list of references to data source objects.
 const DataSourceObjectReferencesSchema = struct {
     // The references.
-    references: DataSourceObjectReferenceSchema,
+    references: []const DataSourceObjectReferenceSchema,
 
 };
 // A parameter in a data source's query. The parameter allows the user to pass in values from the spreadsheet into a query.
@@ -999,7 +999,7 @@ const DataSourceRefreshDailyScheduleSchema = struct {
 // A monthly schedule for data to refresh on specific days in the month in a given time interval.
 const DataSourceRefreshMonthlyScheduleSchema = struct {
     // Days of the month to refresh. Only 1-28 are supported, mapping to the 1st to the 28th day. At lesat one day must be specified.
-    daysOfMonth: i32,
+    daysOfMonth: []const i32,
     // The start time of a time interval in which a data source refresh is scheduled. Only `hours` part is used. The time interval size defaults to that in the Sheets editor.
     startTime: TimeOfDaySchema,
 
@@ -1023,7 +1023,7 @@ const DataSourceRefreshScheduleSchema = struct {
 // A weekly schedule for data to refresh on specific days in a given time interval.
 const DataSourceRefreshWeeklyScheduleSchema = struct {
     // Days of the week to refresh. At least one day must be specified.
-    daysOfWeek: []const u8,
+    daysOfWeek: []const []const u8,
     // The start time of a time interval in which a data source refresh is scheduled. Only `hours` part is used. The time interval size defaults to that in the Sheets editor.
     startTime: TimeOfDaySchema,
 
@@ -1031,7 +1031,7 @@ const DataSourceRefreshWeeklyScheduleSchema = struct {
 // A range along a single dimension on a DATA_SOURCE sheet.
 const DataSourceSheetDimensionRangeSchema = struct {
     // The columns on the data source sheet.
-    columnReferences: DataSourceColumnReferenceSchema,
+    columnReferences: []const DataSourceColumnReferenceSchema,
     // The ID of the data source sheet the range is on.
     sheetId: i32,
 
@@ -1039,7 +1039,7 @@ const DataSourceSheetDimensionRangeSchema = struct {
 // Additional properties of a DATA_SOURCE sheet.
 const DataSourceSheetPropertiesSchema = struct {
     // The columns displayed on the sheet, corresponding to the values in RowData.
-    columns: DataSourceColumnSchema,
+    columns: []const DataSourceColumnSchema,
     // The data execution status.
     dataExecutionStatus: DataExecutionStatusSchema,
     // ID of the DataSource the sheet is connected to.
@@ -1051,7 +1051,7 @@ const DataSourceSpecSchema = struct {
     // A BigQueryDataSourceSpec.
     bigQuery: BigQueryDataSourceSpecSchema,
     // The parameters of the data source, used when querying the data source.
-    parameters: DataSourceParameterSchema,
+    parameters: []const DataSourceParameterSchema,
 
 };
 // A data source table, which allows the user to import a static table of data from the DataSource into Sheets. This is also known as "Extract" in the Sheets editor.
@@ -1059,17 +1059,17 @@ const DataSourceTableSchema = struct {
     // The type to select columns for the data source table. Defaults to SELECTED.
     columnSelectionType: []const u8,
     // Columns selected for the data source table. The column_selection_type must be SELECTED.
-    columns: DataSourceColumnReferenceSchema,
+    columns: []const DataSourceColumnReferenceSchema,
     // Output only. The data execution status.
     dataExecutionStatus: DataExecutionStatusSchema,
     // The ID of the data source the data source table is associated with.
     dataSourceId: []const u8,
     // Filter specifications in the data source table.
-    filterSpecs: FilterSpecSchema,
+    filterSpecs: []const FilterSpecSchema,
     // The limit of rows to return. If not set, a default limit is applied. Please refer to the Sheets editor for the default and max limit.
     rowLimit: i32,
     // Sort specifications in the data source table. The result of the data source table is sorted based on the sort specifications in order.
-    sortSpecs: SortSpecSchema,
+    sortSpecs: []const SortSpecSchema,
 
 };
 // A data validation rule.
@@ -1125,7 +1125,7 @@ const DeleteDeveloperMetadataRequestSchema = struct {
 // The response from deleting developer metadata.
 const DeleteDeveloperMetadataResponseSchema = struct {
     // The metadata that was deleted.
-    deletedDeveloperMetadata: DeveloperMetadataSchema,
+    deletedDeveloperMetadata: []const DeveloperMetadataSchema,
 
 };
 // Deletes a group over the specified range by decrementing the depth of the dimensions in the range. For example, assume the sheet has a depth-1 group over B:E and a depth-2 group over C:D. Deleting a group over D:E leaves the sheet with a depth-1 group over B:D and a depth-2 group over C:C.
@@ -1137,7 +1137,7 @@ const DeleteDimensionGroupRequestSchema = struct {
 // The result of deleting a group.
 const DeleteDimensionGroupResponseSchema = struct {
     // All groups of a dimension after deleting a group from that dimension.
-    dimensionGroups: DimensionGroupSchema,
+    dimensionGroups: []const DimensionGroupSchema,
 
 };
 // Deletes the dimensions from the sheet.
@@ -1149,7 +1149,7 @@ const DeleteDimensionRequestSchema = struct {
 // Removes rows within this range that contain values in the specified columns that are duplicates of values in any previous row. Rows with identical values but different letter cases, formatting, or formulas are considered to be duplicates. This request also removes duplicate rows hidden from view (for example, due to a filter). When removing duplicates, the first instance of each duplicate row scanning from the top downwards is kept in the resulting range. Content outside of the specified range isn't removed, and rows considered duplicates do not have to be adjacent to each other in the range.
 const DeleteDuplicatesRequestSchema = struct {
     // The columns in the range to analyze for duplicate values. If no columns are selected then all columns are analyzed for duplicates.
-    comparisonColumns: DimensionRangeSchema,
+    comparisonColumns: []const DimensionRangeSchema,
     // The range to remove duplicates rows from.
     range: GridRangeSchema,
 
@@ -1257,7 +1257,7 @@ const DimensionPropertiesSchema = struct {
     // Output only. If set, this is a column in a data source sheet.
     dataSourceColumnReference: DataSourceColumnReferenceSchema,
     // The developer metadata associated with a single row or column.
-    developerMetadata: DeveloperMetadataSchema,
+    developerMetadata: []const DeveloperMetadataSchema,
     // True if this dimension is being filtered. This field is read-only.
     hiddenByFilter: bool,
     // True if this dimension is explicitly hidden.
@@ -1313,9 +1313,9 @@ const EditorsSchema = struct {
     // True if anyone in the document's domain has edit access to the protected range. Domain protection is only supported on documents within a domain.
     domainUsersCanEdit: bool,
     // The email addresses of groups with edit access to the protected range.
-    groups: []const u8,
+    groups: []const []const u8,
     // The email addresses of users with edit access to the protected range.
-    users: []const u8,
+    users: []const []const u8,
 
 };
 // A chart embedded in a sheet.
@@ -1375,7 +1375,7 @@ const FilterCriteriaSchema = struct {
     // A condition that must be true for values to be shown. (This does not override hidden_values -- if a value is listed there, it will still be hidden.)
     condition: BooleanConditionSchema,
     // Values that should be hidden.
-    hiddenValues: []const u8,
+    hiddenValues: []const []const u8,
     // The background fill color to filter by; only cells with this fill color are shown. Mutually exclusive with visible_foreground_color. Deprecated: Use visible_background_color_style.
     visibleBackgroundColor: ColorSchema,
     // The background fill color to filter by; only cells with this fill color are shown. This field is mutually exclusive with visible_foreground_color, and must be set to an RGB-type color. If visible_background_color is also set, this field takes precedence.
@@ -1401,7 +1401,7 @@ const FilterViewSchema = struct {
     // The criteria for showing/hiding values per column. The map's key is the column index, and the value is the criteria for that column. This field is deprecated in favor of filter_specs.
     criteria: StringHashMap(FilterCriteriaSchema),
     // The filter criteria for showing/hiding values per column. Both criteria and filter_specs are populated in responses. If both fields are specified in an update request, this field takes precedence.
-    filterSpecs: FilterSpecSchema,
+    filterSpecs: []const FilterSpecSchema,
     // The ID of the filter view.
     filterViewId: i32,
     // The named range this filter view is backed by, if any. When writing, only one of range or named_range_id may be set.
@@ -1409,7 +1409,7 @@ const FilterViewSchema = struct {
     // The range this filter view covers. When writing, only one of range or named_range_id may be set.
     range: GridRangeSchema,
     // The sort order per column. Later specifications are used when values are equal in the earlier specifications.
-    sortSpecs: SortSpecSchema,
+    sortSpecs: []const SortSpecSchema,
     // The name of the filter view.
     title: []const u8,
 
@@ -1453,7 +1453,7 @@ const FindReplaceResponseSchema = struct {
 // The request for retrieving a Spreadsheet.
 const GetSpreadsheetByDataFilterRequestSchema = struct {
     // The DataFilters used to select which ranges to retrieve from the spreadsheet.
-    dataFilters: DataFilterSchema,
+    dataFilters: []const DataFilterSchema,
     // True if grid data should be returned. This parameter is ignored if a field mask was set in the request.
     includeGridData: bool,
 
@@ -1481,11 +1481,11 @@ const GridCoordinateSchema = struct {
 // Data in the grid, as well as metadata about the dimensions.
 const GridDataSchema = struct {
     // Metadata about the requested columns in the grid, starting with the column in start_column.
-    columnMetadata: DimensionPropertiesSchema,
+    columnMetadata: []const DimensionPropertiesSchema,
     // The data in the grid, one entry per row, starting with the row in startRow. The values in RowData will correspond to columns starting at start_column.
-    rowData: RowDataSchema,
+    rowData: []const RowDataSchema,
     // Metadata about the requested rows in the grid, starting with the row in start_row.
-    rowMetadata: DimensionPropertiesSchema,
+    rowMetadata: []const DimensionPropertiesSchema,
     // The first column this GridData refers to, zero-based.
     startColumn: i32,
     // The first row this GridData refers to, zero-based.
@@ -1533,7 +1533,7 @@ const HistogramChartSpecSchema = struct {
     // The outlier percentile is used to ensure that outliers do not adversely affect the calculation of bucket sizes. For example, setting an outlier percentile of 0.05 indicates that the top and bottom 5% of values when calculating buckets. The values are still included in the chart, they will be added to the first or last buckets instead of their own buckets. Must be between 0.0 and 0.5.
     outlierPercentile: f64,
     // The series for a histogram may be either a single series of values to be bucketed or multiple series, each of the same length, containing the name of the series followed by the values to be bucketed for that series.
-    series: HistogramSeriesSchema,
+    series: []const HistogramSeriesSchema,
     // Whether horizontal divider lines should be displayed between items in each column.
     showItemDividers: bool,
 
@@ -1627,7 +1627,7 @@ const LinkSchema = struct {
 // Allows you to manually organize the values in a source data column into buckets with names of your choosing. For example, a pivot table that aggregates population by state: +-------+-------------------+ | State | SUM of Population | +-------+-------------------+ | AK | 0.7 | | AL | 4.8 | | AR | 2.9 | ... +-------+-------------------+ could be turned into a pivot table that aggregates population by time zone by providing a list of groups (for example, groupName = 'Central', items = ['AL', 'AR', 'IA', ...]) to a manual group rule. Note that a similar effect could be achieved by adding a time zone column to the source data and adjusting the pivot table. +-----------+-------------------+ | Time Zone | SUM of Population | +-----------+-------------------+ | Central | 106.3 | | Eastern | 151.9 | | Mountain | 17.4 | ... +-----------+-------------------+
 const ManualRuleSchema = struct {
     // The list of group names and the corresponding items from the source data that map to each group name.
-    groups: ManualRuleGroupSchema,
+    groups: []const ManualRuleGroupSchema,
 
 };
 // A group name and a list of items from the source data that should be placed in the group with this name.
@@ -1635,13 +1635,13 @@ const ManualRuleGroupSchema = struct {
     // The group name, which must be a string. Each group in a given ManualRule must have a unique group name.
     groupName: ExtendedValueSchema,
     // The items in the source data that should be placed into this group. Each item may be a string, number, or boolean. Items may appear in at most one group within a given ManualRule. Items that do not appear in any group will appear on their own.
-    items: ExtendedValueSchema,
+    items: []const ExtendedValueSchema,
 
 };
 // A developer metadata entry and the data filters specified in the original request that matched it.
 const MatchedDeveloperMetadataSchema = struct {
     // All filters matching the returned developer metadata.
-    dataFilters: DataFilterSchema,
+    dataFilters: []const DataFilterSchema,
     // The developer metadata matching the specified filters.
     developerMetadata: DeveloperMetadataSchema,
 
@@ -1649,7 +1649,7 @@ const MatchedDeveloperMetadataSchema = struct {
 // A value range that was matched by one or more data filers.
 const MatchedValueRangeSchema = struct {
     // The DataFilters from the request that matched the range of values.
-    dataFilters: DataFilterSchema,
+    dataFilters: []const DataFilterSchema,
     // The values matched by the DataFilter.
     valueRange: ValueRangeSchema,
 
@@ -1769,7 +1769,7 @@ const PivotFilterCriteriaSchema = struct {
     // Whether values are visible by default. If true, the visible_values are ignored, all values that meet condition (if specified) are shown. If false, values that are both in visible_values and meet condition are shown.
     visibleByDefault: bool,
     // Values that should be included. Values not listed here are excluded.
-    visibleValues: []const u8,
+    visibleValues: []const []const u8,
 
 };
 // The pivot table filter criteria associated with a specific source column offset.
@@ -1803,7 +1803,7 @@ const PivotGroupSchema = struct {
     // The bucket of the opposite pivot group to sort by. If not specified, sorting is alphabetical by this group's values.
     valueBucket: PivotGroupSortValueBucketSchema,
     // Metadata about values in the grouping.
-    valueMetadata: PivotGroupValueMetadataSchema,
+    valueMetadata: []const PivotGroupValueMetadataSchema,
 
 };
 // The count limit on rows or columns in the pivot group.
@@ -1827,7 +1827,7 @@ const PivotGroupRuleSchema = struct {
 // Information about which values in a pivot group should be used for sorting.
 const PivotGroupSortValueBucketSchema = struct {
     // Determines the bucket from which values are chosen to sort. For example, in a pivot table with one row group & two column groups, the row group can list up to two values. The first value corresponds to a value within the first column group, and the second value corresponds to a value in the second column group. If no values are listed, this would indicate that the row should be sorted according to the "Grand Total" over the column groups. If a single value is listed, this would correspond to using the "Total" of that bucket.
-    buckets: ExtendedValueSchema,
+    buckets: []const ExtendedValueSchema,
     // The offset in the PivotTable.values list which the values in this grouping should be sorted by.
     valuesIndex: i32,
 
@@ -1843,7 +1843,7 @@ const PivotGroupValueMetadataSchema = struct {
 // A pivot table.
 const PivotTableSchema = struct {
     // Each column grouping in the pivot table.
-    columns: PivotGroupSchema,
+    columns: []const PivotGroupSchema,
     // An optional mapping of filters per source column offset. The filters are applied before aggregating data into the pivot table. The map's key is the column offset of the source range that you want to filter, and the value is the criteria for that column. For example, if the source was `C10:E15`, a key of `0` will have the filter for column `C`, whereas the key `1` is for column `D`. This field is deprecated in favor of filter_specs.
     criteria: StringHashMap(PivotFilterCriteriaSchema),
     // Output only. The data execution status for data source pivot tables.
@@ -1851,15 +1851,15 @@ const PivotTableSchema = struct {
     // The ID of the data source the pivot table is reading data from.
     dataSourceId: []const u8,
     // The filters applied to the source columns before aggregating data for the pivot table. Both criteria and filter_specs are populated in responses. If both fields are specified in an update request, this field takes precedence.
-    filterSpecs: PivotFilterSpecSchema,
+    filterSpecs: []const PivotFilterSpecSchema,
     // Each row grouping in the pivot table.
-    rows: PivotGroupSchema,
+    rows: []const PivotGroupSchema,
     // The range the pivot table is reading data from.
     source: GridRangeSchema,
     // Whether values should be listed horizontally (as columns) or vertically (as rows).
     valueLayout: []const u8,
     // A list of values to include in the pivot table.
-    values: PivotValueSchema,
+    values: []const PivotValueSchema,
 
 };
 // The definition of how a value in a pivot table should be calculated.
@@ -1901,7 +1901,7 @@ const ProtectedRangeSchema = struct {
     // True if the user who requested this protected range can edit the protected area. This field is read-only.
     requestingUserCanEdit: bool,
     // The list of unprotected ranges within a protected sheet. Unprotected ranges are only supported on protected sheets.
-    unprotectedRanges: GridRangeSchema,
+    unprotectedRanges: []const GridRangeSchema,
     // True if this protected range will show a warning when editing. Warning-based protection means that every user can edit data in the protected range, except editing will prompt a warning asking the user to confirm the edit. When writing: if this field is true, then editors is ignored. Additionally, if this field is changed from true to false and the `editors` field is not set (nor included in the field mask), then the editors will be set to all the editors in the document.
     warningOnly: bool,
 
@@ -1935,7 +1935,7 @@ const RefreshDataSourceRequestSchema = struct {
 // The response from refreshing one or multiple data source objects.
 const RefreshDataSourceResponseSchema = struct {
     // All the refresh status for the data source object references specified in the request. If is_all is specified, the field contains only those in failure status.
-    statuses: RefreshDataSourceObjectExecutionStatusSchema,
+    statuses: []const RefreshDataSourceObjectExecutionStatusSchema,
 
 };
 // Updates all cells in the range to the values in the given Cell object. Only the fields listed in the fields field are updated; others are unchanged. If writing a cell with a formula, the formula's ranges will automatically increment for each field in the range. For example, if writing a cell with formula `=A1` into range B2:C4, B2 would be `=A1`, B3 would be `=A2`, B4 would be `=A3`, C2 would be `=B1`, C3 would be `=B2`, C4 would be `=B3`. To keep the formula's ranges static, use the `$` indicator. For example, use the formula `=$A$1` to prevent both the row and the column from incrementing.
@@ -2135,7 +2135,7 @@ const ResponseSchema = struct {
 // Data about each cell in a row.
 const RowDataSchema = struct {
     // The values in the row, one per column.
-    values: CellDataSchema,
+    values: []const CellDataSchema,
 
 };
 // A scorecard chart. Scorecard charts are used to highlight key performance indicators, known as KPIs, on the spreadsheet. A scorecard chart can represent things like total sales, average cost, or a top selling item. You can specify a single data value, or aggregate over a range of data. Percentage or absolute difference from a baseline value can be highlighted, like changes over time.
@@ -2161,13 +2161,13 @@ const ScorecardChartSpecSchema = struct {
 // A request to retrieve all developer metadata matching the set of specified criteria.
 const SearchDeveloperMetadataRequestSchema = struct {
     // The data filters describing the criteria used to determine which DeveloperMetadata entries to return. DeveloperMetadata matching any of the specified filters are included in the response.
-    dataFilters: DataFilterSchema,
+    dataFilters: []const DataFilterSchema,
 
 };
 // A reply to a developer metadata search request.
 const SearchDeveloperMetadataResponseSchema = struct {
     // The metadata matching the criteria of the search request.
-    matchedDeveloperMetadata: MatchedDeveloperMetadataSchema,
+    matchedDeveloperMetadata: []const MatchedDeveloperMetadataSchema,
 
 };
 // Sets the basic filter associated with a sheet.
@@ -2187,31 +2187,31 @@ const SetDataValidationRequestSchema = struct {
 // A sheet in a spreadsheet.
 const SheetSchema = struct {
     // The banded (alternating colors) ranges on this sheet.
-    bandedRanges: BandedRangeSchema,
+    bandedRanges: []const BandedRangeSchema,
     // The filter on this sheet, if any.
     basicFilter: BasicFilterSchema,
     // The specifications of every chart on this sheet.
-    charts: EmbeddedChartSchema,
+    charts: []const EmbeddedChartSchema,
     // All column groups on this sheet, ordered by increasing range start index, then by group depth.
-    columnGroups: DimensionGroupSchema,
+    columnGroups: []const DimensionGroupSchema,
     // The conditional format rules in this sheet.
-    conditionalFormats: ConditionalFormatRuleSchema,
+    conditionalFormats: []const ConditionalFormatRuleSchema,
     // Data in the grid, if this is a grid sheet. The number of GridData objects returned is dependent on the number of ranges requested on this sheet. For example, if this is representing `Sheet1`, and the spreadsheet was requested with ranges `Sheet1!A1:C10` and `Sheet1!D15:E20`, then the first GridData will have a startRow/startColumn of `0`, while the second one will have `startRow 14` (zero-based row 15), and `startColumn 3` (zero-based column D). For a DATA_SOURCE sheet, you can not request a specific range, the GridData contains all the values.
-    data: GridDataSchema,
+    data: []const GridDataSchema,
     // The developer metadata associated with a sheet.
-    developerMetadata: DeveloperMetadataSchema,
+    developerMetadata: []const DeveloperMetadataSchema,
     // The filter views in this sheet.
-    filterViews: FilterViewSchema,
+    filterViews: []const FilterViewSchema,
     // The ranges that are merged together.
-    merges: GridRangeSchema,
+    merges: []const GridRangeSchema,
     // The properties of the sheet.
     properties: SheetPropertiesSchema,
     // The protected ranges in this sheet.
-    protectedRanges: ProtectedRangeSchema,
+    protectedRanges: []const ProtectedRangeSchema,
     // All row groups on this sheet, ordered by increasing range start index, then by group depth.
-    rowGroups: DimensionGroupSchema,
+    rowGroups: []const DimensionGroupSchema,
     // The slicers on this sheet.
-    slicers: SlicerSchema,
+    slicers: []const SlicerSchema,
 
 };
 // Properties of a sheet.
@@ -2275,7 +2275,7 @@ const SortRangeRequestSchema = struct {
     // The range to sort.
     range: GridRangeSchema,
     // The sort order per column. Later specifications are used when values are equal in the earlier specifications.
-    sortSpecs: SortSpecSchema,
+    sortSpecs: []const SortSpecSchema,
 
 };
 // A sort order associated with a specific column or row.
@@ -2309,17 +2309,17 @@ const SourceAndDestinationSchema = struct {
 // Resource that represents a spreadsheet.
 const SpreadsheetSchema = struct {
     // Output only. A list of data source refresh schedules.
-    dataSourceSchedules: DataSourceRefreshScheduleSchema,
+    dataSourceSchedules: []const DataSourceRefreshScheduleSchema,
     // A list of external data sources connected with the spreadsheet.
-    dataSources: DataSourceSchema,
+    dataSources: []const DataSourceSchema,
     // The developer metadata associated with a spreadsheet.
-    developerMetadata: DeveloperMetadataSchema,
+    developerMetadata: []const DeveloperMetadataSchema,
     // The named ranges defined in a spreadsheet.
-    namedRanges: NamedRangeSchema,
+    namedRanges: []const NamedRangeSchema,
     // Overall properties of a spreadsheet.
     properties: SpreadsheetPropertiesSchema,
     // The sheets that are part of a spreadsheet.
-    sheets: SheetSchema,
+    sheets: []const SheetSchema,
     // The ID of the spreadsheet. This field is read-only.
     spreadsheetId: []const u8,
     // The url of the spreadsheet. This field is read-only.
@@ -2349,7 +2349,7 @@ const SpreadsheetThemeSchema = struct {
     // Name of the primary font family.
     primaryFontFamily: []const u8,
     // The spreadsheet theme color pairs. To update you must provide all theme color pairs.
-    themeColors: ThemeColorPairSchema,
+    themeColors: []const ThemeColorPairSchema,
 
 };
 // The format of a run of text in a cell. Absent values indicate that the field isn't specified.
@@ -2527,7 +2527,7 @@ const UpdateCellsRequestSchema = struct {
     // The range to write data to. If the data in rows does not cover the entire requested range, the fields matching those set in fields will be cleared.
     range: GridRangeSchema,
     // The data to write.
-    rows: RowDataSchema,
+    rows: []const RowDataSchema,
     // The coordinate to start writing data at. Any number of rows and columns (including a different number of columns per row) may be written.
     start: GridCoordinateSchema,
 
@@ -2583,7 +2583,7 @@ const UpdateDataSourceResponseSchema = struct {
 // A request to update properties of developer metadata. Updates the properties of the developer metadata selected by the filters to the values provided in the DeveloperMetadata resource. Callers must specify the properties they wish to update in the fields parameter, as well as specify at least one DataFilter matching the metadata they wish to update.
 const UpdateDeveloperMetadataRequestSchema = struct {
     // The filters matching the developer metadata entries to update.
-    dataFilters: DataFilterSchema,
+    dataFilters: []const DataFilterSchema,
     // The value that all metadata matched by the data filters will be updated to.
     developerMetadata: DeveloperMetadataSchema,
     // The fields that should be updated. At least one field must be specified. The root `developerMetadata` is implied and should not be specified. A single `"*"` can be used as short-hand for listing every field.
@@ -2593,7 +2593,7 @@ const UpdateDeveloperMetadataRequestSchema = struct {
 // The response from updating developer metadata.
 const UpdateDeveloperMetadataResponseSchema = struct {
     // The updated developer metadata.
-    developerMetadata: DeveloperMetadataSchema,
+    developerMetadata: []const DeveloperMetadataSchema,
 
 };
 // Updates the state of the specified group.
@@ -2731,7 +2731,7 @@ const ValueRangeSchema = struct {
     // The range the values cover, in [A1 notation](/sheets/api/guides/concepts#cell). For output, this range indicates the entire requested range, even though the values will exclude trailing rows and columns. When appending values, this field represents the range to search for a table, after which values will be appended.
     range: []const u8,
     // The data that was read or to be written. This is an array of arrays, the outer array representing all the data and each inner array representing a major dimension. Each item in the inner array corresponds with one cell. For output, empty trailing rows and columns will not be included. For input, supported value types are: bool, string, and double. Null values will be skipped. To set a cell to an empty value, set the string value to an empty string.
-    values: *anyopaque,
+    values: []const []const []const u8,
 
 };
 // Styles for a waterfall chart column.
@@ -2765,7 +2765,7 @@ const WaterfallChartDomainSchema = struct {
 // A single series of data for a waterfall chart.
 const WaterfallChartSeriesSchema = struct {
     // Custom subtotal columns appearing in this series. The order in which subtotals are defined is not significant. Only one subtotal may be defined for each data point.
-    customSubtotals: WaterfallChartCustomSubtotalSchema,
+    customSubtotals: []const WaterfallChartCustomSubtotalSchema,
     // The data being visualized in this series.
     data: ChartDataSchema,
     // Information about the data labels for this series.
@@ -2791,7 +2791,7 @@ const WaterfallChartSpecSchema = struct {
     // True to hide connector lines between columns.
     hideConnectorLines: bool,
     // The data this waterfall chart is visualizing.
-    series: WaterfallChartSeriesSchema,
+    series: []const WaterfallChartSeriesSchema,
     // The stacked type.
     stackedType: []const u8,
     // Controls whether to display additional data labels on stacked charts which sum the total value of all stacked values at each value along the domain axis. stacked_type must be STACKED and neither CUSTOM nor placement can be set on the total_data_label.
@@ -2803,380 +2803,326 @@ pub const Service = struct {
     base_url: []const u8 = base_url,
     root_url: []const u8 = root_url,
     user_agent: []const u8 = "zoogle-api-zig-client/0.1.0",
-    spreadsheets: struct {
+    pub const Spreadsheets = struct {
         // The spreadsheet to apply the updates to.
         spreadsheetId: []const u8,
         // True if grid data should be returned. This parameter is ignored if a field mask was set in the request.
-        includeGridData: bool,
+        includeGridData: ?bool = null,
         // The ranges to retrieve from the spreadsheet.
-        ranges: []const u8,
-        developerMetadata: struct {
+        ranges: ?[]const u8 = null,
+        pub const DeveloperMetadata = struct {
             // The ID of the developer metadata to retrieve.
             metadataId: i32,
             // The ID of the spreadsheet to retrieve metadata from.
             spreadsheetId: []const u8,
-            fn metadataIdSet(self: *@This(), val: i32) void {
+            pub fn metadataIdSet(self: *@This(), val: i32) void {
                 self.metadataId = val;
             }
-            fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
+            pub fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
                 self.spreadsheetId = val;
             }
             // Returns the developer metadata with the specified ID. The caller must specify the spreadsheet ID and the developer metadata's unique metadataId.
-            fn get(
+            pub fn get(
                 self: *@This(),
-                // The ID of the developer metadata to retrieve.
-                metadataId: i32,
-                // The ID of the spreadsheet to retrieve metadata from.
-                spreadsheetId: []const u8,
+                service: *Service,
             ) DeveloperMetadataSchema {
                 // TODO: body
                 _ = self;
-                _ = metadataId;
-                _ = spreadsheetId;
+                _ = service;
+                @panic("TODO: get");
             }
             // Returns all developer metadata matching the specified DataFilter. If the provided DataFilter represents a DeveloperMetadataLookup object, this will return all DeveloperMetadata entries selected by it. If the DataFilter represents a location in a spreadsheet, this will return all developer metadata associated with locations intersecting that region.
-            fn search(
+            pub fn search(
                 self: *@This(),
-                // The ID of the spreadsheet to retrieve metadata from.
-                spreadsheetId: []const u8,
-                schema: SearchDeveloperMetadataRequestSchema,
+                service: *Service,
             ) SearchDeveloperMetadataResponseSchema {
                 // TODO: body
                 _ = self;
-                _ = spreadsheetId;
-                _ = schema;
+                _ = service;
+                @panic("TODO: search");
             }
-        },
-        sheets: struct {
+            pub fn init(
+                metadataId: i32,
+                spreadsheetId: []const u8,
+            ) @This() {
+                return @This(){
+                    .metadataId = metadataId,
+                    .spreadsheetId = spreadsheetId,
+                };
+            }
+        };
+        pub const Sheets = struct {
             // The ID of the sheet to copy.
             sheetId: i32,
             // The ID of the spreadsheet containing the sheet to copy.
             spreadsheetId: []const u8,
-            fn sheetIdSet(self: *@This(), val: i32) void {
+            pub fn sheetIdSet(self: *@This(), val: i32) void {
                 self.sheetId = val;
             }
-            fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
+            pub fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
                 self.spreadsheetId = val;
             }
             // Copies a single sheet from a spreadsheet to another spreadsheet. Returns the properties of the newly created sheet.
-            fn copyTo(
+            pub fn copyTo(
                 self: *@This(),
-                // The ID of the sheet to copy.
-                sheetId: i32,
-                // The ID of the spreadsheet containing the sheet to copy.
-                spreadsheetId: []const u8,
-                schema: CopySheetToAnotherSpreadsheetRequestSchema,
+                service: *Service,
             ) SheetPropertiesSchema {
                 // TODO: body
                 _ = self;
-                _ = sheetId;
-                _ = spreadsheetId;
-                _ = schema;
+                _ = service;
+                @panic("TODO: copyTo");
             }
-        },
-        values: struct {
+            pub fn init(
+                sheetId: i32,
+                spreadsheetId: []const u8,
+            ) @This() {
+                return @This(){
+                    .sheetId = sheetId,
+                    .spreadsheetId = spreadsheetId,
+                };
+            }
+        };
+        pub const Values = struct {
             // Determines if the update response should include the values of the cells that were appended. By default, responses do not include the updated values.
-            includeValuesInResponse: bool,
+            includeValuesInResponse: ?bool = null,
             // How the input data should be inserted.
-            insertDataOption: []const u8,
+            insertDataOption: ?[]const u8 = null,
             // The [A1 notation](/sheets/api/guides/concepts#cell) of a range to search for a logical table of data. Values are appended after the last row of the table.
             range: []const u8,
             // Determines how dates, times, and durations in the response should be rendered. This is ignored if response_value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
-            responseDateTimeRenderOption: []const u8,
+            responseDateTimeRenderOption: ?[]const u8 = null,
             // Determines how values in the response should be rendered. The default render option is FORMATTED_VALUE.
-            responseValueRenderOption: []const u8,
+            responseValueRenderOption: ?[]const u8 = null,
             // The ID of the spreadsheet to update.
             spreadsheetId: []const u8,
             // How the input data should be interpreted.
-            valueInputOption: []const u8,
+            valueInputOption: ?[]const u8 = null,
             // How dates, times, and durations should be represented in the output. This is ignored if value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
-            dateTimeRenderOption: []const u8,
+            dateTimeRenderOption: ?[]const u8 = null,
             // The major dimension that results should use. For example, if the spreadsheet data is: `A1=1,B1=2,A2=3,B2=4`, then requesting `ranges=["A1:B2"],majorDimension=ROWS` returns `[[1,2],[3,4]]`, whereas requesting `ranges=["A1:B2"],majorDimension=COLUMNS` returns `[[1,3],[2,4]]`.
-            majorDimension: []const u8,
+            majorDimension: ?[]const u8 = null,
             // The [A1 notation or R1C1 notation](/sheets/api/guides/concepts#cell) of the range to retrieve values from.
-            ranges: []const u8,
+            ranges: ?[]const u8 = null,
             // How values should be represented in the output. The default render option is ValueRenderOption.FORMATTED_VALUE.
-            valueRenderOption: []const u8,
-            fn includeValuesInResponseSet(self: *@This(), val: bool) void {
+            valueRenderOption: ?[]const u8 = null,
+            pub fn includeValuesInResponseSet(self: *@This(), val: ?bool) void {
                 self.includeValuesInResponse = val;
             }
-            fn insertDataOptionSet(self: *@This(), val: []const u8) void {
+            pub fn insertDataOptionSet(self: *@This(), val: ?[]const u8) void {
                 self.insertDataOption = val;
             }
-            fn rangeSet(self: *@This(), val: []const u8) void {
+            pub fn rangeSet(self: *@This(), val: []const u8) void {
                 self.range = val;
             }
-            fn responseDateTimeRenderOptionSet(self: *@This(), val: []const u8) void {
+            pub fn responseDateTimeRenderOptionSet(self: *@This(), val: ?[]const u8) void {
                 self.responseDateTimeRenderOption = val;
             }
-            fn responseValueRenderOptionSet(self: *@This(), val: []const u8) void {
+            pub fn responseValueRenderOptionSet(self: *@This(), val: ?[]const u8) void {
                 self.responseValueRenderOption = val;
             }
-            fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
+            pub fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
                 self.spreadsheetId = val;
             }
-            fn valueInputOptionSet(self: *@This(), val: []const u8) void {
+            pub fn valueInputOptionSet(self: *@This(), val: ?[]const u8) void {
                 self.valueInputOption = val;
             }
-            fn dateTimeRenderOptionSet(self: *@This(), val: []const u8) void {
+            pub fn dateTimeRenderOptionSet(self: *@This(), val: ?[]const u8) void {
                 self.dateTimeRenderOption = val;
             }
-            fn majorDimensionSet(self: *@This(), val: []const u8) void {
+            pub fn majorDimensionSet(self: *@This(), val: ?[]const u8) void {
                 self.majorDimension = val;
             }
-            fn rangesSet(self: *@This(), val: []const u8) void {
+            pub fn rangesSet(self: *@This(), val: ?[]const u8) void {
                 self.ranges = val;
             }
-            fn valueRenderOptionSet(self: *@This(), val: []const u8) void {
+            pub fn valueRenderOptionSet(self: *@This(), val: ?[]const u8) void {
                 self.valueRenderOption = val;
             }
             // Appends values to a spreadsheet. The input range is used to search for existing data and find a "table" within that range. Values will be appended to the next row of the table, starting with the first column of the table. See the [guide](/sheets/api/guides/values#appending_values) and [sample code](/sheets/api/samples/writing#append_values) for specific details of how tables are detected and data is appended. The caller must specify the spreadsheet ID, range, and a valueInputOption. The `valueInputOption` only controls how the input data will be added to the sheet (column-wise or row-wise), it does not influence what cell the data starts being written to.
-            fn append(
+            pub fn append(
                 self: *@This(),
-                // Determines if the update response should include the values of the cells that were appended. By default, responses do not include the updated values.
-                includeValuesInResponse: bool,
-                // How the input data should be inserted.
-                insertDataOption: []const u8,
-                // The [A1 notation](/sheets/api/guides/concepts#cell) of a range to search for a logical table of data. Values are appended after the last row of the table.
-                range: []const u8,
-                // Determines how dates, times, and durations in the response should be rendered. This is ignored if response_value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
-                responseDateTimeRenderOption: []const u8,
-                // Determines how values in the response should be rendered. The default render option is FORMATTED_VALUE.
-                responseValueRenderOption: []const u8,
-                // The ID of the spreadsheet to update.
-                spreadsheetId: []const u8,
-                // How the input data should be interpreted.
-                valueInputOption: []const u8,
-                schema: ValueRangeSchema,
+                service: *Service,
             ) AppendValuesResponseSchema {
                 // TODO: body
                 _ = self;
-                _ = includeValuesInResponse;
-                _ = insertDataOption;
-                _ = range;
-                _ = responseDateTimeRenderOption;
-                _ = responseValueRenderOption;
-                _ = spreadsheetId;
-                _ = valueInputOption;
-                _ = schema;
+                _ = service;
+                @panic("TODO: append");
             }
             // Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges. Only values are cleared -- all other properties of the cell (such as formatting and data validation) are kept.
-            fn batchClear(
+            pub fn batchClear(
                 self: *@This(),
-                // The ID of the spreadsheet to update.
-                spreadsheetId: []const u8,
-                schema: BatchClearValuesRequestSchema,
+                service: *Service,
             ) BatchClearValuesResponseSchema {
                 // TODO: body
                 _ = self;
-                _ = spreadsheetId;
-                _ = schema;
+                _ = service;
+                @panic("TODO: batchClear");
             }
             // Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges matching any of the specified data filters will be cleared. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept.
-            fn batchClearByDataFilter(
+            pub fn batchClearByDataFilter(
                 self: *@This(),
-                // The ID of the spreadsheet to update.
-                spreadsheetId: []const u8,
-                schema: BatchClearValuesByDataFilterRequestSchema,
+                service: *Service,
             ) BatchClearValuesByDataFilterResponseSchema {
                 // TODO: body
                 _ = self;
-                _ = spreadsheetId;
-                _ = schema;
+                _ = service;
+                @panic("TODO: batchClearByDataFilter");
             }
             // Returns one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges.
-            fn batchGet(
+            pub fn batchGet(
                 self: *@This(),
-                // How dates, times, and durations should be represented in the output. This is ignored if value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
-                dateTimeRenderOption: []const u8,
-                // The major dimension that results should use. For example, if the spreadsheet data is: `A1=1,B1=2,A2=3,B2=4`, then requesting `ranges=["A1:B2"],majorDimension=ROWS` returns `[[1,2],[3,4]]`, whereas requesting `ranges=["A1:B2"],majorDimension=COLUMNS` returns `[[1,3],[2,4]]`.
-                majorDimension: []const u8,
-                // The [A1 notation or R1C1 notation](/sheets/api/guides/concepts#cell) of the range to retrieve values from.
-                ranges: []const u8,
-                // The ID of the spreadsheet to retrieve data from.
-                spreadsheetId: []const u8,
-                // How values should be represented in the output. The default render option is ValueRenderOption.FORMATTED_VALUE.
-                valueRenderOption: []const u8,
+                service: *Service,
             ) BatchGetValuesResponseSchema {
                 // TODO: body
                 _ = self;
-                _ = dateTimeRenderOption;
-                _ = majorDimension;
-                _ = ranges;
-                _ = spreadsheetId;
-                _ = valueRenderOption;
+                _ = service;
+                @panic("TODO: batchGet");
             }
             // Returns one or more ranges of values that match the specified data filters. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges that match any of the data filters in the request will be returned.
-            fn batchGetByDataFilter(
+            pub fn batchGetByDataFilter(
                 self: *@This(),
-                // The ID of the spreadsheet to retrieve data from.
-                spreadsheetId: []const u8,
-                schema: BatchGetValuesByDataFilterRequestSchema,
+                service: *Service,
             ) BatchGetValuesByDataFilterResponseSchema {
                 // TODO: body
                 _ = self;
-                _ = spreadsheetId;
-                _ = schema;
+                _ = service;
+                @panic("TODO: batchGetByDataFilter");
             }
             // Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more ValueRanges.
-            fn batchUpdate(
+            pub fn batchUpdate(
                 self: *@This(),
-                // The ID of the spreadsheet to update.
-                spreadsheetId: []const u8,
-                schema: BatchUpdateValuesRequestSchema,
+                service: *Service,
             ) BatchUpdateValuesResponseSchema {
                 // TODO: body
                 _ = self;
-                _ = spreadsheetId;
-                _ = schema;
+                _ = service;
+                @panic("TODO: batchUpdate");
             }
             // Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more DataFilterValueRanges.
-            fn batchUpdateByDataFilter(
+            pub fn batchUpdateByDataFilter(
                 self: *@This(),
-                // The ID of the spreadsheet to update.
-                spreadsheetId: []const u8,
-                schema: BatchUpdateValuesByDataFilterRequestSchema,
+                service: *Service,
             ) BatchUpdateValuesByDataFilterResponseSchema {
                 // TODO: body
                 _ = self;
-                _ = spreadsheetId;
-                _ = schema;
+                _ = service;
+                @panic("TODO: batchUpdateByDataFilter");
             }
             // Clears values from a spreadsheet. The caller must specify the spreadsheet ID and range. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept.
-            fn clear(
+            pub fn clear(
                 self: *@This(),
-                // The [A1 notation or R1C1 notation](/sheets/api/guides/concepts#cell) of the values to clear.
-                range: []const u8,
-                // The ID of the spreadsheet to update.
-                spreadsheetId: []const u8,
-                schema: ClearValuesRequestSchema,
+                service: *Service,
             ) ClearValuesResponseSchema {
                 // TODO: body
                 _ = self;
-                _ = range;
-                _ = spreadsheetId;
-                _ = schema;
+                _ = service;
+                @panic("TODO: clear");
             }
             // Returns a range of values from a spreadsheet. The caller must specify the spreadsheet ID and a range.
-            fn get(
+            pub fn get(
                 self: *@This(),
-                // How dates, times, and durations should be represented in the output. This is ignored if value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
-                dateTimeRenderOption: []const u8,
-                // The major dimension that results should use. For example, if the spreadsheet data is: `A1=1,B1=2,A2=3,B2=4`, then requesting `range=A1:B2,majorDimension=ROWS` returns `[[1,2],[3,4]]`, whereas requesting `range=A1:B2,majorDimension=COLUMNS` returns `[[1,3],[2,4]]`.
-                majorDimension: []const u8,
-                // The [A1 notation or R1C1 notation](/sheets/api/guides/concepts#cell) of the range to retrieve values from.
-                range: []const u8,
-                // The ID of the spreadsheet to retrieve data from.
-                spreadsheetId: []const u8,
-                // How values should be represented in the output. The default render option is FORMATTED_VALUE.
-                valueRenderOption: []const u8,
+                service: *Service,
             ) ValueRangeSchema {
                 // TODO: body
                 _ = self;
-                _ = dateTimeRenderOption;
-                _ = majorDimension;
-                _ = range;
-                _ = spreadsheetId;
-                _ = valueRenderOption;
+                _ = service;
+                @panic("TODO: get");
             }
             // Sets values in a range of a spreadsheet. The caller must specify the spreadsheet ID, range, and a valueInputOption.
-            fn update(
+            pub fn update(
                 self: *@This(),
-                // Determines if the update response should include the values of the cells that were updated. By default, responses do not include the updated values. If the range to write was larger than the range actually written, the response includes all values in the requested range (excluding trailing empty rows and columns).
-                includeValuesInResponse: bool,
-                // The [A1 notation](/sheets/api/guides/concepts#cell) of the values to update.
-                range: []const u8,
-                // Determines how dates, times, and durations in the response should be rendered. This is ignored if response_value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
-                responseDateTimeRenderOption: []const u8,
-                // Determines how values in the response should be rendered. The default render option is FORMATTED_VALUE.
-                responseValueRenderOption: []const u8,
-                // The ID of the spreadsheet to update.
-                spreadsheetId: []const u8,
-                // How the input data should be interpreted.
-                valueInputOption: []const u8,
-                schema: ValueRangeSchema,
+                service: *Service,
             ) UpdateValuesResponseSchema {
                 // TODO: body
                 _ = self;
-                _ = includeValuesInResponse;
-                _ = range;
-                _ = responseDateTimeRenderOption;
-                _ = responseValueRenderOption;
-                _ = spreadsheetId;
-                _ = valueInputOption;
-                _ = schema;
+                _ = service;
+                @panic("TODO: update");
             }
-        },
-        fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
+            pub fn init(
+                range: []const u8,
+                spreadsheetId: []const u8,
+            ) @This() {
+                return @This(){
+                    .range = range,
+                    .spreadsheetId = spreadsheetId,
+                };
+            }
+        };
+        pub fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
             self.spreadsheetId = val;
         }
-        fn includeGridDataSet(self: *@This(), val: bool) void {
+        pub fn includeGridDataSet(self: *@This(), val: ?bool) void {
             self.includeGridData = val;
         }
-        fn rangesSet(self: *@This(), val: []const u8) void {
+        pub fn rangesSet(self: *@This(), val: ?[]const u8) void {
             self.ranges = val;
         }
         // Applies one or more updates to the spreadsheet. Each request is validated before being applied. If any request is not valid then the entire request will fail and nothing will be applied. Some requests have replies to give you some information about how they are applied. The replies will mirror the requests. For example, if you applied 4 updates and the 3rd one had a reply, then the response will have 2 empty replies, the actual reply, and another empty reply, in that order. Due to the collaborative nature of spreadsheets, it is not guaranteed that the spreadsheet will reflect exactly your changes after this completes, however it is guaranteed that the updates in the request will be applied together atomically. Your changes may be altered with respect to collaborator changes. If there are no collaborators, the spreadsheet should reflect your changes.
-        fn batchUpdate(
+        pub fn batchUpdate(
             self: *@This(),
-            // The spreadsheet to apply the updates to.
-            spreadsheetId: []const u8,
-            schema: BatchUpdateSpreadsheetRequestSchema,
+            service: *Service,
         ) BatchUpdateSpreadsheetResponseSchema {
             // TODO: body
             _ = self;
-            _ = spreadsheetId;
-            _ = schema;
+            _ = service;
+            @panic("TODO: batchUpdate");
         }
         // Creates a spreadsheet, returning the newly created spreadsheet.
-        fn create(
+        pub fn create(
             self: *@This(),
-            schema: SpreadsheetSchema,
+            service: *Service,
         ) SpreadsheetSchema {
             // TODO: body
             _ = self;
-            _ = schema;
+            _ = service;
+            @panic("TODO: create");
         }
         // Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. By default, data within grids is not returned. You can include grid data in one of 2 ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData URL parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, as a best practice, retrieve only the specific spreadsheet fields that you want. To retrieve only subsets of spreadsheet data, use the ranges URL parameter. Ranges are specified using [A1 notation](/sheets/api/guides/concepts#cell). You can define a single cell (for example, `A1`) or multiple cells (for example, `A1:D5`). You can also get cells from other sheets within the same spreadsheet (for example, `Sheet2!A1:C4`) or retrieve multiple ranges at once (for example, `?ranges=A1:D5&ranges=Sheet2!A1:C4`). Limiting the range returns only the portions of the spreadsheet that intersect the requested ranges.
-        fn get(
+        pub fn get(
             self: *@This(),
-            // True if grid data should be returned. This parameter is ignored if a field mask was set in the request.
-            includeGridData: bool,
-            // The ranges to retrieve from the spreadsheet.
-            ranges: []const u8,
-            // The spreadsheet to request.
-            spreadsheetId: []const u8,
+            service: *Service,
         ) SpreadsheetSchema {
             // TODO: body
             _ = self;
-            _ = includeGridData;
-            _ = ranges;
-            _ = spreadsheetId;
+            _ = service;
+            @panic("TODO: get");
         }
         // Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. This method differs from GetSpreadsheet in that it allows selecting which subsets of spreadsheet data to return by specifying a dataFilters parameter. Multiple DataFilters can be specified. Specifying one or more data filters returns the portions of the spreadsheet that intersect ranges matched by any of the filters. By default, data within grids is not returned. You can include grid data one of 2 ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, as a best practice, retrieve only the specific spreadsheet fields that you want.
-        fn getByDataFilter(
+        pub fn getByDataFilter(
             self: *@This(),
-            // The spreadsheet to request.
-            spreadsheetId: []const u8,
-            schema: GetSpreadsheetByDataFilterRequestSchema,
+            service: *Service,
         ) SpreadsheetSchema {
             // TODO: body
             _ = self;
-            _ = spreadsheetId;
-            _ = schema;
+            _ = service;
+            @panic("TODO: getByDataFilter");
         }
-    },
-    fn clientSet(self: *@This(), val: *requestz.Client) void {
+        pub fn init(
+            spreadsheetId: []const u8,
+        ) @This() {
+            return @This(){
+                .spreadsheetId = spreadsheetId,
+            };
+        }
+    };
+    pub fn clientSet(self: *@This(), val: *requestz.Client) void {
         self.client = val;
     }
-    fn base_urlSet(self: *@This(), val: []const u8) void {
+    pub fn base_urlSet(self: *@This(), val: []const u8) void {
         self.base_url = val;
     }
-    fn root_urlSet(self: *@This(), val: []const u8) void {
+    pub fn root_urlSet(self: *@This(), val: []const u8) void {
         self.root_url = val;
     }
-    fn user_agentSet(self: *@This(), val: []const u8) void {
+    pub fn user_agentSet(self: *@This(), val: []const u8) void {
         self.user_agent = val;
+    }
+    pub fn init(
+        client: *requestz.Client,
+    ) @This() {
+        return @This(){
+            .client = client,
+        };
     }
 };
 test "static analysis" {

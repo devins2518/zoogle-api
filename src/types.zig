@@ -25,37 +25,17 @@ pub const Method = struct {
                 .desc = d,
             });
         try std.fmt.format(writer,
-            \\{[pre]s}fn {[name]s}(
+            \\{[pre]s}pub fn {[name]s}(
             \\{[pre]s}    self: *@This(),
-            \\
-        , .{
-            .pre = pre.items,
-            .name = self.name,
-        });
-        var iter = self.params.iterator();
-        while (iter.next()) |param|
-            try param.key_ptr.genArg(alloc, writer, indent + 4);
-
-        try std.fmt.format(writer,
+            \\{[pre]s}    service: *Service,
             \\{[pre]s}) {[ret]s} {{
-            \\
-        , .{ .pre = pre.items, .ret = self.return_ty });
-
-        try std.fmt.format(writer,
             \\{[pre]s}    // TODO: body
             \\{[pre]s}    _ = self;
-            \\
-        , .{ .pre = pre.items });
-        iter = self.params.iterator();
-        while (iter.next()) |param|
-            try std.fmt.format(writer, "{[pre]s}    _ = {[name]s};\n", .{
-                .pre = pre.items,
-                .name = param.key_ptr.name,
-            });
-        try std.fmt.format(writer,
+            \\{[pre]s}    _ = service;
+            \\{[pre]s}    @panic("TODO: {[name]s}");
             \\{[pre]s}}}
             \\
-        , .{ .pre = pre.items });
+        , .{ .pre = pre.items, .name = self.name, .ret = self.return_ty });
     }
     fn from(value: json.ObjectMap.Entry, allocator: Allocator, parent_fields: *ParamHashMap) anyerror!Self {
         var params = ParamHashMap.init(allocator);
@@ -64,13 +44,32 @@ pub const Method = struct {
             var iter = param.Object.iterator();
             while (iter.next()) |p| {
                 const pobj = p.value_ptr.Object;
+                const param_name = p.key_ptr.*;
                 const desc = if (pobj.get("description")) |d| d.String else null;
                 const default = if (pobj.get("default")) |d| d.String else null;
-                const ty = try tyStrFromJsonValue(&pobj, allocator);
+                var ty = try tyStrFromJsonValue(&pobj, allocator);
+                var optional = true;
+                if (obj.get("parameterOrder")) |param_order| {
+                    for (param_order.Array.items) |str| {
+                        if (std.mem.eql(u8, str.String, param_name)) {
+                            optional = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (optional) {
+                    var list = try std.ArrayList(u8).initCapacity(allocator, ty.len + 1);
+                    try list.append('?');
+                    try list.appendSlice(ty);
+                    allocator.free(ty);
+                    ty = try list.toOwnedSliceSentinel(0);
+                }
                 // TODO format name in snake_case rather than camelCase
-                const param_name = p.key_ptr.*;
                 const parameter = Parameter{ .desc = desc, .name = param_name, .ty = ty, .default = default };
-                try params.put(parameter, .{});
+                if (!optional) {
+                    try params.put(parameter, .{});
+                }
                 try parent_fields.put(parameter, .{});
             }
         }
@@ -164,7 +163,9 @@ const Parameter = struct {
         // TODO format name in snake_case rather than camelCase
         try std.fmt.format(writer, "{s}{s}: {s}", .{ pre.items, self.name, self.ty });
         if (self.default) |default|
-            try std.fmt.format(writer, " = {s}", .{default});
+            try std.fmt.format(writer, " = {s}", .{default})
+        else if (self.ty[0] == '?')
+            try std.fmt.format(writer, " = null", .{});
         try std.fmt.format(writer, ",\n", .{});
     }
     fn genArg(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) !void {
@@ -183,7 +184,7 @@ const Parameter = struct {
         defer pre.deinit();
         pre.appendNTimesAssumeCapacity(' ', indent);
         try std.fmt.format(writer,
-            \\{[pre]s}fn {[name]s}Set(self: *@This(), val: {[ty]s}) void {{
+            \\{[pre]s}pub fn {[name]s}Set(self: *@This(), val: {[ty]s}) void {{
             \\{[pre]s}    self.{[name]s} = val;
             \\{[pre]s}}}
             \\
@@ -237,12 +238,12 @@ pub const Resource = struct {
         defer pre.deinit();
         pre.appendNTimesAssumeCapacity(' ', indent);
         try std.fmt.format(writer,
-            \\{s}{s}: struct {{
+            \\{s}pub const {c}{s} = struct {{
             \\
-        , .{ pre.items, self.name });
+        , .{ pre.items, std.ascii.toUpper(self.name[0]), self.name[1..] });
         var key_iter = self.fields.iterator();
         while (key_iter.next()) |field|
-            try field.key_ptr.genArg(alloc, writer, indent + 4);
+            try field.key_ptr.genField(alloc, writer, indent + 4);
         for (self.resources.items) |resource|
             try resource.printMember(alloc, writer, indent + 4);
         key_iter = self.fields.iterator();
@@ -250,8 +251,9 @@ pub const Resource = struct {
             try field.key_ptr.genSetter(alloc, writer, indent + 4);
         for (self.methods.items) |method|
             try method.print(alloc, writer, indent + 4);
+        try self.printInit(alloc, writer, indent + 4);
         try std.fmt.format(writer,
-            \\{s}}},
+            \\{s}}};
             \\
         , .{pre.items});
     }
@@ -270,14 +272,47 @@ pub const Resource = struct {
             try field.key_ptr.genSetter(alloc, writer, 4);
         for (self.methods.items) |method|
             try method.print(alloc, writer, 4);
+        try self.printInit(alloc, writer, 4);
         try std.fmt.format(writer,
             \\}};
             \\
         , .{});
     }
+    fn printInit(self: *const Self, alloc: Allocator, writer: anytype, indent: u32) anyerror!void {
+        var pre = try std.ArrayList(u8).initCapacity(alloc, indent);
+        defer pre.deinit();
+        pre.appendNTimesAssumeCapacity(' ', indent);
+        try std.fmt.format(writer, "{s}pub fn init(\n", .{pre.items});
+        var field_iter = self.fields.iterator();
+        while (field_iter.next()) |field| {
+            if (field.key_ptr.default == null and field.key_ptr.ty[0] != '?')
+                try std.fmt.format(writer, "{s}    {s}: {s},\n", .{
+                    pre.items,
+                    field.key_ptr.name,
+                    field.key_ptr.ty,
+                });
+        }
+        try std.fmt.format(writer,
+            \\{[pre]s}) @This() {{
+            \\{[pre]s}    return @This(){{
+        , .{ .pre = pre.items });
+        field_iter = self.fields.iterator();
+        while (field_iter.next()) |field| {
+            if (field.key_ptr.default == null and field.key_ptr.ty[0] != '?')
+                try std.fmt.format(writer, "\n{[pre]s}        .{[name]s} = {[name]s},", .{
+                    .pre = pre.items,
+                    .name = field.key_ptr.name,
+                });
+        }
+        try std.fmt.format(writer,
+            \\
+            \\{[pre]s}    }};
+            \\{[pre]s}}}
+            \\
+        , .{ .pre = pre.items });
+    }
 
     fn deinit(self: *Self, allocator: Allocator) void {
-        // for (self.fields.items) |*i| i.deinit(allocator);
         self.fields.deinit();
         for (self.resources.items) |*i| i.deinit(allocator);
         self.resources.deinit();
@@ -302,7 +337,7 @@ fn tyStrFromJsonValue(obj: *const json.ObjectMap, allocator: Allocator) Allocato
         else if (std.mem.eql(u8, ty.String, "boolean"))
             try allocator.dupe(u8, "bool")
         else if (std.mem.eql(u8, ty.String, "any"))
-            try allocator.dupe(u8, "*anyopaque")
+            try allocator.dupe(u8, "[]const u8")
         else if (std.mem.eql(u8, ty.String, "number"))
             if (obj.get("format")) |fmt|
                 return if (std.mem.eql(u8, fmt.String, "double"))
@@ -318,6 +353,7 @@ fn tyStrFromJsonValue(obj: *const json.ObjectMap, allocator: Allocator) Allocato
             const items = obj.get("items").?.Object;
             const inner = try tyStrFromJsonValue(&items, allocator);
             defer allocator.free(inner);
+            try arr.appendSlice("[]const ");
             try arr.appendSlice(inner);
             return try arr.toOwnedSliceSentinel(0);
         } else if (std.mem.eql(u8, ty.String, "object")) {

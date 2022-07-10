@@ -8,7 +8,7 @@ pub const api_version = "0.1.0";
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    defer std.debug.assert(!gpa.deinit());
+    // defer std.debug.assert(!gpa.deinit());
     var allocator = gpa.allocator();
 
     const args = try std.process.argsAlloc(allocator);
