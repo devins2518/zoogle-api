@@ -67,12 +67,26 @@ const UserinfoSchema = struct {
 
 };
 pub const Service = struct {
-    client: *requestz.Client,
-    base_url: []const u8 = base_url,
-    root_url: []const u8 = root_url,
-    user_agent: []const u8 = "zoogle-api-zig-client/0.1.0",
-    access_token: ?[]const u8 = null,
-    id_token: ?[]const u8 = null,
+    @"client": *requestz.Client,
+    @"base_url": []const u8 = "base_url",
+    @"root_url": []const u8 = "root_url",
+    @"user_agent": []const u8 = "zoogle-api-zig-client/0.1.0",
+    // Data format for the response.
+    @"alt": []const u8 = "json",
+    // Selector specifying which fields to include in a partial response.
+    @"fields": ?[]const u8 = null,
+    // API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.
+    @"key": ?[]const u8 = null,
+    // OAuth 2.0 token for the current user.
+    @"oauth_token": ?[]const u8 = null,
+    // Returns response with indentations and line breaks.
+    @"prettyPrint": bool = true,
+    // An opaque string that represents a user for quota purposes. Must not exceed 40 characters.
+    @"quotaUser": ?[]const u8 = null,
+    // Deprecated. Please use quotaUser instead.
+    @"userIp": ?[]const u8 = null,
+    @"access_token": ?[]const u8 = null,
+    @"id_token": ?[]const u8 = null,
     pub const Userinfo = struct {
         pub const V2 = struct {
             pub const Me = struct {
@@ -112,23 +126,44 @@ pub const Service = struct {
             };
         }
     };
-    pub fn clientSet(self: *@This(), val: *requestz.Client) void {
-        self.client = val;
+    pub fn @"clientSet"(self: *@This(), val: *requestz.Client) void {
+        self.@"client" = val;
     }
-    pub fn base_urlSet(self: *@This(), val: []const u8) void {
-        self.base_url = val;
+    pub fn @"base_urlSet"(self: *@This(), val: []const u8) void {
+        self.@"base_url" = val;
     }
-    pub fn root_urlSet(self: *@This(), val: []const u8) void {
-        self.root_url = val;
+    pub fn @"root_urlSet"(self: *@This(), val: []const u8) void {
+        self.@"root_url" = val;
     }
-    pub fn user_agentSet(self: *@This(), val: []const u8) void {
-        self.user_agent = val;
+    pub fn @"user_agentSet"(self: *@This(), val: []const u8) void {
+        self.@"user_agent" = val;
     }
-    pub fn access_tokenSet(self: *@This(), val: ?[]const u8) void {
-        self.access_token = val;
+    pub fn @"altSet"(self: *@This(), val: []const u8) void {
+        self.@"alt" = val;
     }
-    pub fn id_tokenSet(self: *@This(), val: ?[]const u8) void {
-        self.id_token = val;
+    pub fn @"fieldsSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"fields" = val;
+    }
+    pub fn @"keySet"(self: *@This(), val: ?[]const u8) void {
+        self.@"key" = val;
+    }
+    pub fn @"oauth_tokenSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"oauth_token" = val;
+    }
+    pub fn @"prettyPrintSet"(self: *@This(), val: bool) void {
+        self.@"prettyPrint" = val;
+    }
+    pub fn @"quotaUserSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"quotaUser" = val;
+    }
+    pub fn @"userIpSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"userIp" = val;
+    }
+    pub fn @"access_tokenSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"access_token" = val;
+    }
+    pub fn @"id_tokenSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"id_token" = val;
     }
     pub fn tokeninfo(
         self: *@This(),

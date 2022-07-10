@@ -2799,27 +2799,49 @@ const WaterfallChartSpecSchema = struct {
 
 };
 pub const Service = struct {
-    client: *requestz.Client,
-    base_url: []const u8 = base_url,
-    root_url: []const u8 = root_url,
-    user_agent: []const u8 = "zoogle-api-zig-client/0.1.0",
+    @"client": *requestz.Client,
+    @"base_url": []const u8 = "base_url",
+    @"root_url": []const u8 = "root_url",
+    @"user_agent": []const u8 = "zoogle-api-zig-client/0.1.0",
+    // V1 error format.
+    @"$.xgafv": ?[]const u8 = null,
+    // OAuth access token.
+    @"access_token": ?[]const u8 = null,
+    // Data format for response.
+    @"alt": []const u8 = "json",
+    // JSONP
+    @"callback": ?[]const u8 = null,
+    // Selector specifying which fields to include in a partial response.
+    @"fields": ?[]const u8 = null,
+    // API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.
+    @"key": ?[]const u8 = null,
+    // OAuth 2.0 token for the current user.
+    @"oauth_token": ?[]const u8 = null,
+    // Returns response with indentations and line breaks.
+    @"prettyPrint": bool = true,
+    // Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.
+    @"quotaUser": ?[]const u8 = null,
+    // Legacy upload protocol for media (e.g. "media", "multipart").
+    @"uploadType": ?[]const u8 = null,
+    // Upload protocol for media (e.g. "raw", "multipart").
+    @"upload_protocol": ?[]const u8 = null,
     pub const Spreadsheets = struct {
         // The spreadsheet to apply the updates to.
-        spreadsheetId: []const u8,
+        @"spreadsheetId": []const u8,
         // True if grid data should be returned. This parameter is ignored if a field mask was set in the request.
-        includeGridData: ?bool = null,
+        @"includeGridData": ?bool = null,
         // The ranges to retrieve from the spreadsheet.
-        ranges: ?[]const u8 = null,
+        @"ranges": ?[]const u8 = null,
         pub const DeveloperMetadata = struct {
             // The ID of the developer metadata to retrieve.
-            metadataId: i32,
+            @"metadataId": i32,
             // The ID of the spreadsheet to retrieve metadata from.
-            spreadsheetId: []const u8,
-            pub fn metadataIdSet(self: *@This(), val: i32) void {
-                self.metadataId = val;
+            @"spreadsheetId": []const u8,
+            pub fn @"metadataIdSet"(self: *@This(), val: i32) void {
+                self.@"metadataId" = val;
             }
-            pub fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
-                self.spreadsheetId = val;
+            pub fn @"spreadsheetIdSet"(self: *@This(), val: []const u8) void {
+                self.@"spreadsheetId" = val;
             }
             // Returns the developer metadata with the specified ID. The caller must specify the spreadsheet ID and the developer metadata's unique metadataId.
             pub fn get(
@@ -2853,14 +2875,14 @@ pub const Service = struct {
         };
         pub const Sheets = struct {
             // The ID of the sheet to copy.
-            sheetId: i32,
+            @"sheetId": i32,
             // The ID of the spreadsheet containing the sheet to copy.
-            spreadsheetId: []const u8,
-            pub fn sheetIdSet(self: *@This(), val: i32) void {
-                self.sheetId = val;
+            @"spreadsheetId": []const u8,
+            pub fn @"sheetIdSet"(self: *@This(), val: i32) void {
+                self.@"sheetId" = val;
             }
-            pub fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
-                self.spreadsheetId = val;
+            pub fn @"spreadsheetIdSet"(self: *@This(), val: []const u8) void {
+                self.@"spreadsheetId" = val;
             }
             // Copies a single sheet from a spreadsheet to another spreadsheet. Returns the properties of the newly created sheet.
             pub fn copyTo(
@@ -2884,59 +2906,59 @@ pub const Service = struct {
         };
         pub const Values = struct {
             // Determines if the update response should include the values of the cells that were appended. By default, responses do not include the updated values.
-            includeValuesInResponse: ?bool = null,
+            @"includeValuesInResponse": ?bool = null,
             // How the input data should be inserted.
-            insertDataOption: ?[]const u8 = null,
+            @"insertDataOption": ?[]const u8 = null,
             // The [A1 notation](/sheets/api/guides/concepts#cell) of a range to search for a logical table of data. Values are appended after the last row of the table.
-            range: []const u8,
+            @"range": []const u8,
             // Determines how dates, times, and durations in the response should be rendered. This is ignored if response_value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
-            responseDateTimeRenderOption: ?[]const u8 = null,
+            @"responseDateTimeRenderOption": ?[]const u8 = null,
             // Determines how values in the response should be rendered. The default render option is FORMATTED_VALUE.
-            responseValueRenderOption: ?[]const u8 = null,
+            @"responseValueRenderOption": ?[]const u8 = null,
             // The ID of the spreadsheet to update.
-            spreadsheetId: []const u8,
+            @"spreadsheetId": []const u8,
             // How the input data should be interpreted.
-            valueInputOption: ?[]const u8 = null,
+            @"valueInputOption": ?[]const u8 = null,
             // How dates, times, and durations should be represented in the output. This is ignored if value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.
-            dateTimeRenderOption: ?[]const u8 = null,
+            @"dateTimeRenderOption": ?[]const u8 = null,
             // The major dimension that results should use. For example, if the spreadsheet data is: `A1=1,B1=2,A2=3,B2=4`, then requesting `ranges=["A1:B2"],majorDimension=ROWS` returns `[[1,2],[3,4]]`, whereas requesting `ranges=["A1:B2"],majorDimension=COLUMNS` returns `[[1,3],[2,4]]`.
-            majorDimension: ?[]const u8 = null,
+            @"majorDimension": ?[]const u8 = null,
             // The [A1 notation or R1C1 notation](/sheets/api/guides/concepts#cell) of the range to retrieve values from.
-            ranges: ?[]const u8 = null,
+            @"ranges": ?[]const u8 = null,
             // How values should be represented in the output. The default render option is ValueRenderOption.FORMATTED_VALUE.
-            valueRenderOption: ?[]const u8 = null,
-            pub fn includeValuesInResponseSet(self: *@This(), val: ?bool) void {
-                self.includeValuesInResponse = val;
+            @"valueRenderOption": ?[]const u8 = null,
+            pub fn @"includeValuesInResponseSet"(self: *@This(), val: ?bool) void {
+                self.@"includeValuesInResponse" = val;
             }
-            pub fn insertDataOptionSet(self: *@This(), val: ?[]const u8) void {
-                self.insertDataOption = val;
+            pub fn @"insertDataOptionSet"(self: *@This(), val: ?[]const u8) void {
+                self.@"insertDataOption" = val;
             }
-            pub fn rangeSet(self: *@This(), val: []const u8) void {
-                self.range = val;
+            pub fn @"rangeSet"(self: *@This(), val: []const u8) void {
+                self.@"range" = val;
             }
-            pub fn responseDateTimeRenderOptionSet(self: *@This(), val: ?[]const u8) void {
-                self.responseDateTimeRenderOption = val;
+            pub fn @"responseDateTimeRenderOptionSet"(self: *@This(), val: ?[]const u8) void {
+                self.@"responseDateTimeRenderOption" = val;
             }
-            pub fn responseValueRenderOptionSet(self: *@This(), val: ?[]const u8) void {
-                self.responseValueRenderOption = val;
+            pub fn @"responseValueRenderOptionSet"(self: *@This(), val: ?[]const u8) void {
+                self.@"responseValueRenderOption" = val;
             }
-            pub fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
-                self.spreadsheetId = val;
+            pub fn @"spreadsheetIdSet"(self: *@This(), val: []const u8) void {
+                self.@"spreadsheetId" = val;
             }
-            pub fn valueInputOptionSet(self: *@This(), val: ?[]const u8) void {
-                self.valueInputOption = val;
+            pub fn @"valueInputOptionSet"(self: *@This(), val: ?[]const u8) void {
+                self.@"valueInputOption" = val;
             }
-            pub fn dateTimeRenderOptionSet(self: *@This(), val: ?[]const u8) void {
-                self.dateTimeRenderOption = val;
+            pub fn @"dateTimeRenderOptionSet"(self: *@This(), val: ?[]const u8) void {
+                self.@"dateTimeRenderOption" = val;
             }
-            pub fn majorDimensionSet(self: *@This(), val: ?[]const u8) void {
-                self.majorDimension = val;
+            pub fn @"majorDimensionSet"(self: *@This(), val: ?[]const u8) void {
+                self.@"majorDimension" = val;
             }
-            pub fn rangesSet(self: *@This(), val: ?[]const u8) void {
-                self.ranges = val;
+            pub fn @"rangesSet"(self: *@This(), val: ?[]const u8) void {
+                self.@"ranges" = val;
             }
-            pub fn valueRenderOptionSet(self: *@This(), val: ?[]const u8) void {
-                self.valueRenderOption = val;
+            pub fn @"valueRenderOptionSet"(self: *@This(), val: ?[]const u8) void {
+                self.@"valueRenderOption" = val;
             }
             // Appends values to a spreadsheet. The input range is used to search for existing data and find a "table" within that range. Values will be appended to the next row of the table, starting with the first column of the table. See the [guide](/sheets/api/guides/values#appending_values) and [sample code](/sheets/api/samples/writing#append_values) for specific details of how tables are detected and data is appended. The caller must specify the spreadsheet ID, range, and a valueInputOption. The `valueInputOption` only controls how the input data will be added to the sheet (column-wise or row-wise), it does not influence what cell the data starts being written to.
             pub fn append(
@@ -3048,14 +3070,14 @@ pub const Service = struct {
                 };
             }
         };
-        pub fn spreadsheetIdSet(self: *@This(), val: []const u8) void {
-            self.spreadsheetId = val;
+        pub fn @"spreadsheetIdSet"(self: *@This(), val: []const u8) void {
+            self.@"spreadsheetId" = val;
         }
-        pub fn includeGridDataSet(self: *@This(), val: ?bool) void {
-            self.includeGridData = val;
+        pub fn @"includeGridDataSet"(self: *@This(), val: ?bool) void {
+            self.@"includeGridData" = val;
         }
-        pub fn rangesSet(self: *@This(), val: ?[]const u8) void {
-            self.ranges = val;
+        pub fn @"rangesSet"(self: *@This(), val: ?[]const u8) void {
+            self.@"ranges" = val;
         }
         // Applies one or more updates to the spreadsheet. Each request is validated before being applied. If any request is not valid then the entire request will fail and nothing will be applied. Some requests have replies to give you some information about how they are applied. The replies will mirror the requests. For example, if you applied 4 updates and the 3rd one had a reply, then the response will have 2 empty replies, the actual reply, and another empty reply, in that order. Due to the collaborative nature of spreadsheets, it is not guaranteed that the spreadsheet will reflect exactly your changes after this completes, however it is guaranteed that the updates in the request will be applied together atomically. Your changes may be altered with respect to collaborator changes. If there are no collaborators, the spreadsheet should reflect your changes.
         pub fn batchUpdate(
@@ -3105,17 +3127,50 @@ pub const Service = struct {
             };
         }
     };
-    pub fn clientSet(self: *@This(), val: *requestz.Client) void {
-        self.client = val;
+    pub fn @"clientSet"(self: *@This(), val: *requestz.Client) void {
+        self.@"client" = val;
     }
-    pub fn base_urlSet(self: *@This(), val: []const u8) void {
-        self.base_url = val;
+    pub fn @"base_urlSet"(self: *@This(), val: []const u8) void {
+        self.@"base_url" = val;
     }
-    pub fn root_urlSet(self: *@This(), val: []const u8) void {
-        self.root_url = val;
+    pub fn @"root_urlSet"(self: *@This(), val: []const u8) void {
+        self.@"root_url" = val;
     }
-    pub fn user_agentSet(self: *@This(), val: []const u8) void {
-        self.user_agent = val;
+    pub fn @"user_agentSet"(self: *@This(), val: []const u8) void {
+        self.@"user_agent" = val;
+    }
+    pub fn @"$.xgafvSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"$.xgafv" = val;
+    }
+    pub fn @"access_tokenSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"access_token" = val;
+    }
+    pub fn @"altSet"(self: *@This(), val: []const u8) void {
+        self.@"alt" = val;
+    }
+    pub fn @"callbackSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"callback" = val;
+    }
+    pub fn @"fieldsSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"fields" = val;
+    }
+    pub fn @"keySet"(self: *@This(), val: ?[]const u8) void {
+        self.@"key" = val;
+    }
+    pub fn @"oauth_tokenSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"oauth_token" = val;
+    }
+    pub fn @"prettyPrintSet"(self: *@This(), val: bool) void {
+        self.@"prettyPrint" = val;
+    }
+    pub fn @"quotaUserSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"quotaUser" = val;
+    }
+    pub fn @"uploadTypeSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"uploadType" = val;
+    }
+    pub fn @"upload_protocolSet"(self: *@This(), val: ?[]const u8) void {
+        self.@"upload_protocol" = val;
     }
     pub fn init(
         client: *requestz.Client,

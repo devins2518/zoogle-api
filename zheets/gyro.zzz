@@ -1,5 +1,8 @@
 deps:
-  requestz:
-    local: ../../requestz
   zoogle-api:
     local: ..
+  requestz:
+    git:
+      url: "https://github.com/devins2518/requestz.git"
+      ref: 0ceadc9f04bb567eb2b3ca8577fc0a21f29f26b6
+      root: src/main.zig
