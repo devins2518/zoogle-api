@@ -2,10 +2,13 @@
 
 const std = @import("std");
 const requestz = @import("requestz");
+const oauth2 = requestz.oauth2;
 const StringHashMap = std.StringHashMap;
+const Allocator = std.mem.Allocator;
+const Headers = requestz.Headers;
 
-const base_url = "https://www.googleapis.com/";
-const root_url = "https://www.googleapis.com/";
+pub const base_url = "https://www.googleapis.com/";
+pub const root_url = "https://www.googleapis.com/";
 
 pub const Scope = enum {
     // View your email address
@@ -15,7 +18,7 @@ pub const Scope = enum {
     // Associate you with your personal info on Google
     openid,
 
-    fn toStr(self: @This()) []const u8 {
+    pub fn toStr(self: @This()) []const u8 {
         return switch (self) {
             .userinfoEmail => "https://www.googleapis.com/auth/userinfo.email",
             .userinfoProfile => "https://www.googleapis.com/auth/userinfo.profile",
@@ -67,12 +70,15 @@ const UserinfoSchema = struct {
 
 };
 pub const Service = struct {
+    @"allocator": Allocator,
     @"client": *requestz.Client,
-    @"base_url": []const u8 = "base_url",
-    @"root_url": []const u8 = "root_url",
+    @"auth": oauth2.Authenticator,
+    @"scopes": []const []const u8,
+    @"base_url": []const u8 = "https://www.googleapis.com/",
+    @"root_url": []const u8 = "https://www.googleapis.com/",
     @"user_agent": []const u8 = "zoogle-api-zig-client/0.1.0",
     // Data format for the response.
-    @"alt": []const u8 = "json",
+    @"alt": ?[]const u8 = "json",
     // Selector specifying which fields to include in a partial response.
     @"fields": ?[]const u8 = null,
     // API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.
@@ -80,7 +86,7 @@ pub const Service = struct {
     // OAuth 2.0 token for the current user.
     @"oauth_token": ?[]const u8 = null,
     // Returns response with indentations and line breaks.
-    @"prettyPrint": bool = true,
+    @"prettyPrint": ?bool = true,
     // An opaque string that represents a user for quota purposes. Must not exceed 40 characters.
     @"quotaUser": ?[]const u8 = null,
     // Deprecated. Please use quotaUser instead.
@@ -93,10 +99,62 @@ pub const Service = struct {
                 pub fn get(
                     self: *@This(),
                     service: *Service,
-                ) UserinfoSchema {
-                    // TODO: body
-                    _ = self;
-                    _ = service;
+                ) !UserinfoSchema {
+                    var headers = Headers.init(service.allocator);
+                    defer headers.deinit();
+                    var auth = std.ArrayList(u8).init(service.allocator);
+                    defer auth.deinit();
+                    try auth.appendSlice("Bearer: ");
+                    try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                    try headers.append("x-goog-api-client", service.user_agent);
+                    try headers.append("User-Agent", service.user_agent);
+                    try headers.append("Authorization", auth.items);
+                    inline for (std.meta.fields(Service)) |field| {
+                        const opt = @typeInfo(field.field_type) == .Optional;
+                        if (opt) {
+                            if (@field(service, field.name)) |f| {
+                                switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                    .Bool => if (f)
+                                        try headers.append(field.name, "true")
+                                    else
+                                        try headers.append(field.name, "false"),
+                                    else => try headers.append(field.name, f),
+                                }
+                            }
+                        }
+                    }
+                    inline for (std.meta.fields(@This())) |field| {
+                        const opt = @typeInfo(field.field_type) == .Optional;
+                        if (!opt) try headers.append(field.name, @field(self, field.name));
+                    }
+                    for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                    var url = std.ArrayList(u8).init(service.allocator);
+                    defer url.deinit();
+                    try url.appendSlice(service.base_url);
+                    try std.fmt.format(url.writer(), "userinfo/v2/me?", .{
+                    });
+                    var first = true;
+                    inline for (std.meta.fields(@This())) |field| {
+                        const opt = @typeInfo(field.field_type) == .Optional;
+                        const f = @field(self, field.name);
+                        if (opt) {
+                            if (f != null) {
+                                if (!first) try url.append('&');
+                                try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                                first = false;
+                            }
+                        }
+                    }
+                    var haystack = url.items;
+                    while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                        const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                        try url.replaceRange(real_first, 1, "%20");
+                        haystack = url.items[real_first + 3 ..];
+                    }
+                    std.debug.print("url: {s}\n", .{url.items});
+                    var response = try service.client.get(url.items, .{.headers = headers.items()});
+                    const json = try response.json();
+                    try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                     @panic("TODO: get");
                 }
                 pub fn init(
@@ -114,10 +172,62 @@ pub const Service = struct {
         pub fn get(
             self: *@This(),
             service: *Service,
-        ) UserinfoSchema {
-            // TODO: body
-            _ = self;
-            _ = service;
+        ) !UserinfoSchema {
+            var headers = Headers.init(service.allocator);
+            defer headers.deinit();
+            var auth = std.ArrayList(u8).init(service.allocator);
+            defer auth.deinit();
+            try auth.appendSlice("Bearer: ");
+            try auth.appendSlice((try service.auth.token(service.scopes)).value);
+            try headers.append("x-goog-api-client", service.user_agent);
+            try headers.append("User-Agent", service.user_agent);
+            try headers.append("Authorization", auth.items);
+            inline for (std.meta.fields(Service)) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                if (opt) {
+                    if (@field(service, field.name)) |f| {
+                        switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                            .Bool => if (f)
+                                try headers.append(field.name, "true")
+                            else
+                                try headers.append(field.name, "false"),
+                            else => try headers.append(field.name, f),
+                        }
+                    }
+                }
+            }
+            inline for (std.meta.fields(@This())) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                if (!opt) try headers.append(field.name, @field(self, field.name));
+            }
+            for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+            var url = std.ArrayList(u8).init(service.allocator);
+            defer url.deinit();
+            try url.appendSlice(service.base_url);
+            try std.fmt.format(url.writer(), "oauth2/v2/userinfo?", .{
+            });
+            var first = true;
+            inline for (std.meta.fields(@This())) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                const f = @field(self, field.name);
+                if (opt) {
+                    if (f != null) {
+                        if (!first) try url.append('&');
+                        try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                        first = false;
+                    }
+                }
+            }
+            var haystack = url.items;
+            while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                try url.replaceRange(real_first, 1, "%20");
+                haystack = url.items[real_first + 3 ..];
+            }
+            std.debug.print("url: {s}\n", .{url.items});
+            var response = try service.client.get(url.items, .{.headers = headers.items()});
+            const json = try response.json();
+            try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
             @panic("TODO: get");
         }
         pub fn init(
@@ -126,8 +236,17 @@ pub const Service = struct {
             };
         }
     };
+    pub fn @"allocatorSet"(self: *@This(), val: Allocator) void {
+        self.@"allocator" = val;
+    }
     pub fn @"clientSet"(self: *@This(), val: *requestz.Client) void {
         self.@"client" = val;
+    }
+    pub fn @"authSet"(self: *@This(), val: oauth2.Authenticator) void {
+        self.@"auth" = val;
+    }
+    pub fn @"scopesSet"(self: *@This(), val: []const []const u8) void {
+        self.@"scopes" = val;
     }
     pub fn @"base_urlSet"(self: *@This(), val: []const u8) void {
         self.@"base_url" = val;
@@ -138,7 +257,7 @@ pub const Service = struct {
     pub fn @"user_agentSet"(self: *@This(), val: []const u8) void {
         self.@"user_agent" = val;
     }
-    pub fn @"altSet"(self: *@This(), val: []const u8) void {
+    pub fn @"altSet"(self: *@This(), val: ?[]const u8) void {
         self.@"alt" = val;
     }
     pub fn @"fieldsSet"(self: *@This(), val: ?[]const u8) void {
@@ -150,7 +269,7 @@ pub const Service = struct {
     pub fn @"oauth_tokenSet"(self: *@This(), val: ?[]const u8) void {
         self.@"oauth_token" = val;
     }
-    pub fn @"prettyPrintSet"(self: *@This(), val: bool) void {
+    pub fn @"prettyPrintSet"(self: *@This(), val: ?bool) void {
         self.@"prettyPrint" = val;
     }
     pub fn @"quotaUserSet"(self: *@This(), val: ?[]const u8) void {
@@ -168,17 +287,75 @@ pub const Service = struct {
     pub fn tokeninfo(
         self: *@This(),
         service: *Service,
-    ) TokeninfoSchema {
-        // TODO: body
-        _ = self;
-        _ = service;
+    ) !TokeninfoSchema {
+        var headers = Headers.init(service.allocator);
+        defer headers.deinit();
+        var auth = std.ArrayList(u8).init(service.allocator);
+        defer auth.deinit();
+        try auth.appendSlice("Bearer: ");
+        try auth.appendSlice((try service.auth.token(service.scopes)).value);
+        try headers.append("x-goog-api-client", service.user_agent);
+        try headers.append("User-Agent", service.user_agent);
+        try headers.append("Authorization", auth.items);
+        inline for (std.meta.fields(Service)) |field| {
+            const opt = @typeInfo(field.field_type) == .Optional;
+            if (opt) {
+                if (@field(service, field.name)) |f| {
+                    switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                        .Bool => if (f)
+                            try headers.append(field.name, "true")
+                        else
+                            try headers.append(field.name, "false"),
+                        else => try headers.append(field.name, f),
+                    }
+                }
+            }
+        }
+        inline for (std.meta.fields(@This())) |field| {
+            const opt = @typeInfo(field.field_type) == .Optional;
+            if (!opt) try headers.append(field.name, @field(self, field.name));
+        }
+        for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+        var url = std.ArrayList(u8).init(service.allocator);
+        defer url.deinit();
+        try url.appendSlice(service.base_url);
+        try std.fmt.format(url.writer(), "oauth2/v2/tokeninfo?", .{
+        });
+        var first = true;
+        inline for (std.meta.fields(@This())) |field| {
+            const opt = @typeInfo(field.field_type) == .Optional;
+            const f = @field(self, field.name);
+            if (opt) {
+                if (f != null) {
+                    if (!first) try url.append('&');
+                    try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                    first = false;
+                }
+            }
+        }
+        var haystack = url.items;
+        while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+            const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+            try url.replaceRange(real_first, 1, "%20");
+            haystack = url.items[real_first + 3 ..];
+        }
+        std.debug.print("url: {s}\n", .{url.items});
+        var response = try service.client.post(url.items, .{.headers = headers.items()});
+        const json = try response.json();
+        try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
         @panic("TODO: tokeninfo");
     }
     pub fn init(
+        allocator: Allocator,
         client: *requestz.Client,
+        auth: oauth2.Authenticator,
+        scopes: []const []const u8,
     ) @This() {
         return @This(){
+            .allocator = allocator,
             .client = client,
+            .auth = auth,
+            .scopes = scopes,
         };
     }
 };

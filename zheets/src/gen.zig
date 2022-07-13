@@ -2,10 +2,13 @@
 
 const std = @import("std");
 const requestz = @import("requestz");
+const oauth2 = requestz.oauth2;
 const StringHashMap = std.StringHashMap;
+const Allocator = std.mem.Allocator;
+const Headers = requestz.Headers;
 
-const base_url = "https://sheets.googleapis.com/";
-const root_url = "https://sheets.googleapis.com/";
+pub const base_url = "https://sheets.googleapis.com/";
+pub const root_url = "https://sheets.googleapis.com/";
 
 pub const Scope = enum {
     // See, edit, create, and delete all of your Google Drive files
@@ -19,7 +22,7 @@ pub const Scope = enum {
     // See all your Google Sheets spreadsheets
     spreadsheetsReadonly,
 
-    fn toStr(self: @This()) []const u8 {
+    pub fn toStr(self: @This()) []const u8 {
         return switch (self) {
             .drive => "https://www.googleapis.com/auth/drive",
             .driveFile => "https://www.googleapis.com/auth/drive.file",
@@ -2799,16 +2802,19 @@ const WaterfallChartSpecSchema = struct {
 
 };
 pub const Service = struct {
+    @"allocator": Allocator,
     @"client": *requestz.Client,
-    @"base_url": []const u8 = "base_url",
-    @"root_url": []const u8 = "root_url",
+    @"auth": oauth2.Authenticator,
+    @"scopes": []const []const u8,
+    @"base_url": []const u8 = "https://sheets.googleapis.com/",
+    @"root_url": []const u8 = "https://sheets.googleapis.com/",
     @"user_agent": []const u8 = "zoogle-api-zig-client/0.1.0",
     // V1 error format.
     @"$.xgafv": ?[]const u8 = null,
     // OAuth access token.
     @"access_token": ?[]const u8 = null,
     // Data format for response.
-    @"alt": []const u8 = "json",
+    @"alt": ?[]const u8 = "json",
     // JSONP
     @"callback": ?[]const u8 = null,
     // Selector specifying which fields to include in a partial response.
@@ -2818,7 +2824,7 @@ pub const Service = struct {
     // OAuth 2.0 token for the current user.
     @"oauth_token": ?[]const u8 = null,
     // Returns response with indentations and line breaks.
-    @"prettyPrint": bool = true,
+    @"prettyPrint": ?bool = true,
     // Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.
     @"quotaUser": ?[]const u8 = null,
     // Legacy upload protocol for media (e.g. "media", "multipart").
@@ -2847,20 +2853,127 @@ pub const Service = struct {
             pub fn get(
                 self: *@This(),
                 service: *Service,
-            ) DeveloperMetadataSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !DeveloperMetadataSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/developerMetadata/{s}?", .{
+                    self.metadataId,
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.get(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: get");
             }
             // Returns all developer metadata matching the specified DataFilter. If the provided DataFilter represents a DeveloperMetadataLookup object, this will return all DeveloperMetadata entries selected by it. If the DataFilter represents a location in a spreadsheet, this will return all developer metadata associated with locations intersecting that region.
             pub fn search(
                 self: *@This(),
                 service: *Service,
-            ) SearchDeveloperMetadataResponseSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !SearchDeveloperMetadataResponseSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/developerMetadata:search?", .{
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: search");
             }
             pub fn init(
@@ -2888,10 +3001,64 @@ pub const Service = struct {
             pub fn copyTo(
                 self: *@This(),
                 service: *Service,
-            ) SheetPropertiesSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !SheetPropertiesSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/sheets/{s}:copyTo?", .{
+                    self.sheetId,
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: copyTo");
             }
             pub fn init(
@@ -2964,100 +3131,634 @@ pub const Service = struct {
             pub fn append(
                 self: *@This(),
                 service: *Service,
-            ) AppendValuesResponseSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !AppendValuesResponseSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/values/{s}:append?", .{
+                    self.range,
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: append");
             }
             // Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges. Only values are cleared -- all other properties of the cell (such as formatting and data validation) are kept.
             pub fn batchClear(
                 self: *@This(),
                 service: *Service,
-            ) BatchClearValuesResponseSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !BatchClearValuesResponseSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/values:batchClear?", .{
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: batchClear");
             }
             // Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges matching any of the specified data filters will be cleared. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept.
             pub fn batchClearByDataFilter(
                 self: *@This(),
                 service: *Service,
-            ) BatchClearValuesByDataFilterResponseSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !BatchClearValuesByDataFilterResponseSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/values:batchClearByDataFilter?", .{
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: batchClearByDataFilter");
             }
             // Returns one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges.
             pub fn batchGet(
                 self: *@This(),
                 service: *Service,
-            ) BatchGetValuesResponseSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !BatchGetValuesResponseSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/values:batchGet?", .{
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.get(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: batchGet");
             }
             // Returns one or more ranges of values that match the specified data filters. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges that match any of the data filters in the request will be returned.
             pub fn batchGetByDataFilter(
                 self: *@This(),
                 service: *Service,
-            ) BatchGetValuesByDataFilterResponseSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !BatchGetValuesByDataFilterResponseSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/values:batchGetByDataFilter?", .{
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: batchGetByDataFilter");
             }
             // Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more ValueRanges.
             pub fn batchUpdate(
                 self: *@This(),
                 service: *Service,
-            ) BatchUpdateValuesResponseSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !BatchUpdateValuesResponseSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/values:batchUpdate?", .{
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: batchUpdate");
             }
             // Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more DataFilterValueRanges.
             pub fn batchUpdateByDataFilter(
                 self: *@This(),
                 service: *Service,
-            ) BatchUpdateValuesByDataFilterResponseSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !BatchUpdateValuesByDataFilterResponseSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/values:batchUpdateByDataFilter?", .{
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: batchUpdateByDataFilter");
             }
             // Clears values from a spreadsheet. The caller must specify the spreadsheet ID and range. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept.
             pub fn clear(
                 self: *@This(),
                 service: *Service,
-            ) ClearValuesResponseSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !ClearValuesResponseSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/values/{s}:clear?", .{
+                    self.range,
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: clear");
             }
             // Returns a range of values from a spreadsheet. The caller must specify the spreadsheet ID and a range.
             pub fn get(
                 self: *@This(),
                 service: *Service,
-            ) ValueRangeSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !ValueRangeSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/values/{s}?", .{
+                    self.range,
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.get(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: get");
             }
             // Sets values in a range of a spreadsheet. The caller must specify the spreadsheet ID, range, and a valueInputOption.
             pub fn update(
                 self: *@This(),
                 service: *Service,
-            ) UpdateValuesResponseSchema {
-                // TODO: body
-                _ = self;
-                _ = service;
+            ) !UpdateValuesResponseSchema {
+                var headers = Headers.init(service.allocator);
+                defer headers.deinit();
+                var auth = std.ArrayList(u8).init(service.allocator);
+                defer auth.deinit();
+                try auth.appendSlice("Bearer: ");
+                try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                try headers.append("x-goog-api-client", service.user_agent);
+                try headers.append("User-Agent", service.user_agent);
+                try headers.append("Authorization", auth.items);
+                inline for (std.meta.fields(Service)) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (opt) {
+                        if (@field(service, field.name)) |f| {
+                            switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                                .Bool => if (f)
+                                    try headers.append(field.name, "true")
+                                else
+                                    try headers.append(field.name, "false"),
+                                else => try headers.append(field.name, f),
+                            }
+                        }
+                    }
+                }
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    if (!opt) try headers.append(field.name, @field(self, field.name));
+                }
+                for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+                var url = std.ArrayList(u8).init(service.allocator);
+                defer url.deinit();
+                try url.appendSlice(service.base_url);
+                try std.fmt.format(url.writer(), "v4/spreadsheets/{s}/values/{s}?", .{
+                    self.range,
+                    self.spreadsheetId,
+                });
+                var first = true;
+                inline for (std.meta.fields(@This())) |field| {
+                    const opt = @typeInfo(field.field_type) == .Optional;
+                    const f = @field(self, field.name);
+                    if (opt) {
+                        if (f != null) {
+                            if (!first) try url.append('&');
+                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            first = false;
+                        }
+                    }
+                }
+                var haystack = url.items;
+                while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                    const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                    try url.replaceRange(real_first, 1, "%20");
+                    haystack = url.items[real_first + 3 ..];
+                }
+                std.debug.print("url: {s}\n", .{url.items});
+                var response = try service.client.put(url.items, .{.headers = headers.items()});
+                const json = try response.json();
+                try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
                 @panic("TODO: update");
             }
             pub fn init(
@@ -3083,40 +3784,251 @@ pub const Service = struct {
         pub fn batchUpdate(
             self: *@This(),
             service: *Service,
-        ) BatchUpdateSpreadsheetResponseSchema {
-            // TODO: body
-            _ = self;
-            _ = service;
+        ) !BatchUpdateSpreadsheetResponseSchema {
+            var headers = Headers.init(service.allocator);
+            defer headers.deinit();
+            var auth = std.ArrayList(u8).init(service.allocator);
+            defer auth.deinit();
+            try auth.appendSlice("Bearer: ");
+            try auth.appendSlice((try service.auth.token(service.scopes)).value);
+            try headers.append("x-goog-api-client", service.user_agent);
+            try headers.append("User-Agent", service.user_agent);
+            try headers.append("Authorization", auth.items);
+            inline for (std.meta.fields(Service)) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                if (opt) {
+                    if (@field(service, field.name)) |f| {
+                        switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                            .Bool => if (f)
+                                try headers.append(field.name, "true")
+                            else
+                                try headers.append(field.name, "false"),
+                            else => try headers.append(field.name, f),
+                        }
+                    }
+                }
+            }
+            inline for (std.meta.fields(@This())) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                if (!opt) try headers.append(field.name, @field(self, field.name));
+            }
+            for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+            var url = std.ArrayList(u8).init(service.allocator);
+            defer url.deinit();
+            try url.appendSlice(service.base_url);
+            try std.fmt.format(url.writer(), "v4/spreadsheets/{s}:batchUpdate?", .{
+                self.spreadsheetId,
+            });
+            var first = true;
+            inline for (std.meta.fields(@This())) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                const f = @field(self, field.name);
+                if (opt) {
+                    if (f != null) {
+                        if (!first) try url.append('&');
+                        try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                        first = false;
+                    }
+                }
+            }
+            var haystack = url.items;
+            while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                try url.replaceRange(real_first, 1, "%20");
+                haystack = url.items[real_first + 3 ..];
+            }
+            std.debug.print("url: {s}\n", .{url.items});
+            var response = try service.client.post(url.items, .{.headers = headers.items()});
+            const json = try response.json();
+            try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
             @panic("TODO: batchUpdate");
         }
         // Creates a spreadsheet, returning the newly created spreadsheet.
         pub fn create(
             self: *@This(),
             service: *Service,
-        ) SpreadsheetSchema {
-            // TODO: body
-            _ = self;
-            _ = service;
+        ) !SpreadsheetSchema {
+            var headers = Headers.init(service.allocator);
+            defer headers.deinit();
+            var auth = std.ArrayList(u8).init(service.allocator);
+            defer auth.deinit();
+            try auth.appendSlice("Bearer: ");
+            try auth.appendSlice((try service.auth.token(service.scopes)).value);
+            try headers.append("x-goog-api-client", service.user_agent);
+            try headers.append("User-Agent", service.user_agent);
+            try headers.append("Authorization", auth.items);
+            inline for (std.meta.fields(Service)) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                if (opt) {
+                    if (@field(service, field.name)) |f| {
+                        switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                            .Bool => if (f)
+                                try headers.append(field.name, "true")
+                            else
+                                try headers.append(field.name, "false"),
+                            else => try headers.append(field.name, f),
+                        }
+                    }
+                }
+            }
+            inline for (std.meta.fields(@This())) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                if (!opt) try headers.append(field.name, @field(self, field.name));
+            }
+            for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+            var url = std.ArrayList(u8).init(service.allocator);
+            defer url.deinit();
+            try url.appendSlice(service.base_url);
+            try std.fmt.format(url.writer(), "v4/spreadsheets?", .{
+            });
+            var first = true;
+            inline for (std.meta.fields(@This())) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                const f = @field(self, field.name);
+                if (opt) {
+                    if (f != null) {
+                        if (!first) try url.append('&');
+                        try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                        first = false;
+                    }
+                }
+            }
+            var haystack = url.items;
+            while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                try url.replaceRange(real_first, 1, "%20");
+                haystack = url.items[real_first + 3 ..];
+            }
+            std.debug.print("url: {s}\n", .{url.items});
+            var response = try service.client.post(url.items, .{.headers = headers.items()});
+            const json = try response.json();
+            try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
             @panic("TODO: create");
         }
         // Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. By default, data within grids is not returned. You can include grid data in one of 2 ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData URL parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, as a best practice, retrieve only the specific spreadsheet fields that you want. To retrieve only subsets of spreadsheet data, use the ranges URL parameter. Ranges are specified using [A1 notation](/sheets/api/guides/concepts#cell). You can define a single cell (for example, `A1`) or multiple cells (for example, `A1:D5`). You can also get cells from other sheets within the same spreadsheet (for example, `Sheet2!A1:C4`) or retrieve multiple ranges at once (for example, `?ranges=A1:D5&ranges=Sheet2!A1:C4`). Limiting the range returns only the portions of the spreadsheet that intersect the requested ranges.
         pub fn get(
             self: *@This(),
             service: *Service,
-        ) SpreadsheetSchema {
-            // TODO: body
-            _ = self;
-            _ = service;
+        ) !SpreadsheetSchema {
+            var headers = Headers.init(service.allocator);
+            defer headers.deinit();
+            var auth = std.ArrayList(u8).init(service.allocator);
+            defer auth.deinit();
+            try auth.appendSlice("Bearer: ");
+            try auth.appendSlice((try service.auth.token(service.scopes)).value);
+            try headers.append("x-goog-api-client", service.user_agent);
+            try headers.append("User-Agent", service.user_agent);
+            try headers.append("Authorization", auth.items);
+            inline for (std.meta.fields(Service)) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                if (opt) {
+                    if (@field(service, field.name)) |f| {
+                        switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                            .Bool => if (f)
+                                try headers.append(field.name, "true")
+                            else
+                                try headers.append(field.name, "false"),
+                            else => try headers.append(field.name, f),
+                        }
+                    }
+                }
+            }
+            inline for (std.meta.fields(@This())) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                if (!opt) try headers.append(field.name, @field(self, field.name));
+            }
+            for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+            var url = std.ArrayList(u8).init(service.allocator);
+            defer url.deinit();
+            try url.appendSlice(service.base_url);
+            try std.fmt.format(url.writer(), "v4/spreadsheets/{s}?", .{
+                self.spreadsheetId,
+            });
+            var first = true;
+            inline for (std.meta.fields(@This())) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                const f = @field(self, field.name);
+                if (opt) {
+                    if (f != null) {
+                        if (!first) try url.append('&');
+                        try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                        first = false;
+                    }
+                }
+            }
+            var haystack = url.items;
+            while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                try url.replaceRange(real_first, 1, "%20");
+                haystack = url.items[real_first + 3 ..];
+            }
+            std.debug.print("url: {s}\n", .{url.items});
+            var response = try service.client.get(url.items, .{.headers = headers.items()});
+            const json = try response.json();
+            try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
             @panic("TODO: get");
         }
         // Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. This method differs from GetSpreadsheet in that it allows selecting which subsets of spreadsheet data to return by specifying a dataFilters parameter. Multiple DataFilters can be specified. Specifying one or more data filters returns the portions of the spreadsheet that intersect ranges matched by any of the filters. By default, data within grids is not returned. You can include grid data one of 2 ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, as a best practice, retrieve only the specific spreadsheet fields that you want.
         pub fn getByDataFilter(
             self: *@This(),
             service: *Service,
-        ) SpreadsheetSchema {
-            // TODO: body
-            _ = self;
-            _ = service;
+        ) !SpreadsheetSchema {
+            var headers = Headers.init(service.allocator);
+            defer headers.deinit();
+            var auth = std.ArrayList(u8).init(service.allocator);
+            defer auth.deinit();
+            try auth.appendSlice("Bearer: ");
+            try auth.appendSlice((try service.auth.token(service.scopes)).value);
+            try headers.append("x-goog-api-client", service.user_agent);
+            try headers.append("User-Agent", service.user_agent);
+            try headers.append("Authorization", auth.items);
+            inline for (std.meta.fields(Service)) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                if (opt) {
+                    if (@field(service, field.name)) |f| {
+                        switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {
+                            .Bool => if (f)
+                                try headers.append(field.name, "true")
+                            else
+                                try headers.append(field.name, "false"),
+                            else => try headers.append(field.name, f),
+                        }
+                    }
+                }
+            }
+            inline for (std.meta.fields(@This())) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                if (!opt) try headers.append(field.name, @field(self, field.name));
+            }
+            for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
+            var url = std.ArrayList(u8).init(service.allocator);
+            defer url.deinit();
+            try url.appendSlice(service.base_url);
+            try std.fmt.format(url.writer(), "v4/spreadsheets/{s}:getByDataFilter?", .{
+                self.spreadsheetId,
+            });
+            var first = true;
+            inline for (std.meta.fields(@This())) |field| {
+                const opt = @typeInfo(field.field_type) == .Optional;
+                const f = @field(self, field.name);
+                if (opt) {
+                    if (f != null) {
+                        if (!first) try url.append('&');
+                        try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                        first = false;
+                    }
+                }
+            }
+            var haystack = url.items;
+            while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
+                const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+                try url.replaceRange(real_first, 1, "%20");
+                haystack = url.items[real_first + 3 ..];
+            }
+            std.debug.print("url: {s}\n", .{url.items});
+            var response = try service.client.post(url.items, .{.headers = headers.items()});
+            const json = try response.json();
+            try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
             @panic("TODO: getByDataFilter");
         }
         pub fn init(
@@ -3127,8 +4039,17 @@ pub const Service = struct {
             };
         }
     };
+    pub fn @"allocatorSet"(self: *@This(), val: Allocator) void {
+        self.@"allocator" = val;
+    }
     pub fn @"clientSet"(self: *@This(), val: *requestz.Client) void {
         self.@"client" = val;
+    }
+    pub fn @"authSet"(self: *@This(), val: oauth2.Authenticator) void {
+        self.@"auth" = val;
+    }
+    pub fn @"scopesSet"(self: *@This(), val: []const []const u8) void {
+        self.@"scopes" = val;
     }
     pub fn @"base_urlSet"(self: *@This(), val: []const u8) void {
         self.@"base_url" = val;
@@ -3145,7 +4066,7 @@ pub const Service = struct {
     pub fn @"access_tokenSet"(self: *@This(), val: ?[]const u8) void {
         self.@"access_token" = val;
     }
-    pub fn @"altSet"(self: *@This(), val: []const u8) void {
+    pub fn @"altSet"(self: *@This(), val: ?[]const u8) void {
         self.@"alt" = val;
     }
     pub fn @"callbackSet"(self: *@This(), val: ?[]const u8) void {
@@ -3160,7 +4081,7 @@ pub const Service = struct {
     pub fn @"oauth_tokenSet"(self: *@This(), val: ?[]const u8) void {
         self.@"oauth_token" = val;
     }
-    pub fn @"prettyPrintSet"(self: *@This(), val: bool) void {
+    pub fn @"prettyPrintSet"(self: *@This(), val: ?bool) void {
         self.@"prettyPrint" = val;
     }
     pub fn @"quotaUserSet"(self: *@This(), val: ?[]const u8) void {
@@ -3173,10 +4094,16 @@ pub const Service = struct {
         self.@"upload_protocol" = val;
     }
     pub fn init(
+        allocator: Allocator,
         client: *requestz.Client,
+        auth: oauth2.Authenticator,
+        scopes: []const []const u8,
     ) @This() {
         return @This(){
+            .allocator = allocator,
             .client = client,
+            .auth = auth,
+            .scopes = scopes,
         };
     }
 };

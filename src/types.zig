@@ -11,7 +11,9 @@ pub const Method = struct {
     name: []const u8,
     params: ParamHashMap,
     method: HttpMethod,
+    path: []const u8,
     id: []const u8,
+    request_ty: ?[]const u8,
     return_ty: []const u8,
     return_alloc: bool,
 
@@ -28,10 +30,10 @@ pub const Method = struct {
                 var ty = try tyStrFromJsonValue(&pobj, allocator);
                 var optional = true;
                 if (obj.get("parameterOrder")) |param_order| {
-                    for (param_order.Array.items) |str| {
+                    for (param_order.Array.items) |str| blk: {
                         if (std.mem.eql(u8, str.String, param_name)) {
                             optional = false;
-                            break;
+                            break :blk;
                         }
                     }
                 }
@@ -43,18 +45,21 @@ pub const Method = struct {
                 try parent_fields.put(.{ .allocator = allocator, .desc = desc, .name = param_name, .ty = ty, .default = default, .optional = optional }, .{});
             }
         }
-        if (obj.get("request")) |req| {
-            const desc = if (req.Object.get("description")) |d| d.String else null;
-            const ty = try tyStrFromJsonValue(&req.Object, allocator);
-            const param_name = "schema";
-            const parameter = Parameter{ .allocator = allocator, .desc = desc, .name = param_name, .ty = ty, .optional = false };
-            try params.put(parameter, .{});
-        }
         const response = obj.get("response");
         const return_ty = if (response) |res|
             try tyStrFromJsonValue(&res.Object, allocator)
         else
             "requestz.Response";
+        var path = std.ArrayList(u8).init(allocator);
+        try path.appendSlice(obj.get("path").?.String);
+        var haystack = path.items;
+        while (std.mem.indexOfScalar(u8, haystack, '{')) |begin| {
+            const end = std.mem.indexOfScalar(u8, haystack, '}').?;
+            const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(path.items.ptr));
+            const real_end = end + (@ptrToInt(haystack.ptr) - @ptrToInt(path.items.ptr));
+            try path.replaceRange(real_first, real_end - real_first + 1, "{s}");
+            haystack = path.items[real_first + 3 ..];
+        }
 
         return Self{
             .allocator = allocator,
@@ -62,7 +67,12 @@ pub const Method = struct {
             .name = value.key_ptr.*,
             .params = params,
             .method = HttpMethod.fromStr(obj.get("httpMethod").?.String),
+            .path = path.toOwnedSlice(),
             .id = obj.get("id").?.String,
+            .request_ty = if (obj.get("request")) |req|
+                req.Object.get("$ref").?.String
+            else
+                null,
             .return_ty = return_ty,
             .return_alloc = response != null,
         };
@@ -84,14 +94,74 @@ pub const Method = struct {
             \\{[pre]s}pub fn {[name]s}(
             \\{[pre]s}    self: *@This(),
             \\{[pre]s}    service: *Service,
-            \\{[pre]s}) {[ret]s} {{
-            \\{[pre]s}    // TODO: body
-            \\{[pre]s}    _ = self;
-            \\{[pre]s}    _ = service;
-            \\{[pre]s}    @panic("TODO: {[name]s}");
-            \\{[pre]s}}}
+            \\{[pre]s}) !{[ret]s} {{
             \\
         , .{ .pre = pre.items, .name = self.name, .ret = self.return_ty });
+        try std.fmt.format(writer,
+            \\{[pre]s}    var headers = Headers.init(service.allocator);
+            \\{[pre]s}    defer headers.deinit();
+            \\{[pre]s}    var auth = std.ArrayList(u8).init(service.allocator);
+            \\{[pre]s}    defer auth.deinit();
+            \\{[pre]s}    try auth.appendSlice("Bearer: ");
+            \\{[pre]s}    try auth.appendSlice((try service.auth.token(service.scopes)).value);
+            \\{[pre]s}    try headers.append("x-goog-api-client", service.user_agent);
+            \\{[pre]s}    try headers.append("User-Agent", service.user_agent);
+            \\{[pre]s}    try headers.append("Authorization", auth.items);
+            \\{[pre]s}    inline for (std.meta.fields(Service)) |field| {{
+            \\{[pre]s}        const opt = @typeInfo(field.field_type) == .Optional;
+            \\{[pre]s}        if (opt) {{
+            \\{[pre]s}            if (@field(service, field.name)) |f| {{
+            \\{[pre]s}                switch (@typeInfo(@typeInfo(field.field_type).Optional.child)) {{
+            \\{[pre]s}                    .Bool => if (f)
+            \\{[pre]s}                        try headers.append(field.name, "true")
+            \\{[pre]s}                    else
+            \\{[pre]s}                        try headers.append(field.name, "false"),
+            \\{[pre]s}                    else => try headers.append(field.name, f),
+            \\{[pre]s}                }}
+            \\{[pre]s}            }}
+            \\{[pre]s}        }}
+            \\{[pre]s}    }}
+            \\{[pre]s}    inline for (std.meta.fields(@This())) |field| {{
+            \\{[pre]s}        const opt = @typeInfo(field.field_type) == .Optional;
+            \\{[pre]s}        if (!opt) try headers.append(field.name, @field(self, field.name));
+            \\{[pre]s}    }}
+            \\{[pre]s}    for (headers.items()) |i| std.debug.print("name: {{s}}, value: {{s}}\n", .{{i.name.value, i.value}});
+            \\{[pre]s}    var url = std.ArrayList(u8).init(service.allocator);
+            \\{[pre]s}    defer url.deinit();
+            \\{[pre]s}    try url.appendSlice(service.base_url);
+            \\{[pre]s}    try std.fmt.format(url.writer(), "{[path]s}?", .{{
+            \\
+        , .{ .pre = pre.items, .path = self.path });
+        var iter = self.params.iterator();
+        while (iter.next()) |params| try std.fmt.format(writer, "{s}        self.{s},\n", .{ pre.items, params.key_ptr.name });
+        try std.fmt.format(writer,
+            \\{[pre]s}    }});
+            \\{[pre]s}    var first = true;
+            \\{[pre]s}    inline for (std.meta.fields(@This())) |field| {{
+            \\{[pre]s}        const opt = @typeInfo(field.field_type) == .Optional;
+            \\{[pre]s}        const f = @field(self, field.name);
+            \\{[pre]s}        if (opt) {{
+            \\{[pre]s}            if (f != null) {{
+            \\{[pre]s}                if (!first) try url.append('&');
+            \\{[pre]s}                try std.fmt.format(url.writer(), "{{s}}={{s}}", .{{field.name, f}});
+            \\{[pre]s}                first = false;
+            \\{[pre]s}            }}
+            \\{[pre]s}        }}
+            \\{[pre]s}    }}
+            \\{[pre]s}    var haystack = url.items;
+            \\{[pre]s}    while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {{
+            \\{[pre]s}        const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
+            \\{[pre]s}        try url.replaceRange(real_first, 1, "%20");
+            \\{[pre]s}        haystack = url.items[real_first + 3 ..];
+            \\{[pre]s}    }}
+            \\{[pre]s}    std.debug.print("url: {{s}}\n", .{{url.items}});
+            \\{[pre]s}    var response = try service.client.{[method]s}(url.items, .{{.headers = headers.items()}});
+            \\{[pre]s}    const json = try response.json();
+            \\{[pre]s}    try json.root.jsonStringify(.{{.whitespace = .{{}}}}, std.io.getStdOut().writer());
+            \\
+        , .{ .pre = pre.items, .method = @tagName(self.method) });
+        try std.fmt.format(writer, "{s}    @panic(\"TODO: {s}\");\n", .{ pre.items, self.name });
+        try std.fmt.format(writer, "{s}}}\n", .{pre.items});
     }
 
     fn deinit(self: *Self) void {
@@ -100,6 +170,7 @@ pub const Method = struct {
         while (param_iter.next()) |param| param.key_ptr.deinit();
         self.params.deinit();
         if (self.return_alloc) allocator.free(self.return_ty);
+        allocator.free(self.path);
     }
 };
 
@@ -124,16 +195,6 @@ pub const HttpMethod = enum {
             Self.put
         else
             unreachable;
-    }
-
-    fn toStr(self: *const Self) []const u8 {
-        return switch (self) {
-            .get => "GET",
-            .post => "POST",
-            .patch => "PATCH",
-            .delete => "DELETE",
-            .put => "PUT",
-        };
     }
 };
 
@@ -428,7 +489,7 @@ pub fn genAuth(values: json.ObjectMap, allocator: Allocator, writer: anytype, li
     }
     try std.fmt.format(writer,
         \\
-        \\    fn toStr(self: @This()) []const u8 {{
+        \\    pub fn toStr(self: @This()) []const u8 {{
         \\        return switch (self) {{
         \\
     , .{});
@@ -493,9 +554,24 @@ pub fn genSchemas(values: json.ObjectMap, allocator: Allocator, writer: anytype)
 }
 pub fn genRootResources(values: json.ObjectMap, allocator: Allocator, writer: anytype) !void {
     var fields = ParamHashMap.init(allocator);
+    try fields.put(.{ .allocator = allocator, .name = "allocator", .ty = try allocator.dupe(u8, "Allocator"), .optional = false }, .{});
     try fields.put(.{ .allocator = allocator, .name = "client", .ty = try allocator.dupe(u8, "*requestz.Client"), .optional = false }, .{});
-    try fields.put(.{ .allocator = allocator, .name = "base_url", .ty = try allocator.dupe(u8, "[]const u8"), .default = "base_url", .optional = false }, .{});
-    try fields.put(.{ .allocator = allocator, .name = "root_url", .ty = try allocator.dupe(u8, "[]const u8"), .default = "root_url", .optional = false }, .{});
+    try fields.put(.{ .allocator = allocator, .name = "auth", .ty = try allocator.dupe(u8, "oauth2.Authenticator"), .optional = false }, .{});
+    try fields.put(.{ .allocator = allocator, .name = "scopes", .ty = try allocator.dupe(u8, "[]const []const u8"), .optional = false }, .{});
+    try fields.put(.{
+        .allocator = allocator,
+        .name = "base_url",
+        .ty = try allocator.dupe(u8, "[]const u8"),
+        .default = values.get("baseUrl").?.String,
+        .optional = false,
+    }, .{});
+    try fields.put(.{
+        .allocator = allocator,
+        .name = "root_url",
+        .ty = try allocator.dupe(u8, "[]const u8"),
+        .default = values.get("rootUrl").?.String,
+        .optional = false,
+    }, .{});
     try fields.put(.{
         .allocator = allocator,
         .name = "user_agent",
@@ -511,7 +587,8 @@ pub fn genRootResources(values: json.ObjectMap, allocator: Allocator, writer: an
             const desc = if (pobj.get("description")) |d| d.String else null;
             const default = if (pobj.get("default")) |d| d.String else null;
             var ty = try tyStrFromJsonValue(&pobj, allocator);
-            try fields.put(.{ .allocator = allocator, .desc = desc, .name = param_name, .ty = ty, .default = default, .optional = default == null }, .{});
+            // Force optional to segregate between param fields and internals added above
+            try fields.put(.{ .allocator = allocator, .desc = desc, .name = param_name, .ty = ty, .default = default, .optional = true }, .{});
         }
     }
     var resources = try std.ArrayList(Resource).initCapacity(allocator, 4);

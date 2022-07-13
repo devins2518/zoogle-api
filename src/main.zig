@@ -30,10 +30,13 @@ pub fn main() !void {
         \\
         \\const std = @import("std");
         \\const requestz = @import("requestz");
+        \\const oauth2 = requestz.oauth2;
         \\const StringHashMap = std.StringHashMap;
+        \\const Allocator = std.mem.Allocator;
+        \\const Headers = requestz.Headers;
         \\
-        \\const base_url = "{s}";
-        \\const root_url = "{s}";
+        \\pub const base_url = "{s}";
+        \\pub const root_url = "{s}";
         \\
         \\
     , .{ parsed.root.Object.get("baseUrl").?.String, parsed.root.Object.get("rootUrl").?.String });
