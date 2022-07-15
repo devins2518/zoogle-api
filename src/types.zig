@@ -58,13 +58,11 @@ pub const Method = struct {
             "requestz.Response";
         var path = std.ArrayList(u8).init(allocator);
         try path.appendSlice(obj.get("path").?.String);
-        var haystack = path.items;
-        while (std.mem.indexOfScalar(u8, haystack, '{')) |begin| {
-            const end = std.mem.indexOfScalar(u8, haystack, '}').?;
-            const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(path.items.ptr));
-            const real_end = end + (@ptrToInt(haystack.ptr) - @ptrToInt(path.items.ptr));
-            try path.replaceRange(real_first, real_end - real_first + 1, "{s}");
-            haystack = path.items[real_first + 3 ..];
+        var idx: usize = 0;
+        while (std.mem.indexOfScalarPos(u8, path.items, idx, '{')) |start| {
+            const end = std.mem.indexOfScalarPos(u8, path.items, idx, '}').?;
+            try path.replaceRange(start, end - start + 1, "{s}");
+            idx = start + 3;
         }
 
         return Self{
