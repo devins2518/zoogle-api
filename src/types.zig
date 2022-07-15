@@ -10,6 +10,7 @@ pub const Method = struct {
     desc: ?[]const u8,
     name: []const u8,
     params: ParamHashMap,
+    param_order: []const []const u8,
     method: HttpMethod,
     path: []const u8,
     id: []const u8,
@@ -45,6 +46,11 @@ pub const Method = struct {
                 try parent_fields.put(.{ .allocator = allocator, .desc = desc, .name = param_name, .ty = ty, .default = default, .optional = optional }, .{});
             }
         }
+        var param_order = std.ArrayList([]const u8).init(allocator);
+        if (obj.get("parameterOrder")) |param| {
+            var items = param.Array.items;
+            for (items) |item| try param_order.append(item.String);
+        }
         const response = obj.get("response");
         const return_ty = if (response) |res|
             try tyStrFromJsonValue(&res.Object, allocator)
@@ -66,6 +72,7 @@ pub const Method = struct {
             .desc = if (obj.get("description")) |d| d.String else null,
             .name = value.key_ptr.*,
             .params = params,
+            .param_order = param_order.toOwnedSlice(),
             .method = HttpMethod.fromStr(obj.get("httpMethod").?.String),
             .path = path.toOwnedSlice(),
             .id = obj.get("id").?.String,
@@ -95,15 +102,13 @@ pub const Method = struct {
             \\{[pre]s}    self: *@This(),
             \\{[pre]s}    service: *Service,
             \\{[pre]s}) !{[ret]s} {{
-            \\
-        , .{ .pre = pre.items, .name = self.name, .ret = self.return_ty });
-        try std.fmt.format(writer,
             \\{[pre]s}    var headers = Headers.init(service.allocator);
             \\{[pre]s}    defer headers.deinit();
             \\{[pre]s}    var auth = std.ArrayList(u8).init(service.allocator);
             \\{[pre]s}    defer auth.deinit();
-            \\{[pre]s}    try auth.appendSlice("Bearer: ");
-            \\{[pre]s}    try auth.appendSlice((try service.auth.token(service.scopes)).value);
+            \\{[pre]s}    const token = try service.auth.token(service.scopes);
+            \\{[pre]s}    try auth.appendSlice("Bearer ");
+            \\{[pre]s}    try auth.appendSlice(token.value);
             \\{[pre]s}    try headers.append("x-goog-api-client", service.user_agent);
             \\{[pre]s}    try headers.append("User-Agent", service.user_agent);
             \\{[pre]s}    try headers.append("Authorization", auth.items);
@@ -125,15 +130,13 @@ pub const Method = struct {
             \\{[pre]s}        const opt = @typeInfo(field.field_type) == .Optional;
             \\{[pre]s}        if (!opt) try headers.append(field.name, @field(self, field.name));
             \\{[pre]s}    }}
-            \\{[pre]s}    for (headers.items()) |i| std.debug.print("name: {{s}}, value: {{s}}\n", .{{i.name.value, i.value}});
             \\{[pre]s}    var url = std.ArrayList(u8).init(service.allocator);
             \\{[pre]s}    defer url.deinit();
             \\{[pre]s}    try url.appendSlice(service.base_url);
             \\{[pre]s}    try std.fmt.format(url.writer(), "{[path]s}?", .{{
             \\
-        , .{ .pre = pre.items, .path = self.path });
-        var iter = self.params.iterator();
-        while (iter.next()) |params| try std.fmt.format(writer, "{s}        self.{s},\n", .{ pre.items, params.key_ptr.name });
+        , .{ .pre = pre.items, .path = self.path, .name = self.name, .ret = self.return_ty });
+        for (self.param_order) |param| try std.fmt.format(writer, "{s}        self.{s},\n", .{ pre.items, param });
         try std.fmt.format(writer,
             \\{[pre]s}    }});
             \\{[pre]s}    var first = true;
@@ -148,20 +151,20 @@ pub const Method = struct {
             \\{[pre]s}            }}
             \\{[pre]s}        }}
             \\{[pre]s}    }}
-            \\{[pre]s}    var haystack = url.items;
-            \\{[pre]s}    while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {{
-            \\{[pre]s}        const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
-            \\{[pre]s}        try url.replaceRange(real_first, 1, "%20");
-            \\{[pre]s}        haystack = url.items[real_first + 3 ..];
+            \\{[pre]s}    var idx: usize = 0;
+            \\{[pre]s}    while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {{
+            \\{[pre]s}        try url.replaceRange(begin, 1, "%20");
+            \\{[pre]s}        idx = begin + 3;
             \\{[pre]s}    }}
-            \\{[pre]s}    std.debug.print("url: {{s}}\n", .{{url.items}});
             \\{[pre]s}    var response = try service.client.{[method]s}(url.items, .{{.headers = headers.items()}});
-            \\{[pre]s}    const json = try response.json();
-            \\{[pre]s}    try json.root.jsonStringify(.{{.whitespace = .{{}}}}, std.io.getStdOut().writer());
+            \\{[pre]s}    defer response.deinit();
+            \\{[pre]s}    var tokens = std.json.TokenStream.init(response.body);
+            \\{[pre]s}    return std.json.parse({[ret]s}, &tokens, .{{ .allocator = service.allocator }});
+            \\{[pre]s}}}
             \\
-        , .{ .pre = pre.items, .method = @tagName(self.method) });
-        try std.fmt.format(writer, "{s}    @panic(\"TODO: {s}\");\n", .{ pre.items, self.name });
-        try std.fmt.format(writer, "{s}}}\n", .{pre.items});
+        , .{ .pre = pre.items, .method = @tagName(self.method), .ret = self.return_ty });
+        // try std.fmt.format(writer, "{s}    @panic(\"TODO: {s}\");\n", .{ pre.items, self.name });
+        // try std.fmt.format(writer, "{s}}}\n", .{pre.items});
     }
 
     fn deinit(self: *Self) void {
@@ -170,6 +173,7 @@ pub const Method = struct {
         while (param_iter.next()) |param| param.key_ptr.deinit();
         self.params.deinit();
         if (self.return_alloc) allocator.free(self.return_ty);
+        allocator.free(self.param_order);
         allocator.free(self.path);
     }
 };
@@ -519,6 +523,7 @@ pub fn genSchemas(values: json.ObjectMap, allocator: Allocator, writer: anytype)
         }
         try std.fmt.format(writer,
             \\const {s}Schema = struct {{
+            \\    const Self = @This();
             \\
         , .{schema_obj.key_ptr.*});
         var prop_iter = schema.get("properties").?.Object.iterator();
@@ -546,6 +551,9 @@ pub fn genSchemas(values: json.ObjectMap, allocator: Allocator, writer: anytype)
             , .{});
         }
         try std.fmt.format(writer,
+            \\    pub fn deinit(self: Self, service: *Service) void {{
+            \\        std.json.parseFree(Self, self, .{{ .allocator = service.allocator }});
+            \\    }}
             \\
             \\}};
             \\
@@ -556,7 +564,7 @@ pub fn genRootResources(values: json.ObjectMap, allocator: Allocator, writer: an
     var fields = ParamHashMap.init(allocator);
     try fields.put(.{ .allocator = allocator, .name = "allocator", .ty = try allocator.dupe(u8, "Allocator"), .optional = false }, .{});
     try fields.put(.{ .allocator = allocator, .name = "client", .ty = try allocator.dupe(u8, "*requestz.Client"), .optional = false }, .{});
-    try fields.put(.{ .allocator = allocator, .name = "auth", .ty = try allocator.dupe(u8, "oauth2.Authenticator"), .optional = false }, .{});
+    try fields.put(.{ .allocator = allocator, .name = "auth", .ty = try allocator.dupe(u8, "*oauth2.Authenticator"), .optional = false }, .{});
     try fields.put(.{ .allocator = allocator, .name = "scopes", .ty = try allocator.dupe(u8, "[]const []const u8"), .optional = false }, .{});
     try fields.put(.{
         .allocator = allocator,

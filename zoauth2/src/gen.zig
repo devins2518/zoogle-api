@@ -28,6 +28,7 @@ pub const Scope = enum {
 };
 
 const TokeninfoSchema = struct {
+    const Self = @This();
     // Who is the intended audience for this token. In general the same as issued_to.
     audience: []const u8,
     // The email address of the user. Present only if the email scope is present in the request.
@@ -42,9 +43,13 @@ const TokeninfoSchema = struct {
     user_id: []const u8,
     // Boolean flag which is true if the email address is verified. Present only if the email scope is present in the request.
     verified_email: bool,
+    pub fn deinit(self: Self, service: *Service) void {
+        std.json.parseFree(Self, self, .{ .allocator = service.allocator });
+    }
 
 };
 const UserinfoSchema = struct {
+    const Self = @This();
     // The user's email address.
     email: []const u8,
     // The user's last name.
@@ -67,12 +72,15 @@ const UserinfoSchema = struct {
     picture: []const u8,
     // Boolean flag which is true if the email address is verified. Always verified because we only return the user's primary email address.
     verified_email: bool = true,
+    pub fn deinit(self: Self, service: *Service) void {
+        std.json.parseFree(Self, self, .{ .allocator = service.allocator });
+    }
 
 };
 pub const Service = struct {
     @"allocator": Allocator,
     @"client": *requestz.Client,
-    @"auth": oauth2.Authenticator,
+    @"auth": *oauth2.Authenticator,
     @"scopes": []const []const u8,
     @"base_url": []const u8 = "https://www.googleapis.com/",
     @"root_url": []const u8 = "https://www.googleapis.com/",
@@ -104,8 +112,9 @@ pub const Service = struct {
                     defer headers.deinit();
                     var auth = std.ArrayList(u8).init(service.allocator);
                     defer auth.deinit();
-                    try auth.appendSlice("Bearer: ");
-                    try auth.appendSlice((try service.auth.token(service.scopes)).value);
+                    const token = try service.auth.token(service.scopes);
+                    try auth.appendSlice("Bearer ");
+                    try auth.appendSlice(token.value);
                     try headers.append("x-goog-api-client", service.user_agent);
                     try headers.append("User-Agent", service.user_agent);
                     try headers.append("Authorization", auth.items);
@@ -127,7 +136,6 @@ pub const Service = struct {
                         const opt = @typeInfo(field.field_type) == .Optional;
                         if (!opt) try headers.append(field.name, @field(self, field.name));
                     }
-                    for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
                     var url = std.ArrayList(u8).init(service.allocator);
                     defer url.deinit();
                     try url.appendSlice(service.base_url);
@@ -145,17 +153,15 @@ pub const Service = struct {
                             }
                         }
                     }
-                    var haystack = url.items;
-                    while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
-                        const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
-                        try url.replaceRange(real_first, 1, "%20");
-                        haystack = url.items[real_first + 3 ..];
+                    var idx: usize = 0;
+                    while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
+                        try url.replaceRange(begin, 1, "%20");
+                        idx = begin + 3;
                     }
-                    std.debug.print("url: {s}\n", .{url.items});
                     var response = try service.client.get(url.items, .{.headers = headers.items()});
-                    const json = try response.json();
-                    try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
-                    @panic("TODO: get");
+                    defer response.deinit();
+                    var tokens = std.json.TokenStream.init(response.body);
+                    return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator });
                 }
                 pub fn init(
                 ) @This() {
@@ -177,8 +183,9 @@ pub const Service = struct {
             defer headers.deinit();
             var auth = std.ArrayList(u8).init(service.allocator);
             defer auth.deinit();
-            try auth.appendSlice("Bearer: ");
-            try auth.appendSlice((try service.auth.token(service.scopes)).value);
+            const token = try service.auth.token(service.scopes);
+            try auth.appendSlice("Bearer ");
+            try auth.appendSlice(token.value);
             try headers.append("x-goog-api-client", service.user_agent);
             try headers.append("User-Agent", service.user_agent);
             try headers.append("Authorization", auth.items);
@@ -200,7 +207,6 @@ pub const Service = struct {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 if (!opt) try headers.append(field.name, @field(self, field.name));
             }
-            for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
             var url = std.ArrayList(u8).init(service.allocator);
             defer url.deinit();
             try url.appendSlice(service.base_url);
@@ -218,17 +224,15 @@ pub const Service = struct {
                     }
                 }
             }
-            var haystack = url.items;
-            while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
-                const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
-                try url.replaceRange(real_first, 1, "%20");
-                haystack = url.items[real_first + 3 ..];
+            var idx: usize = 0;
+            while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
+                try url.replaceRange(begin, 1, "%20");
+                idx = begin + 3;
             }
-            std.debug.print("url: {s}\n", .{url.items});
             var response = try service.client.get(url.items, .{.headers = headers.items()});
-            const json = try response.json();
-            try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
-            @panic("TODO: get");
+            defer response.deinit();
+            var tokens = std.json.TokenStream.init(response.body);
+            return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator });
         }
         pub fn init(
         ) @This() {
@@ -242,7 +246,7 @@ pub const Service = struct {
     pub fn @"clientSet"(self: *@This(), val: *requestz.Client) void {
         self.@"client" = val;
     }
-    pub fn @"authSet"(self: *@This(), val: oauth2.Authenticator) void {
+    pub fn @"authSet"(self: *@This(), val: *oauth2.Authenticator) void {
         self.@"auth" = val;
     }
     pub fn @"scopesSet"(self: *@This(), val: []const []const u8) void {
@@ -292,8 +296,9 @@ pub const Service = struct {
         defer headers.deinit();
         var auth = std.ArrayList(u8).init(service.allocator);
         defer auth.deinit();
-        try auth.appendSlice("Bearer: ");
-        try auth.appendSlice((try service.auth.token(service.scopes)).value);
+        const token = try service.auth.token(service.scopes);
+        try auth.appendSlice("Bearer ");
+        try auth.appendSlice(token.value);
         try headers.append("x-goog-api-client", service.user_agent);
         try headers.append("User-Agent", service.user_agent);
         try headers.append("Authorization", auth.items);
@@ -315,7 +320,6 @@ pub const Service = struct {
             const opt = @typeInfo(field.field_type) == .Optional;
             if (!opt) try headers.append(field.name, @field(self, field.name));
         }
-        for (headers.items()) |i| std.debug.print("name: {s}, value: {s}\n", .{i.name.value, i.value});
         var url = std.ArrayList(u8).init(service.allocator);
         defer url.deinit();
         try url.appendSlice(service.base_url);
@@ -333,22 +337,20 @@ pub const Service = struct {
                 }
             }
         }
-        var haystack = url.items;
-        while (std.mem.indexOfScalar(u8, haystack, ' ')) |begin| {
-            const real_first = begin + (@ptrToInt(haystack.ptr) - @ptrToInt(url.items.ptr));
-            try url.replaceRange(real_first, 1, "%20");
-            haystack = url.items[real_first + 3 ..];
+        var idx: usize = 0;
+        while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
+            try url.replaceRange(begin, 1, "%20");
+            idx = begin + 3;
         }
-        std.debug.print("url: {s}\n", .{url.items});
         var response = try service.client.post(url.items, .{.headers = headers.items()});
-        const json = try response.json();
-        try json.root.jsonStringify(.{.whitespace = .{}}, std.io.getStdOut().writer());
-        @panic("TODO: tokeninfo");
+        defer response.deinit();
+        var tokens = std.json.TokenStream.init(response.body);
+        return std.json.parse(TokeninfoSchema, &tokens, .{ .allocator = service.allocator });
     }
     pub fn init(
         allocator: Allocator,
         client: *requestz.Client,
-        auth: oauth2.Authenticator,
+        auth: *oauth2.Authenticator,
         scopes: []const []const u8,
     ) @This() {
         return @This(){

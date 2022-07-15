@@ -13,7 +13,7 @@ pub const pkgs = struct {
     pub const requestz = Pkg{
         .name = "requestz",
         .source = FileSource{
-            .path = ".gyro/requestz-devins2518-github.com-0ceadc9f/pkg/src/main.zig",
+            .path = ".gyro/requestz-devins2518-github.com-03edc848/pkg/src/main.zig",
         },
         .dependencies = &[_]Pkg{
             Pkg{
@@ -46,6 +46,12 @@ pub const pkgs = struct {
                             .path = ".gyro/http-ducdetronquito-0.1.4-astrolabe.pm/pkg/src/main.zig",
                         },
                     },
+                },
+            },
+            Pkg{
+                .name = "apple_pie",
+                .source = FileSource{
+                    .path = ".gyro/apple_pie-Luukdegram-github.com-55b25cf5/pkg/src/apple_pie.zig",
                 },
             },
         },
