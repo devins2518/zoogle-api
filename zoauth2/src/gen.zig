@@ -7,6 +7,8 @@ const StringHashMap = std.StringHashMap;
 const Allocator = std.mem.Allocator;
 const Headers = requestz.Headers;
 
+const log = std.log.scoped(.zoogle_api);
+
 pub const base_url = "https://www.googleapis.com/";
 pub const root_url = "https://www.googleapis.com/";
 
@@ -118,6 +120,7 @@ pub const Service = struct {
                     try headers.append("x-goog-api-client", service.user_agent);
                     try headers.append("User-Agent", service.user_agent);
                     try headers.append("Authorization", auth.items);
+                    for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                     inline for (std.meta.fields(Service)) |field| {
                         const opt = @typeInfo(field.field_type) == .Optional;
                         if (opt) {
@@ -158,7 +161,9 @@ pub const Service = struct {
                         try url.replaceRange(begin, 1, "%20");
                         idx = begin + 3;
                     }
+                    log.info("Url: {s}\n", .{url.items});
                     var response = try service.client.get(url.items, .{.headers = headers.items()});
+                    log.info("Response: {s}\n", .{response.body});
                     defer response.deinit();
                     var tokens = std.json.TokenStream.init(response.body);
                     return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator });
@@ -189,6 +194,7 @@ pub const Service = struct {
             try headers.append("x-goog-api-client", service.user_agent);
             try headers.append("User-Agent", service.user_agent);
             try headers.append("Authorization", auth.items);
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
             inline for (std.meta.fields(Service)) |field| {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 if (opt) {
@@ -229,7 +235,9 @@ pub const Service = struct {
                 try url.replaceRange(begin, 1, "%20");
                 idx = begin + 3;
             }
+            log.info("Url: {s}\n", .{url.items});
             var response = try service.client.get(url.items, .{.headers = headers.items()});
+            log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
             return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator });
@@ -302,6 +310,7 @@ pub const Service = struct {
         try headers.append("x-goog-api-client", service.user_agent);
         try headers.append("User-Agent", service.user_agent);
         try headers.append("Authorization", auth.items);
+        for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
         inline for (std.meta.fields(Service)) |field| {
             const opt = @typeInfo(field.field_type) == .Optional;
             if (opt) {
@@ -342,7 +351,9 @@ pub const Service = struct {
             try url.replaceRange(begin, 1, "%20");
             idx = begin + 3;
         }
+        log.info("Url: {s}\n", .{url.items});
         var response = try service.client.post(url.items, .{.headers = headers.items()});
+        log.info("Response: {s}\n", .{response.body});
         defer response.deinit();
         var tokens = std.json.TokenStream.init(response.body);
         return std.json.parse(TokeninfoSchema, &tokens, .{ .allocator = service.allocator });

@@ -35,6 +35,8 @@ pub fn main() !void {
         \\const Allocator = std.mem.Allocator;
         \\const Headers = requestz.Headers;
         \\
+        \\const log = std.log.scoped(.zoogle_api);
+        \\
         \\pub const base_url = "{s}";
         \\pub const root_url = "{s}";
         \\

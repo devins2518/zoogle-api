@@ -110,6 +110,7 @@ pub const Method = struct {
             \\{[pre]s}    try headers.append("x-goog-api-client", service.user_agent);
             \\{[pre]s}    try headers.append("User-Agent", service.user_agent);
             \\{[pre]s}    try headers.append("Authorization", auth.items);
+            \\{[pre]s}    for (headers.items()) |header| log.info("Header:\n    Name: {{s}}, Value: {{s}}\n", .{{header.name.value, header.value}});
             \\{[pre]s}    inline for (std.meta.fields(Service)) |field| {{
             \\{[pre]s}        const opt = @typeInfo(field.field_type) == .Optional;
             \\{[pre]s}        if (opt) {{
@@ -154,7 +155,9 @@ pub const Method = struct {
             \\{[pre]s}        try url.replaceRange(begin, 1, "%20");
             \\{[pre]s}        idx = begin + 3;
             \\{[pre]s}    }}
+            \\{[pre]s}    log.info("Url: {{s}}\n", .{{url.items}});
             \\{[pre]s}    var response = try service.client.{[method]s}(url.items, .{{.headers = headers.items()}});
+            \\{[pre]s}    log.info("Response: {{s}}\n", .{{response.body}});
             \\{[pre]s}    defer response.deinit();
             \\{[pre]s}    var tokens = std.json.TokenStream.init(response.body);
             \\{[pre]s}    return std.json.parse({[ret]s}, &tokens, .{{ .allocator = service.allocator }});
