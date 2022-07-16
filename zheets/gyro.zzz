@@ -5,4 +5,7 @@ deps:
       ref: ae9ba4b62dc8c1b12c678bc4a443a844ff44c6b5
       root: src/lib.zig
   requestz:
-    local: ../../trash/requestz
+    git:
+      url: "https://github.com/devins2518/requestz.git"
+      ref: da32d03a7ae0179eac0d28e83dc83339361bf576
+      root: src/main.zig

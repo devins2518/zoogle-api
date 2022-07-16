@@ -1,6 +1,6 @@
 pkgs:
   zheets:
-    version: 0.1.5
+    version: 0.1.6
     root: zheets/src/gen.zig
     files:
       zheets/gyro.zzz
@@ -10,5 +10,5 @@ deps:
   requestz:
     git:
       url: "https://github.com/devins2518/requestz.git"
-      ref: 03edc84886af2b4185f9ec131d6ee08803b16557
+      ref: da32d03a7ae0179eac0d28e83dc83339361bf576
       root: src/main.zig
