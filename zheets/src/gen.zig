@@ -3846,7 +3846,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -3889,11 +3888,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.get(url.items, .{ .headers = headers.items() });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(DeveloperMetadataSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             // Returns all developer metadata matching the specified DataFilter. If the provided DataFilter represents a DeveloperMetadataLookup object, this will return all DeveloperMetadata entries selected by it. If the DataFilter represents a location in a spreadsheet, this will return all developer metadata associated with locations intersecting that region.
@@ -3912,7 +3912,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -3954,7 +3953,7 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
+                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 log.info("Body: {s}\n", .{body});
@@ -3962,6 +3961,8 @@ pub const Service = struct {
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(SearchDeveloperMetadataResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             pub fn init(
@@ -4001,7 +4002,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4044,7 +4044,7 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
+                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 log.info("Body: {s}\n", .{body});
@@ -4052,6 +4052,8 @@ pub const Service = struct {
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(SheetPropertiesSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             pub fn init(
@@ -4136,7 +4138,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4179,7 +4180,7 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
+                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 log.info("Body: {s}\n", .{body});
@@ -4187,6 +4188,8 @@ pub const Service = struct {
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(AppendValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             // Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges. Only values are cleared -- all other properties of the cell (such as formatting and data validation) are kept.
@@ -4205,7 +4208,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4247,7 +4249,7 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
+                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 log.info("Body: {s}\n", .{body});
@@ -4255,6 +4257,8 @@ pub const Service = struct {
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(BatchClearValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             // Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges matching any of the specified data filters will be cleared. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept.
@@ -4273,7 +4277,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4315,7 +4318,7 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
+                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 log.info("Body: {s}\n", .{body});
@@ -4323,6 +4326,8 @@ pub const Service = struct {
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(BatchClearValuesByDataFilterResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             // Returns one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges.
@@ -4340,7 +4345,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4382,11 +4386,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.get(url.items, .{ .headers = headers.items() });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(BatchGetValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             // Returns one or more ranges of values that match the specified data filters. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges that match any of the data filters in the request will be returned.
@@ -4405,7 +4410,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4447,7 +4451,7 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
+                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 log.info("Body: {s}\n", .{body});
@@ -4455,6 +4459,8 @@ pub const Service = struct {
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(BatchGetValuesByDataFilterResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             // Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more ValueRanges.
@@ -4473,7 +4479,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4515,7 +4520,7 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
+                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 log.info("Body: {s}\n", .{body});
@@ -4523,6 +4528,8 @@ pub const Service = struct {
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(BatchUpdateValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             // Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more DataFilterValueRanges.
@@ -4541,7 +4548,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4583,7 +4589,7 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
+                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 log.info("Body: {s}\n", .{body});
@@ -4591,6 +4597,8 @@ pub const Service = struct {
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(BatchUpdateValuesByDataFilterResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             // Clears values from a spreadsheet. The caller must specify the spreadsheet ID and range. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept.
@@ -4609,7 +4617,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4652,7 +4659,7 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
+                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 log.info("Body: {s}\n", .{body});
@@ -4660,6 +4667,8 @@ pub const Service = struct {
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(ClearValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             // Returns a range of values from a spreadsheet. The caller must specify the spreadsheet ID and a range.
@@ -4677,7 +4686,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4720,11 +4728,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.get(url.items, .{ .headers = headers.items() });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(ValueRangeSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             // Sets values in a range of a spreadsheet. The caller must specify the spreadsheet ID, range, and a valueInputOption.
@@ -4743,7 +4752,6 @@ pub const Service = struct {
                 try headers.append("x-goog-api-client", service.user_agent);
                 try headers.append("User-Agent", service.user_agent);
                 try headers.append("Authorization", auth.items);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                 inline for (std.meta.fields(Service)) |field| {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     if (opt) {
@@ -4786,7 +4794,7 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                log.info("Url: {s}\n", .{url.items});
+                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 log.info("Body: {s}\n", .{body});
@@ -4794,6 +4802,8 @@ pub const Service = struct {
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                log.info("Url: {s}\n", .{url.items});
                 return std.json.parse(UpdateValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
             }
             pub fn init(
@@ -4831,7 +4841,6 @@ pub const Service = struct {
             try headers.append("x-goog-api-client", service.user_agent);
             try headers.append("User-Agent", service.user_agent);
             try headers.append("Authorization", auth.items);
-            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
             inline for (std.meta.fields(Service)) |field| {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 if (opt) {
@@ -4873,7 +4882,7 @@ pub const Service = struct {
                 try url.replaceRange(begin, 1, "%20");
                 idx = begin + 3;
             }
-            log.info("Url: {s}\n", .{url.items});
+            try headers.append("Content-Type", "application/json");
             const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
             log.info("Body: {s}\n", .{body});
@@ -4881,6 +4890,8 @@ pub const Service = struct {
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+            log.info("Url: {s}\n", .{url.items});
             return std.json.parse(BatchUpdateSpreadsheetResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
         }
         // Creates a spreadsheet, returning the newly created spreadsheet.
@@ -4899,7 +4910,6 @@ pub const Service = struct {
             try headers.append("x-goog-api-client", service.user_agent);
             try headers.append("User-Agent", service.user_agent);
             try headers.append("Authorization", auth.items);
-            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
             inline for (std.meta.fields(Service)) |field| {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 if (opt) {
@@ -4940,7 +4950,7 @@ pub const Service = struct {
                 try url.replaceRange(begin, 1, "%20");
                 idx = begin + 3;
             }
-            log.info("Url: {s}\n", .{url.items});
+            try headers.append("Content-Type", "application/json");
             const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
             log.info("Body: {s}\n", .{body});
@@ -4948,6 +4958,8 @@ pub const Service = struct {
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+            log.info("Url: {s}\n", .{url.items});
             return std.json.parse(SpreadsheetSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
         }
         // Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. By default, data within grids is not returned. You can include grid data in one of 2 ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData URL parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, as a best practice, retrieve only the specific spreadsheet fields that you want. To retrieve only subsets of spreadsheet data, use the ranges URL parameter. Ranges are specified using [A1 notation](/sheets/api/guides/concepts#cell). You can define a single cell (for example, `A1`) or multiple cells (for example, `A1:D5`). You can also get cells from other sheets within the same spreadsheet (for example, `Sheet2!A1:C4`) or retrieve multiple ranges at once (for example, `?ranges=A1:D5&ranges=Sheet2!A1:C4`). Limiting the range returns only the portions of the spreadsheet that intersect the requested ranges.
@@ -4965,7 +4977,6 @@ pub const Service = struct {
             try headers.append("x-goog-api-client", service.user_agent);
             try headers.append("User-Agent", service.user_agent);
             try headers.append("Authorization", auth.items);
-            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
             inline for (std.meta.fields(Service)) |field| {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 if (opt) {
@@ -5007,11 +5018,12 @@ pub const Service = struct {
                 try url.replaceRange(begin, 1, "%20");
                 idx = begin + 3;
             }
-            log.info("Url: {s}\n", .{url.items});
             var response = try service.client.get(url.items, .{ .headers = headers.items() });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+            log.info("Url: {s}\n", .{url.items});
             return std.json.parse(SpreadsheetSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
         }
         // Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. This method differs from GetSpreadsheet in that it allows selecting which subsets of spreadsheet data to return by specifying a dataFilters parameter. Multiple DataFilters can be specified. Specifying one or more data filters returns the portions of the spreadsheet that intersect ranges matched by any of the filters. By default, data within grids is not returned. You can include grid data one of 2 ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, as a best practice, retrieve only the specific spreadsheet fields that you want.
@@ -5030,7 +5042,6 @@ pub const Service = struct {
             try headers.append("x-goog-api-client", service.user_agent);
             try headers.append("User-Agent", service.user_agent);
             try headers.append("Authorization", auth.items);
-            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
             inline for (std.meta.fields(Service)) |field| {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 if (opt) {
@@ -5072,7 +5083,7 @@ pub const Service = struct {
                 try url.replaceRange(begin, 1, "%20");
                 idx = begin + 3;
             }
-            log.info("Url: {s}\n", .{url.items});
+            try headers.append("Content-Type", "application/json");
             const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
             log.info("Body: {s}\n", .{body});
@@ -5080,6 +5091,8 @@ pub const Service = struct {
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+            log.info("Url: {s}\n", .{url.items});
             return std.json.parse(SpreadsheetSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
         }
         pub fn init(

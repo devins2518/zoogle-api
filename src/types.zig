@@ -119,7 +119,6 @@ pub const Method = struct {
             \\{[pre]s}    try headers.append("x-goog-api-client", service.user_agent);
             \\{[pre]s}    try headers.append("User-Agent", service.user_agent);
             \\{[pre]s}    try headers.append("Authorization", auth.items);
-            \\{[pre]s}    for (headers.items()) |header| log.info("Header:\n    Name: {{s}}, Value: {{s}}\n", .{{header.name.value, header.value}});
             \\{[pre]s}    inline for (std.meta.fields(Service)) |field| {{
             \\{[pre]s}        const opt = @typeInfo(field.field_type) == .Optional;
             \\{[pre]s}        if (opt) {{
@@ -164,11 +163,11 @@ pub const Method = struct {
             \\{[pre]s}        try url.replaceRange(begin, 1, "%20");
             \\{[pre]s}        idx = begin + 3;
             \\{[pre]s}    }}
-            \\{[pre]s}    log.info("Url: {{s}}\n", .{{url.items}});
             \\
         , .{ .pre = pre.items });
         if (self.request_ty != null) {
             try std.fmt.format(writer,
+                \\{[pre]s}    try headers.append("Content-Type", "application/json");
                 \\{[pre]s}    const body = try std.json.stringifyAlloc(service.allocator, request, .{{.whitespace = .{{}}}});
                 \\{[pre]s}    defer service.allocator.free(body);
                 \\{[pre]s}    log.info("Body: {{s}}\n", .{{body}});
@@ -185,6 +184,8 @@ pub const Method = struct {
             \\{[pre]s}    log.info("Response: {{s}}\n", .{{response.body}});
             \\{[pre]s}    defer response.deinit();
             \\{[pre]s}    var tokens = std.json.TokenStream.init(response.body);
+            \\{[pre]s}    for (headers.items()) |header| log.info("Header:\n    Name: {{s}}, Value: {{s}}\n", .{{header.name.value, header.value}});
+            \\{[pre]s}    log.info("Url: {{s}}\n", .{{url.items}});
             \\{[pre]s}    return std.json.parse({[ret]s}, &tokens, .{{ .allocator = service.allocator, .ignore_unknown_fields = false }});
             \\{[pre]s}}}
             \\

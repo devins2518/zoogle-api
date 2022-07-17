@@ -120,7 +120,6 @@ pub const Service = struct {
                     try headers.append("x-goog-api-client", service.user_agent);
                     try headers.append("User-Agent", service.user_agent);
                     try headers.append("Authorization", auth.items);
-                    for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
                     inline for (std.meta.fields(Service)) |field| {
                         const opt = @typeInfo(field.field_type) == .Optional;
                         if (opt) {
@@ -161,11 +160,12 @@ pub const Service = struct {
                         try url.replaceRange(begin, 1, "%20");
                         idx = begin + 3;
                     }
-                    log.info("Url: {s}\n", .{url.items});
                     var response = try service.client.get(url.items, .{ .headers = headers.items() });
                     log.info("Response: {s}\n", .{response.body});
                     defer response.deinit();
                     var tokens = std.json.TokenStream.init(response.body);
+                    for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+                    log.info("Url: {s}\n", .{url.items});
                     return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
                 }
                 pub fn init(
@@ -194,7 +194,6 @@ pub const Service = struct {
             try headers.append("x-goog-api-client", service.user_agent);
             try headers.append("User-Agent", service.user_agent);
             try headers.append("Authorization", auth.items);
-            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
             inline for (std.meta.fields(Service)) |field| {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 if (opt) {
@@ -235,11 +234,12 @@ pub const Service = struct {
                 try url.replaceRange(begin, 1, "%20");
                 idx = begin + 3;
             }
-            log.info("Url: {s}\n", .{url.items});
             var response = try service.client.get(url.items, .{ .headers = headers.items() });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+            log.info("Url: {s}\n", .{url.items});
             return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
         }
         pub fn init(
@@ -310,7 +310,6 @@ pub const Service = struct {
         try headers.append("x-goog-api-client", service.user_agent);
         try headers.append("User-Agent", service.user_agent);
         try headers.append("Authorization", auth.items);
-        for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
         inline for (std.meta.fields(Service)) |field| {
             const opt = @typeInfo(field.field_type) == .Optional;
             if (opt) {
@@ -351,11 +350,12 @@ pub const Service = struct {
             try url.replaceRange(begin, 1, "%20");
             idx = begin + 3;
         }
-        log.info("Url: {s}\n", .{url.items});
         var response = try service.client.post(url.items, .{ .headers = headers.items() });
         log.info("Response: {s}\n", .{response.body});
         defer response.deinit();
         var tokens = std.json.TokenStream.init(response.body);
+        for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
+        log.info("Url: {s}\n", .{url.items});
         return std.json.parse(TokeninfoSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
     }
     pub fn init(
