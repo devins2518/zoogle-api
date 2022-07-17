@@ -162,7 +162,7 @@ pub const Service = struct {
                         idx = begin + 3;
                     }
                     log.info("Url: {s}\n", .{url.items});
-                    var response = try service.client.get(url.items, .{.headers = headers.items()});
+                    var response = try service.client.get(url.items, .{ .headers = headers.items() });
                     log.info("Response: {s}\n", .{response.body});
                     defer response.deinit();
                     var tokens = std.json.TokenStream.init(response.body);
@@ -236,7 +236,7 @@ pub const Service = struct {
                 idx = begin + 3;
             }
             log.info("Url: {s}\n", .{url.items});
-            var response = try service.client.get(url.items, .{.headers = headers.items()});
+            var response = try service.client.get(url.items, .{ .headers = headers.items() });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
@@ -352,7 +352,7 @@ pub const Service = struct {
             idx = begin + 3;
         }
         log.info("Url: {s}\n", .{url.items});
-        var response = try service.client.post(url.items, .{.headers = headers.items()});
+        var response = try service.client.post(url.items, .{ .headers = headers.items() });
         log.info("Response: {s}\n", .{response.body});
         defer response.deinit();
         var tokens = std.json.TokenStream.init(response.body);

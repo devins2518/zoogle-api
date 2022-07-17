@@ -103,7 +103,7 @@ pub const Method = struct {
         , .{ .pre = pre.items, .name = self.name });
         if (self.request_ty) |ty| {
             try std.fmt.format(writer,
-                \\{s}    request: {s}
+                \\{s}    request: {s}Schema,
                 \\
             , .{ pre.items, ty });
         }

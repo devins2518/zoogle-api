@@ -3900,7 +3900,7 @@ pub const Service = struct {
             pub fn search(
                 self: *@This(),
                 service: *Service,
-                request: SearchDeveloperMetadataRequest
+                request: SearchDeveloperMetadataRequestSchema,
             ) !SearchDeveloperMetadataResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -3988,7 +3988,7 @@ pub const Service = struct {
             pub fn copyTo(
                 self: *@This(),
                 service: *Service,
-                request: CopySheetToAnotherSpreadsheetRequest
+                request: CopySheetToAnotherSpreadsheetRequestSchema,
             ) !SheetPropertiesSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4122,7 +4122,7 @@ pub const Service = struct {
             pub fn append(
                 self: *@This(),
                 service: *Service,
-                request: ValueRange
+                request: ValueRangeSchema,
             ) !AppendValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4190,7 +4190,7 @@ pub const Service = struct {
             pub fn batchClear(
                 self: *@This(),
                 service: *Service,
-                request: BatchClearValuesRequest
+                request: BatchClearValuesRequestSchema,
             ) !BatchClearValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4257,7 +4257,7 @@ pub const Service = struct {
             pub fn batchClearByDataFilter(
                 self: *@This(),
                 service: *Service,
-                request: BatchClearValuesByDataFilterRequest
+                request: BatchClearValuesByDataFilterRequestSchema,
             ) !BatchClearValuesByDataFilterResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4388,7 +4388,7 @@ pub const Service = struct {
             pub fn batchGetByDataFilter(
                 self: *@This(),
                 service: *Service,
-                request: BatchGetValuesByDataFilterRequest
+                request: BatchGetValuesByDataFilterRequestSchema,
             ) !BatchGetValuesByDataFilterResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4455,7 +4455,7 @@ pub const Service = struct {
             pub fn batchUpdate(
                 self: *@This(),
                 service: *Service,
-                request: BatchUpdateValuesRequest
+                request: BatchUpdateValuesRequestSchema,
             ) !BatchUpdateValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4522,7 +4522,7 @@ pub const Service = struct {
             pub fn batchUpdateByDataFilter(
                 self: *@This(),
                 service: *Service,
-                request: BatchUpdateValuesByDataFilterRequest
+                request: BatchUpdateValuesByDataFilterRequestSchema,
             ) !BatchUpdateValuesByDataFilterResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4589,7 +4589,7 @@ pub const Service = struct {
             pub fn clear(
                 self: *@This(),
                 service: *Service,
-                request: ClearValuesRequest
+                request: ClearValuesRequestSchema,
             ) !ClearValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4722,7 +4722,7 @@ pub const Service = struct {
             pub fn update(
                 self: *@This(),
                 service: *Service,
-                request: ValueRange
+                request: ValueRangeSchema,
             ) !UpdateValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4809,7 +4809,7 @@ pub const Service = struct {
         pub fn batchUpdate(
             self: *@This(),
             service: *Service,
-            request: BatchUpdateSpreadsheetRequest
+            request: BatchUpdateSpreadsheetRequestSchema,
         ) !BatchUpdateSpreadsheetResponseSchema {
             var headers = Headers.init(service.allocator);
             defer headers.deinit();
@@ -4876,7 +4876,7 @@ pub const Service = struct {
         pub fn create(
             self: *@This(),
             service: *Service,
-            request: Spreadsheet
+            request: SpreadsheetSchema,
         ) !SpreadsheetSchema {
             var headers = Headers.init(service.allocator);
             defer headers.deinit();
@@ -5006,7 +5006,7 @@ pub const Service = struct {
         pub fn getByDataFilter(
             self: *@This(),
             service: *Service,
-            request: GetSpreadsheetByDataFilterRequest
+            request: GetSpreadsheetByDataFilterRequestSchema,
         ) !SpreadsheetSchema {
             var headers = Headers.init(service.allocator);
             defer headers.deinit();
