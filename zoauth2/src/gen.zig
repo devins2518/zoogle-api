@@ -29,7 +29,7 @@ pub const Scope = enum {
     }
 };
 
-const TokeninfoSchema = struct {
+pub const TokeninfoSchema = struct {
     const Self = @This();
     // Who is the intended audience for this token. In general the same as issued_to.
     audience: []const u8,
@@ -50,7 +50,7 @@ const TokeninfoSchema = struct {
     }
 
 };
-const UserinfoSchema = struct {
+pub const UserinfoSchema = struct {
     const Self = @This();
     // The user's email address.
     email: []const u8,

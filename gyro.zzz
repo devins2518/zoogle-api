@@ -1,6 +1,6 @@
 pkgs:
   zheets:
-    version: 0.1.9
+    version: 0.1.10
     root: zheets/src/gen.zig
     files:
       zheets/gyro.zzz

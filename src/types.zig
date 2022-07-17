@@ -547,7 +547,7 @@ pub fn genSchemas(values: json.ObjectMap, allocator: Allocator, writer: anytype)
             , .{desc.String});
         }
         try std.fmt.format(writer,
-            \\const {s}Schema = struct {{
+            \\pub const {s}Schema = struct {{
             \\    const Self = @This();
             \\
         , .{schema_obj.key_ptr.*});
