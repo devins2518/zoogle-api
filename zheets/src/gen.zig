@@ -3890,7 +3890,7 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.get(url.items, .{.headers = headers.items()});
+                var response = try service.client.get(url.items, .{ .headers = headers.items() });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -3900,6 +3900,7 @@ pub const Service = struct {
             pub fn search(
                 self: *@This(),
                 service: *Service,
+                request: SearchDeveloperMetadataRequest
             ) !SearchDeveloperMetadataResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -3954,7 +3955,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                defer service.allocator.free(body);
+                var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -3985,6 +3988,7 @@ pub const Service = struct {
             pub fn copyTo(
                 self: *@This(),
                 service: *Service,
+                request: CopySheetToAnotherSpreadsheetRequest
             ) !SheetPropertiesSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4040,7 +4044,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                defer service.allocator.free(body);
+                var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4116,6 +4122,7 @@ pub const Service = struct {
             pub fn append(
                 self: *@This(),
                 service: *Service,
+                request: ValueRange
             ) !AppendValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4171,7 +4178,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                defer service.allocator.free(body);
+                var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4181,6 +4190,7 @@ pub const Service = struct {
             pub fn batchClear(
                 self: *@This(),
                 service: *Service,
+                request: BatchClearValuesRequest
             ) !BatchClearValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4235,7 +4245,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                defer service.allocator.free(body);
+                var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4245,6 +4257,7 @@ pub const Service = struct {
             pub fn batchClearByDataFilter(
                 self: *@This(),
                 service: *Service,
+                request: BatchClearValuesByDataFilterRequest
             ) !BatchClearValuesByDataFilterResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4299,7 +4312,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                defer service.allocator.free(body);
+                var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4363,7 +4378,7 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.get(url.items, .{.headers = headers.items()});
+                var response = try service.client.get(url.items, .{ .headers = headers.items() });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4373,6 +4388,7 @@ pub const Service = struct {
             pub fn batchGetByDataFilter(
                 self: *@This(),
                 service: *Service,
+                request: BatchGetValuesByDataFilterRequest
             ) !BatchGetValuesByDataFilterResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4427,7 +4443,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                defer service.allocator.free(body);
+                var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4437,6 +4455,7 @@ pub const Service = struct {
             pub fn batchUpdate(
                 self: *@This(),
                 service: *Service,
+                request: BatchUpdateValuesRequest
             ) !BatchUpdateValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4491,7 +4510,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                defer service.allocator.free(body);
+                var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4501,6 +4522,7 @@ pub const Service = struct {
             pub fn batchUpdateByDataFilter(
                 self: *@This(),
                 service: *Service,
+                request: BatchUpdateValuesByDataFilterRequest
             ) !BatchUpdateValuesByDataFilterResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4555,7 +4577,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                defer service.allocator.free(body);
+                var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4565,6 +4589,7 @@ pub const Service = struct {
             pub fn clear(
                 self: *@This(),
                 service: *Service,
+                request: ClearValuesRequest
             ) !ClearValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4620,7 +4645,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.post(url.items, .{.headers = headers.items()});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                defer service.allocator.free(body);
+                var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4685,7 +4712,7 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.get(url.items, .{.headers = headers.items()});
+                var response = try service.client.get(url.items, .{ .headers = headers.items() });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4695,6 +4722,7 @@ pub const Service = struct {
             pub fn update(
                 self: *@This(),
                 service: *Service,
+                request: ValueRange
             ) !UpdateValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4750,7 +4778,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                var response = try service.client.put(url.items, .{.headers = headers.items()});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                defer service.allocator.free(body);
+                var response = try service.client.put(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
@@ -4779,6 +4809,7 @@ pub const Service = struct {
         pub fn batchUpdate(
             self: *@This(),
             service: *Service,
+            request: BatchUpdateSpreadsheetRequest
         ) !BatchUpdateSpreadsheetResponseSchema {
             var headers = Headers.init(service.allocator);
             defer headers.deinit();
@@ -4833,7 +4864,9 @@ pub const Service = struct {
                 idx = begin + 3;
             }
             log.info("Url: {s}\n", .{url.items});
-            var response = try service.client.post(url.items, .{.headers = headers.items()});
+            const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+            defer service.allocator.free(body);
+            var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
@@ -4843,6 +4876,7 @@ pub const Service = struct {
         pub fn create(
             self: *@This(),
             service: *Service,
+            request: Spreadsheet
         ) !SpreadsheetSchema {
             var headers = Headers.init(service.allocator);
             defer headers.deinit();
@@ -4896,7 +4930,9 @@ pub const Service = struct {
                 idx = begin + 3;
             }
             log.info("Url: {s}\n", .{url.items});
-            var response = try service.client.post(url.items, .{.headers = headers.items()});
+            const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+            defer service.allocator.free(body);
+            var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
@@ -4960,7 +4996,7 @@ pub const Service = struct {
                 idx = begin + 3;
             }
             log.info("Url: {s}\n", .{url.items});
-            var response = try service.client.get(url.items, .{.headers = headers.items()});
+            var response = try service.client.get(url.items, .{ .headers = headers.items() });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
@@ -4970,6 +5006,7 @@ pub const Service = struct {
         pub fn getByDataFilter(
             self: *@This(),
             service: *Service,
+            request: GetSpreadsheetByDataFilterRequest
         ) !SpreadsheetSchema {
             var headers = Headers.init(service.allocator);
             defer headers.deinit();
@@ -5024,7 +5061,9 @@ pub const Service = struct {
                 idx = begin + 3;
             }
             log.info("Url: {s}\n", .{url.items});
-            var response = try service.client.post(url.items, .{.headers = headers.items()});
+            const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+            defer service.allocator.free(body);
+            var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);

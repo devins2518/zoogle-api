@@ -99,6 +99,15 @@ pub const Method = struct {
             \\{[pre]s}pub fn {[name]s}(
             \\{[pre]s}    self: *@This(),
             \\{[pre]s}    service: *Service,
+            \\
+        , .{ .pre = pre.items, .name = self.name });
+        if (self.request_ty) |ty| {
+            try std.fmt.format(writer,
+                \\{s}    request: {s}
+                \\
+            , .{ pre.items, ty });
+        }
+        try std.fmt.format(writer,
             \\{[pre]s}) !{[ret]s} {{
             \\{[pre]s}    var headers = Headers.init(service.allocator);
             \\{[pre]s}    defer headers.deinit();
@@ -134,7 +143,7 @@ pub const Method = struct {
             \\{[pre]s}    try url.appendSlice(service.base_url);
             \\{[pre]s}    try std.fmt.format(url.writer(), "{[path]s}?", .{{
             \\
-        , .{ .pre = pre.items, .path = self.path, .name = self.name, .ret = self.return_ty });
+        , .{ .pre = pre.items, .path = self.path, .ret = self.return_ty });
         for (self.param_order) |param| try std.fmt.format(writer, "{s}        self.{s},\n", .{ pre.items, param });
         try std.fmt.format(writer,
             \\{[pre]s}    }});
@@ -156,14 +165,29 @@ pub const Method = struct {
             \\{[pre]s}        idx = begin + 3;
             \\{[pre]s}    }}
             \\{[pre]s}    log.info("Url: {{s}}\n", .{{url.items}});
-            \\{[pre]s}    var response = try service.client.{[method]s}(url.items, .{{.headers = headers.items()}});
+            \\
+        , .{ .pre = pre.items });
+        if (self.request_ty != null) {
+            try std.fmt.format(writer,
+                \\{[pre]s}    const body = try std.json.stringifyAlloc(service.allocator, request, .{{}});
+                \\{[pre]s}    defer service.allocator.free(body);
+                \\{[pre]s}    var response = try service.client.{[method]s}(url.items, .{{ .headers = headers.items(), .content = body }});
+                \\
+            , .{ .pre = pre.items, .method = @tagName(self.method) });
+        } else {
+            try std.fmt.format(writer,
+                \\{[pre]s}    var response = try service.client.{[method]s}(url.items, .{{ .headers = headers.items() }});
+                \\
+            , .{ .pre = pre.items, .method = @tagName(self.method) });
+        }
+        try std.fmt.format(writer,
             \\{[pre]s}    log.info("Response: {{s}}\n", .{{response.body}});
             \\{[pre]s}    defer response.deinit();
             \\{[pre]s}    var tokens = std.json.TokenStream.init(response.body);
             \\{[pre]s}    return std.json.parse({[ret]s}, &tokens, .{{ .allocator = service.allocator, .ignore_unknown_fields = false }});
             \\{[pre]s}}}
             \\
-        , .{ .pre = pre.items, .method = @tagName(self.method), .ret = self.return_ty });
+        , .{ .pre = pre.items, .ret = self.return_ty });
         // try std.fmt.format(writer, "{s}    @panic(\"TODO: {s}\");\n", .{ pre.items, self.name });
         // try std.fmt.format(writer, "{s}}}\n", .{pre.items});
     }
