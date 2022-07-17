@@ -3955,8 +3955,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
@@ -4044,8 +4045,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
@@ -4178,8 +4180,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
@@ -4245,8 +4248,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
@@ -4312,8 +4316,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
@@ -4443,8 +4448,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
@@ -4510,8 +4516,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
@@ -4577,8 +4584,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
@@ -4645,8 +4653,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
@@ -4778,8 +4787,9 @@ pub const Service = struct {
                     idx = begin + 3;
                 }
                 log.info("Url: {s}\n", .{url.items});
-                const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+                const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                log.info("Body: {s}\n", .{body});
                 var response = try service.client.put(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
@@ -4864,8 +4874,9 @@ pub const Service = struct {
                 idx = begin + 3;
             }
             log.info("Url: {s}\n", .{url.items});
-            const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+            const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
+            log.info("Body: {s}\n", .{body});
             var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
@@ -4930,8 +4941,9 @@ pub const Service = struct {
                 idx = begin + 3;
             }
             log.info("Url: {s}\n", .{url.items});
-            const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+            const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
+            log.info("Body: {s}\n", .{body});
             var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
@@ -5061,8 +5073,9 @@ pub const Service = struct {
                 idx = begin + 3;
             }
             log.info("Url: {s}\n", .{url.items});
-            const body = try std.json.stringifyAlloc(service.allocator, request, .{});
+            const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
+            log.info("Body: {s}\n", .{body});
             var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();

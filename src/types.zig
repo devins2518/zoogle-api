@@ -169,8 +169,9 @@ pub const Method = struct {
         , .{ .pre = pre.items });
         if (self.request_ty != null) {
             try std.fmt.format(writer,
-                \\{[pre]s}    const body = try std.json.stringifyAlloc(service.allocator, request, .{{}});
+                \\{[pre]s}    const body = try std.json.stringifyAlloc(service.allocator, request, .{{.whitespace = .{{}}}});
                 \\{[pre]s}    defer service.allocator.free(body);
+                \\{[pre]s}    log.info("Body: {{s}}\n", .{{body}});
                 \\{[pre]s}    var response = try service.client.{[method]s}(url.items, .{{ .headers = headers.items(), .content = body }});
                 \\
             , .{ .pre = pre.items, .method = @tagName(self.method) });
