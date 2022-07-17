@@ -160,7 +160,7 @@ pub const Method = struct {
             \\{[pre]s}    log.info("Response: {{s}}\n", .{{response.body}});
             \\{[pre]s}    defer response.deinit();
             \\{[pre]s}    var tokens = std.json.TokenStream.init(response.body);
-            \\{[pre]s}    return std.json.parse({[ret]s}, &tokens, .{{ .allocator = service.allocator }});
+            \\{[pre]s}    return std.json.parse({[ret]s}, &tokens, .{{ .allocator = service.allocator, .ignore_unknown_fields = false }});
             \\{[pre]s}}}
             \\
         , .{ .pre = pre.items, .method = @tagName(self.method), .ret = self.return_ty });

@@ -166,7 +166,7 @@ pub const Service = struct {
                     log.info("Response: {s}\n", .{response.body});
                     defer response.deinit();
                     var tokens = std.json.TokenStream.init(response.body);
-                    return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator });
+                    return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
                 }
                 pub fn init(
                 ) @This() {
@@ -240,7 +240,7 @@ pub const Service = struct {
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
-            return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator });
+            return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
         }
         pub fn init(
         ) @This() {
@@ -356,7 +356,7 @@ pub const Service = struct {
         log.info("Response: {s}\n", .{response.body});
         defer response.deinit();
         var tokens = std.json.TokenStream.init(response.body);
-        return std.json.parse(TokeninfoSchema, &tokens, .{ .allocator = service.allocator });
+        return std.json.parse(TokeninfoSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
     }
     pub fn init(
         allocator: Allocator,

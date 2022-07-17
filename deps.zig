@@ -6,7 +6,7 @@ pub const pkgs = struct {
     pub const requestz = Pkg{
         .name = "requestz",
         .source = FileSource{
-            .path = ".gyro/requestz-devins2518-github.com-03edc848/pkg/src/main.zig",
+            .path = ".gyro/requestz-devins2518-github.com-da32d03a/pkg/src/main.zig",
         },
         .dependencies = &[_]Pkg{
             Pkg{

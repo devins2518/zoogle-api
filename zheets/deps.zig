@@ -3,10 +3,17 @@ const Pkg = std.build.Pkg;
 const FileSource = std.build.FileSource;
 
 pub const pkgs = struct {
+    pub const @"zoogle-api" = Pkg{
+        .name = "zoogle-api",
+        .source = FileSource{
+            .path = ".gyro/zoogle-api-devins2518-github.com-ae9ba4b6/pkg/src/lib.zig",
+        },
+    };
+
     pub const requestz = Pkg{
         .name = "requestz",
         .source = FileSource{
-            .path = "../../trash/requestz/src/main.zig",
+            .path = ".gyro/requestz-devins2518-github.com-da32d03a/pkg/src/main.zig",
         },
         .dependencies = &[_]Pkg{
             Pkg{
@@ -50,15 +57,8 @@ pub const pkgs = struct {
         },
     };
 
-    pub const @"zoogle-api" = Pkg{
-        .name = "zoogle-api",
-        .source = FileSource{
-            .path = ".gyro/zoogle-api-devins2518-github.com-ae9ba4b6/pkg/src/lib.zig",
-        },
-    };
-
     pub fn addAllTo(artifact: *std.build.LibExeObjStep) void {
-        artifact.addPackage(pkgs.requestz);
         artifact.addPackage(pkgs.@"zoogle-api");
+        artifact.addPackage(pkgs.requestz);
     }
 };
