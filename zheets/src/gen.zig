@@ -3956,7 +3956,7 @@ pub const Service = struct {
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
                 defer service.allocator.free(length);
                 try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
@@ -4050,7 +4050,7 @@ pub const Service = struct {
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
                 defer service.allocator.free(length);
                 try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
@@ -4189,7 +4189,7 @@ pub const Service = struct {
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
                 defer service.allocator.free(length);
                 try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
@@ -4261,7 +4261,7 @@ pub const Service = struct {
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
                 defer service.allocator.free(length);
                 try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
@@ -4333,7 +4333,7 @@ pub const Service = struct {
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
                 defer service.allocator.free(length);
                 try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
@@ -4469,7 +4469,7 @@ pub const Service = struct {
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
                 defer service.allocator.free(length);
                 try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
@@ -4541,7 +4541,7 @@ pub const Service = struct {
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
                 defer service.allocator.free(length);
                 try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
@@ -4613,7 +4613,7 @@ pub const Service = struct {
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
                 defer service.allocator.free(length);
                 try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
@@ -4686,7 +4686,7 @@ pub const Service = struct {
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
                 defer service.allocator.free(length);
                 try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
@@ -4824,7 +4824,7 @@ pub const Service = struct {
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
                 defer service.allocator.free(length);
                 try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
@@ -4915,7 +4915,7 @@ pub const Service = struct {
             const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
             try headers.append("Content-Type", "application/json");
-            const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+            const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
             defer service.allocator.free(length);
             try headers.append("Content-Length", length);
             log.info("Body: {s}\n", .{body});
@@ -4986,7 +4986,7 @@ pub const Service = struct {
             const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
             try headers.append("Content-Type", "application/json");
-            const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+            const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
             defer service.allocator.free(length);
             try headers.append("Content-Length", length);
             log.info("Body: {s}\n", .{body});
@@ -5122,7 +5122,7 @@ pub const Service = struct {
             const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
             try headers.append("Content-Type", "application/json");
-            const length = try std.fmt.allocPrint(service.allocator, "{}", body.len);
+            const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
             defer service.allocator.free(length);
             try headers.append("Content-Length", length);
             log.info("Body: {s}\n", .{body});
