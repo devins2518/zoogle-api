@@ -3953,9 +3953,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                try headers.append("Content-Type", "application/json");
+                const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+                defer service.allocator.free(length);
+                try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
@@ -4044,9 +4047,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                try headers.append("Content-Type", "application/json");
+                const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+                defer service.allocator.free(length);
+                try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
@@ -4180,9 +4186,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                try headers.append("Content-Type", "application/json");
+                const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+                defer service.allocator.free(length);
+                try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
@@ -4249,9 +4258,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                try headers.append("Content-Type", "application/json");
+                const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+                defer service.allocator.free(length);
+                try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
@@ -4318,9 +4330,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                try headers.append("Content-Type", "application/json");
+                const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+                defer service.allocator.free(length);
+                try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
@@ -4451,9 +4466,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                try headers.append("Content-Type", "application/json");
+                const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+                defer service.allocator.free(length);
+                try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
@@ -4520,9 +4538,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                try headers.append("Content-Type", "application/json");
+                const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+                defer service.allocator.free(length);
+                try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
@@ -4589,9 +4610,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                try headers.append("Content-Type", "application/json");
+                const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+                defer service.allocator.free(length);
+                try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
@@ -4659,9 +4683,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                try headers.append("Content-Type", "application/json");
+                const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+                defer service.allocator.free(length);
+                try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
@@ -4794,9 +4821,12 @@ pub const Service = struct {
                     try url.replaceRange(begin, 1, "%20");
                     idx = begin + 3;
                 }
-                try headers.append("Content-Type", "application/json");
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
                 defer service.allocator.free(body);
+                try headers.append("Content-Type", "application/json");
+                const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+                defer service.allocator.free(length);
+                try headers.append("Content-Length", length);
                 log.info("Body: {s}\n", .{body});
                 var response = try service.client.put(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
@@ -4882,9 +4912,12 @@ pub const Service = struct {
                 try url.replaceRange(begin, 1, "%20");
                 idx = begin + 3;
             }
-            try headers.append("Content-Type", "application/json");
             const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
+            try headers.append("Content-Type", "application/json");
+            const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+            defer service.allocator.free(length);
+            try headers.append("Content-Length", length);
             log.info("Body: {s}\n", .{body});
             var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
@@ -4950,9 +4983,12 @@ pub const Service = struct {
                 try url.replaceRange(begin, 1, "%20");
                 idx = begin + 3;
             }
-            try headers.append("Content-Type", "application/json");
             const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
+            try headers.append("Content-Type", "application/json");
+            const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+            defer service.allocator.free(length);
+            try headers.append("Content-Length", length);
             log.info("Body: {s}\n", .{body});
             var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
@@ -5083,9 +5119,12 @@ pub const Service = struct {
                 try url.replaceRange(begin, 1, "%20");
                 idx = begin + 3;
             }
-            try headers.append("Content-Type", "application/json");
             const body = try std.json.stringifyAlloc(service.allocator, request, .{.whitespace = .{}});
             defer service.allocator.free(body);
+            try headers.append("Content-Type", "application/json");
+            const length = std.fmt.allocPrint(service.allocator, "{}", body.len);
+            defer service.allocator.free(length);
+            try headers.append("Content-Length", length);
             log.info("Body: {s}\n", .{body});
             var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});

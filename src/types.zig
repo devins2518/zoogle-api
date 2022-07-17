@@ -167,9 +167,12 @@ pub const Method = struct {
         , .{ .pre = pre.items });
         if (self.request_ty != null) {
             try std.fmt.format(writer,
-                \\{[pre]s}    try headers.append("Content-Type", "application/json");
                 \\{[pre]s}    const body = try std.json.stringifyAlloc(service.allocator, request, .{{.whitespace = .{{}}}});
                 \\{[pre]s}    defer service.allocator.free(body);
+                \\{[pre]s}    try headers.append("Content-Type", "application/json");
+                \\{[pre]s}    const length = std.fmt.allocPrint(service.allocator, "{{}}", body.len);
+                \\{[pre]s}    defer service.allocator.free(length);
+                \\{[pre]s}    try headers.append("Content-Length", length);
                 \\{[pre]s}    log.info("Body: {{s}}\n", .{{body}});
                 \\{[pre]s}    var response = try service.client.{[method]s}(url.items, .{{ .headers = headers.items(), .content = body }});
                 \\
