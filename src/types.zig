@@ -170,6 +170,7 @@ pub const Method = struct {
                 \\{[pre]s}    const body = try std.json.stringifyAlloc(service.allocator, request, .{{}});
                 \\{[pre]s}    defer service.allocator.free(body);
                 \\{[pre]s}    try headers.append("Content-Type", "application/json");
+                \\{[pre]s}    try headers.append("Accept", "json");
                 \\{[pre]s}    const length = try std.fmt.allocPrint(service.allocator, "{{}}", .{{body.len}});
                 \\{[pre]s}    defer service.allocator.free(length);
                 \\{[pre]s}    try headers.append("Content-Length", length);
