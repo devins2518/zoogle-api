@@ -48,7 +48,6 @@ pub const TokeninfoSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 pub const UserinfoSchema = struct {
     const Self = @This();
@@ -77,7 +76,6 @@ pub const UserinfoSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 pub const Service = struct {
     @"allocator": Allocator,
@@ -106,6 +104,7 @@ pub const Service = struct {
     pub const Userinfo = struct {
         pub const V2 = struct {
             pub const Me = struct {
+
                 pub fn get(
                     self: *@This(),
                     service: *Service,
@@ -141,32 +140,34 @@ pub const Service = struct {
                     var url = std.ArrayList(u8).init(service.allocator);
                     defer url.deinit();
                     try url.appendSlice(service.base_url);
-                    try std.fmt.format(url.writer(), "userinfo/v2/me?", .{
-                    });
+                    try std.fmt.format(url.writer(), "userinfo/v2/me?", .{});
                     var first = true;
                     inline for (std.meta.fields(@This())) |field| {
                         const opt = @typeInfo(field.field_type) == .Optional;
                         const f = @field(self, field.name);
                         if (opt) {
-                            if (f != null) {
+                            if (f) |val| {
                                 if (!first) try url.append('&');
-                                try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                                try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                                 first = false;
                             }
                         }
                     }
-                    var idx: usize = 0;
-                    while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                        try url.replaceRange(begin, 1, "%20");
+                    var idx: usize = service.base_url.len;
+                    const invalid = &[_]u8{ ':', ' ', '\'' };
+                    const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                    while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                        const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                        try url.replaceRange(begin, 1, replacement[replacement_idx]);
                         idx = begin + 3;
                     }
+                    for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
+                    log.info("Url: {s}\n", .{url.items});
                     var response = try service.client.get(url.items, .{ .headers = headers.items() });
                     log.info("Response: {s}\n", .{response.body});
                     defer response.deinit();
                     var tokens = std.json.TokenStream.init(response.body);
-                    for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                    log.info("Url: {s}\n", .{url.items});
-                    return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                    return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator });
                 }
                 pub fn init(
                 ) @This() {
@@ -174,12 +175,14 @@ pub const Service = struct {
                     };
                 }
             };
+
             pub fn init(
             ) @This() {
                 return @This(){
                 };
             }
         };
+
         pub fn get(
             self: *@This(),
             service: *Service,
@@ -215,32 +218,34 @@ pub const Service = struct {
             var url = std.ArrayList(u8).init(service.allocator);
             defer url.deinit();
             try url.appendSlice(service.base_url);
-            try std.fmt.format(url.writer(), "oauth2/v2/userinfo?", .{
-            });
+            try std.fmt.format(url.writer(), "oauth2/v2/userinfo?", .{});
             var first = true;
             inline for (std.meta.fields(@This())) |field| {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 const f = @field(self, field.name);
                 if (opt) {
-                    if (f != null) {
+                    if (f) |val| {
                         if (!first) try url.append('&');
-                        try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                        try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                         first = false;
                     }
                 }
             }
-            var idx: usize = 0;
-            while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                try url.replaceRange(begin, 1, "%20");
+            var idx: usize = service.base_url.len;
+            const invalid = &[_]u8{ ':', ' ', '\'' };
+            const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+            while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                try url.replaceRange(begin, 1, replacement[replacement_idx]);
                 idx = begin + 3;
             }
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
+            log.info("Url: {s}\n", .{url.items});
             var response = try service.client.get(url.items, .{ .headers = headers.items() });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
-            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-            log.info("Url: {s}\n", .{url.items});
-            return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+            return std.json.parse(UserinfoSchema, &tokens, .{ .allocator = service.allocator });
         }
         pub fn init(
         ) @This() {
@@ -296,6 +301,7 @@ pub const Service = struct {
     pub fn @"id_tokenSet"(self: *@This(), val: ?[]const u8) void {
         self.@"id_token" = val;
     }
+
     pub fn tokeninfo(
         self: *@This(),
         service: *Service,
@@ -331,32 +337,34 @@ pub const Service = struct {
         var url = std.ArrayList(u8).init(service.allocator);
         defer url.deinit();
         try url.appendSlice(service.base_url);
-        try std.fmt.format(url.writer(), "oauth2/v2/tokeninfo?", .{
-        });
+        try std.fmt.format(url.writer(), "oauth2/v2/tokeninfo?", .{});
         var first = true;
         inline for (std.meta.fields(@This())) |field| {
             const opt = @typeInfo(field.field_type) == .Optional;
             const f = @field(self, field.name);
             if (opt) {
-                if (f != null) {
+                if (f) |val| {
                     if (!first) try url.append('&');
-                    try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                    try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                     first = false;
                 }
             }
         }
-        var idx: usize = 0;
-        while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-            try url.replaceRange(begin, 1, "%20");
+        var idx: usize = service.base_url.len;
+        const invalid = &[_]u8{ ':', ' ', '\'' };
+        const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+        while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+            const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+            try url.replaceRange(begin, 1, replacement[replacement_idx]);
             idx = begin + 3;
         }
+        for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
+        log.info("Url: {s}\n", .{url.items});
         var response = try service.client.post(url.items, .{ .headers = headers.items() });
         log.info("Response: {s}\n", .{response.body});
         defer response.deinit();
         var tokens = std.json.TokenStream.init(response.body);
-        for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-        log.info("Url: {s}\n", .{url.items});
-        return std.json.parse(TokeninfoSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+        return std.json.parse(TokeninfoSchema, &tokens, .{ .allocator = service.allocator });
     }
     pub fn init(
         allocator: Allocator,

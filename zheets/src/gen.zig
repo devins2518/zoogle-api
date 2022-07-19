@@ -43,7 +43,6 @@ pub const AddBandingRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of adding a banded range.
 pub const AddBandingResponseSchema = struct {
@@ -53,7 +52,6 @@ pub const AddBandingResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Adds a chart to a sheet in the spreadsheet.
 pub const AddChartRequestSchema = struct {
@@ -63,7 +61,6 @@ pub const AddChartRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of adding a chart to a spreadsheet.
 pub const AddChartResponseSchema = struct {
@@ -73,7 +70,6 @@ pub const AddChartResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Adds a new conditional format rule at the given index. All subsequent rules' indexes are incremented.
 pub const AddConditionalFormatRuleRequestSchema = struct {
@@ -85,7 +81,6 @@ pub const AddConditionalFormatRuleRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Adds a data source. After the data source is added successfully, an associated DATA_SOURCE sheet is created and an execution is triggered to refresh the sheet to read data from the data source. The request requires an additional `bigquery.readonly` OAuth scope.
 pub const AddDataSourceRequestSchema = struct {
@@ -95,7 +90,6 @@ pub const AddDataSourceRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of adding a data source.
 pub const AddDataSourceResponseSchema = struct {
@@ -107,7 +101,6 @@ pub const AddDataSourceResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Creates a group over the specified range. If the requested range is a superset of the range of an existing group G, then the depth of G is incremented and this new group G' has the depth of that group. For example, a group [C:D, depth 1] + [B:E] results in groups [B:E, depth 1] and [C:D, depth 2]. If the requested range is a subset of the range of an existing group G, then the depth of the new group G' becomes one greater than the depth of G. For example, a group [B:E, depth 1] + [C:D] results in groups [B:E, depth 1] and [C:D, depth 2]. If the requested range starts before and ends within, or starts within and ends after, the range of an existing group G, then the range of the existing group G becomes the union of the ranges, and the new group G' has depth one greater than the depth of G and range as the intersection of the ranges. For example, a group [B:D, depth 1] + [C:E] results in groups [B:E, depth 1] and [C:D, depth 2].
 pub const AddDimensionGroupRequestSchema = struct {
@@ -117,7 +110,6 @@ pub const AddDimensionGroupRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of adding a group.
 pub const AddDimensionGroupResponseSchema = struct {
@@ -127,7 +119,6 @@ pub const AddDimensionGroupResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Adds a filter view.
 pub const AddFilterViewRequestSchema = struct {
@@ -137,7 +128,6 @@ pub const AddFilterViewRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of adding a filter view.
 pub const AddFilterViewResponseSchema = struct {
@@ -147,7 +137,6 @@ pub const AddFilterViewResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Adds a named range to the spreadsheet.
 pub const AddNamedRangeRequestSchema = struct {
@@ -157,7 +146,6 @@ pub const AddNamedRangeRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of adding a named range.
 pub const AddNamedRangeResponseSchema = struct {
@@ -167,7 +155,6 @@ pub const AddNamedRangeResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Adds a new protected range.
 pub const AddProtectedRangeRequestSchema = struct {
@@ -177,7 +164,6 @@ pub const AddProtectedRangeRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of adding a new protected range.
 pub const AddProtectedRangeResponseSchema = struct {
@@ -187,7 +173,6 @@ pub const AddProtectedRangeResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Adds a new sheet. When a sheet is added at a given index, all subsequent sheets' indexes are incremented. To add an object sheet, use AddChartRequest instead and specify EmbeddedObjectPosition.sheetId or EmbeddedObjectPosition.newSheet.
 pub const AddSheetRequestSchema = struct {
@@ -197,7 +182,6 @@ pub const AddSheetRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of adding a sheet.
 pub const AddSheetResponseSchema = struct {
@@ -207,7 +191,6 @@ pub const AddSheetResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Adds a slicer to a sheet in the spreadsheet.
 pub const AddSlicerRequestSchema = struct {
@@ -217,7 +200,6 @@ pub const AddSlicerRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of adding a slicer to a spreadsheet.
 pub const AddSlicerResponseSchema = struct {
@@ -227,7 +209,6 @@ pub const AddSlicerResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Adds new cells after the last row with data in a sheet, inserting new rows into the sheet if necessary.
 pub const AppendCellsRequestSchema = struct {
@@ -241,7 +222,6 @@ pub const AppendCellsRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Appends rows or columns to the end of a sheet.
 pub const AppendDimensionRequestSchema = struct {
@@ -255,7 +235,6 @@ pub const AppendDimensionRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response when updating a range of values in a spreadsheet.
 pub const AppendValuesResponseSchema = struct {
@@ -269,7 +248,6 @@ pub const AppendValuesResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Fills in more data based on existing data.
 pub const AutoFillRequestSchema = struct {
@@ -283,7 +261,6 @@ pub const AutoFillRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Automatically resizes one or more dimensions based on the contents of the cells in that dimension.
 pub const AutoResizeDimensionsRequestSchema = struct {
@@ -295,7 +272,6 @@ pub const AutoResizeDimensionsRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A banded (alternating colors) range in a sheet.
 pub const BandedRangeSchema = struct {
@@ -311,7 +287,6 @@ pub const BandedRangeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Properties referring a single dimension (either row or column). If both BandedRange.row_properties and BandedRange.column_properties are set, the fill colors are applied to cells according to the following rules: * header_color and footer_color take priority over band colors. * first_band_color takes priority over second_band_color. * row_properties takes priority over column_properties. For example, the first row color takes priority over the first column color, but the first column color takes priority over the second row color. Similarly, the row header takes priority over the column header in the top left cell, but the column header takes priority over the first row color if the row header is not set.
 pub const BandingPropertiesSchema = struct {
@@ -335,7 +310,6 @@ pub const BandingPropertiesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Formatting options for baseline value.
 pub const BaselineValueFormatSchema = struct {
@@ -359,7 +333,6 @@ pub const BaselineValueFormatSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // An axis of the chart. A chart may not have more than one axis per axis position.
 pub const BasicChartAxisSchema = struct {
@@ -377,7 +350,6 @@ pub const BasicChartAxisSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The domain of a chart. For example, if charting stock prices over time, this would be the date.
 pub const BasicChartDomainSchema = struct {
@@ -389,7 +361,6 @@ pub const BasicChartDomainSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A single series of data in a chart. For example, if charting stock prices over time, multiple series may exist, one for the "Open Price", "High Price", "Low Price" and "Close Price".
 pub const BasicChartSeriesSchema = struct {
@@ -415,7 +386,6 @@ pub const BasicChartSeriesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The specification for a basic chart. See BasicChartType for the list of charts this supports.
 pub const BasicChartSpecSchema = struct {
@@ -447,7 +417,6 @@ pub const BasicChartSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The default filter associated with a sheet.
 pub const BasicFilterSchema = struct {
@@ -463,7 +432,6 @@ pub const BasicFilterSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Style override settings for a single series data point.
 pub const BasicSeriesDataPointStyleOverrideSchema = struct {
@@ -479,7 +447,6 @@ pub const BasicSeriesDataPointStyleOverrideSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The request for clearing more than one range selected by a DataFilter in a spreadsheet.
 pub const BatchClearValuesByDataFilterRequestSchema = struct {
@@ -489,7 +456,6 @@ pub const BatchClearValuesByDataFilterRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response when clearing a range of values selected with DataFilters in a spreadsheet.
 pub const BatchClearValuesByDataFilterResponseSchema = struct {
@@ -501,7 +467,6 @@ pub const BatchClearValuesByDataFilterResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The request for clearing more than one range of values in a spreadsheet.
 pub const BatchClearValuesRequestSchema = struct {
@@ -511,7 +476,6 @@ pub const BatchClearValuesRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response when clearing a range of values in a spreadsheet.
 pub const BatchClearValuesResponseSchema = struct {
@@ -523,7 +487,6 @@ pub const BatchClearValuesResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The request for retrieving a range of values in a spreadsheet selected by a set of DataFilters.
 pub const BatchGetValuesByDataFilterRequestSchema = struct {
@@ -539,7 +502,6 @@ pub const BatchGetValuesByDataFilterRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response when retrieving more than one range of values in a spreadsheet selected by DataFilters.
 pub const BatchGetValuesByDataFilterResponseSchema = struct {
@@ -551,7 +513,6 @@ pub const BatchGetValuesByDataFilterResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response when retrieving more than one range of values in a spreadsheet.
 pub const BatchGetValuesResponseSchema = struct {
@@ -563,7 +524,6 @@ pub const BatchGetValuesResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The request for updating any aspect of a spreadsheet.
 pub const BatchUpdateSpreadsheetRequestSchema = struct {
@@ -579,7 +539,6 @@ pub const BatchUpdateSpreadsheetRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The reply for batch updating a spreadsheet.
 pub const BatchUpdateSpreadsheetResponseSchema = struct {
@@ -593,7 +552,6 @@ pub const BatchUpdateSpreadsheetResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The request for updating more than one range of values in a spreadsheet.
 pub const BatchUpdateValuesByDataFilterRequestSchema = struct {
@@ -611,7 +569,6 @@ pub const BatchUpdateValuesByDataFilterRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response when updating a range of values in a spreadsheet.
 pub const BatchUpdateValuesByDataFilterResponseSchema = struct {
@@ -631,7 +588,6 @@ pub const BatchUpdateValuesByDataFilterResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The request for updating more than one range of values in a spreadsheet.
 pub const BatchUpdateValuesRequestSchema = struct {
@@ -649,7 +605,6 @@ pub const BatchUpdateValuesRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response when updating a range of values in a spreadsheet.
 pub const BatchUpdateValuesResponseSchema = struct {
@@ -669,7 +624,6 @@ pub const BatchUpdateValuesResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The specification of a BigQuery data source that's connected to a sheet.
 pub const BigQueryDataSourceSpecSchema = struct {
@@ -683,7 +637,6 @@ pub const BigQueryDataSourceSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Specifies a custom BigQuery query.
 pub const BigQueryQuerySpecSchema = struct {
@@ -693,7 +646,6 @@ pub const BigQueryQuerySpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Specifies a BigQuery table definition. Only [native tables](https://cloud.google.com/bigquery/docs/tables-intro) is allowed.
 pub const BigQueryTableSpecSchema = struct {
@@ -707,7 +659,6 @@ pub const BigQueryTableSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A condition that can evaluate to true or false. BooleanConditions are used by conditional formatting, data validation, and the criteria in filters.
 pub const BooleanConditionSchema = struct {
@@ -719,7 +670,6 @@ pub const BooleanConditionSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A rule that may or may not match, depending on the condition.
 pub const BooleanRuleSchema = struct {
@@ -731,7 +681,6 @@ pub const BooleanRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A border along a cell.
 pub const BorderSchema = struct {
@@ -747,7 +696,6 @@ pub const BorderSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The borders of the cell.
 pub const BordersSchema = struct {
@@ -763,7 +711,6 @@ pub const BordersSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A bubble chart.
 pub const BubbleChartSpecSchema = struct {
@@ -795,7 +742,6 @@ pub const BubbleChartSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A candlestick chart.
 pub const CandlestickChartSpecSchema = struct {
@@ -807,7 +753,6 @@ pub const CandlestickChartSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The Candlestick chart data, each containing the low, open, close, and high values for a series.
 pub const CandlestickDataSchema = struct {
@@ -823,7 +768,6 @@ pub const CandlestickDataSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The domain of a CandlestickChart.
 pub const CandlestickDomainSchema = struct {
@@ -835,7 +779,6 @@ pub const CandlestickDomainSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The series of a CandlestickData.
 pub const CandlestickSeriesSchema = struct {
@@ -845,7 +788,6 @@ pub const CandlestickSeriesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Data about a specific cell.
 pub const CellDataSchema = struct {
@@ -877,7 +819,6 @@ pub const CellDataSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The format of a cell.
 pub const CellFormatSchema = struct {
@@ -909,7 +850,6 @@ pub const CellFormatSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The options that define a "view window" for a chart (such as the visible values in an axis).
 pub const ChartAxisViewWindowOptionsSchema = struct {
@@ -923,7 +863,6 @@ pub const ChartAxisViewWindowOptionsSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Custom number formatting options for chart attributes.
 pub const ChartCustomNumberFormatOptionsSchema = struct {
@@ -935,7 +874,6 @@ pub const ChartCustomNumberFormatOptionsSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The data included in a domain or series.
 pub const ChartDataSchema = struct {
@@ -951,7 +889,6 @@ pub const ChartDataSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Allows you to organize the date-time values in a source data column into buckets based on selected parts of their date or time values.
 pub const ChartDateTimeRuleSchema = struct {
@@ -961,7 +898,6 @@ pub const ChartDateTimeRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // An optional setting on the ChartData of the domain of a data source chart that defines buckets for the values in the domain rather than breaking out each individual value. For example, when plotting a data source chart, you can specify a histogram rule on the domain (it should only contain numeric values), grouping its values into buckets. Any values of a chart series that fall into the same bucket are aggregated based on the aggregate_type.
 pub const ChartGroupRuleSchema = struct {
@@ -973,7 +909,6 @@ pub const ChartGroupRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Allows you to organize numeric values in a source data column into buckets of constant size.
 pub const ChartHistogramRuleSchema = struct {
@@ -987,7 +922,6 @@ pub const ChartHistogramRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Source ranges for a chart.
 pub const ChartSourceRangeSchema = struct {
@@ -997,7 +931,6 @@ pub const ChartSourceRangeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The specifications of a chart.
 pub const ChartSpecSchema = struct {
@@ -1053,7 +986,6 @@ pub const ChartSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Clears the basic filter, if any exists on the sheet.
 pub const ClearBasicFilterRequestSchema = struct {
@@ -1063,7 +995,6 @@ pub const ClearBasicFilterRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The request for clearing a range of values in a spreadsheet.
 pub const ClearValuesRequestSchema = struct {
@@ -1071,7 +1002,6 @@ pub const ClearValuesRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response when clearing a range of values in a spreadsheet.
 pub const ClearValuesResponseSchema = struct {
@@ -1083,7 +1013,6 @@ pub const ClearValuesResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Represents a color in the RGBA color space. This representation is designed for simplicity of conversion to/from color representations in various languages over compactness. For example, the fields of this representation can be trivially provided to the constructor of `java.awt.Color` in Java; it can also be trivially provided to UIColor's `+colorWithRed:green:blue:alpha` method in iOS; and, with just a little work, it can be easily formatted into a CSS `rgba()` string in JavaScript. This reference page doesn't carry information about the absolute color space that should be used to interpret the RGB value (e.g. sRGB, Adobe RGB, DCI-P3, BT.2020, etc.). By default, applications should assume the sRGB color space. When color equality needs to be decided, implementations, unless documented otherwise, treat two colors as equal if all their red, green, blue, and alpha values each differ by at most 1e-5. Example (Java): import com.google.type.Color; // ... public static java.awt.Color fromProto(Color protocolor) { float alpha = protocolor.hasAlpha() ? protocolor.getAlpha().getValue() : 1.0; return new java.awt.Color( protocolor.getRed(), protocolor.getGreen(), protocolor.getBlue(), alpha); } public static Color toProto(java.awt.Color color) { float red = (float) color.getRed(); float green = (float) color.getGreen(); float blue = (float) color.getBlue(); float denominator = 255.0; Color.Builder resultBuilder = Color .newBuilder() .setRed(red / denominator) .setGreen(green / denominator) .setBlue(blue / denominator); int alpha = color.getAlpha(); if (alpha != 255) { result.setAlpha( FloatValue .newBuilder() .setValue(((float) alpha) / denominator) .build()); } return resultBuilder.build(); } // ... Example (iOS / Obj-C): // ... static UIColor* fromProto(Color* protocolor) { float red = [protocolor red]; float green = [protocolor green]; float blue = [protocolor blue]; FloatValue* alpha_wrapper = [protocolor alpha]; float alpha = 1.0; if (alpha_wrapper != nil) { alpha = [alpha_wrapper value]; } return [UIColor colorWithRed:red green:green blue:blue alpha:alpha]; } static Color* toProto(UIColor* color) { CGFloat red, green, blue, alpha; if (![color getRed:&red green:&green blue:&blue alpha:&alpha]) { return nil; } Color* result = [[Color alloc] init]; [result setRed:red]; [result setGreen:green]; [result setBlue:blue]; if (alpha <= 0.9999) { [result setAlpha:floatWrapperWithValue(alpha)]; } [result autorelease]; return result; } // ... Example (JavaScript): // ... var protoToCssColor = function(rgb_color) { var redFrac = rgb_color.red || 0.0; var greenFrac = rgb_color.green || 0.0; var blueFrac = rgb_color.blue || 0.0; var red = Math.floor(redFrac * 255); var green = Math.floor(greenFrac * 255); var blue = Math.floor(blueFrac * 255); if (!('alpha' in rgb_color)) { return rgbToCssColor(red, green, blue); } var alphaFrac = rgb_color.alpha.value || 0.0; var rgbParams = [red, green, blue].join(','); return ['rgba(', rgbParams, ',', alphaFrac, ')'].join(''); }; var rgbToCssColor = function(red, green, blue) { var rgbNumber = new Number((red << 16) | (green << 8) | blue); var hexString = rgbNumber.toString(16); var missingZeros = 6 - hexString.length; var resultBuilder = ['#']; for (var i = 0; i < missingZeros; i++) { resultBuilder.push('0'); } resultBuilder.push(hexString); return resultBuilder.join(''); }; // ...
 pub const ColorSchema = struct {
@@ -1099,7 +1028,6 @@ pub const ColorSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A color value.
 pub const ColorStyleSchema = struct {
@@ -1111,7 +1039,6 @@ pub const ColorStyleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The value of the condition.
 pub const ConditionValueSchema = struct {
@@ -1123,7 +1050,6 @@ pub const ConditionValueSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A rule describing a conditional format.
 pub const ConditionalFormatRuleSchema = struct {
@@ -1137,7 +1063,6 @@ pub const ConditionalFormatRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Copies data from the source to the destination.
 pub const CopyPasteRequestSchema = struct {
@@ -1153,7 +1078,6 @@ pub const CopyPasteRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The request to copy a sheet across spreadsheets.
 pub const CopySheetToAnotherSpreadsheetRequestSchema = struct {
@@ -1163,7 +1087,6 @@ pub const CopySheetToAnotherSpreadsheetRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A request to create developer metadata.
 pub const CreateDeveloperMetadataRequestSchema = struct {
@@ -1173,7 +1096,6 @@ pub const CreateDeveloperMetadataRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response from creating developer metadata.
 pub const CreateDeveloperMetadataResponseSchema = struct {
@@ -1183,7 +1105,6 @@ pub const CreateDeveloperMetadataResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Moves data from the source to the destination.
 pub const CutPasteRequestSchema = struct {
@@ -1197,7 +1118,6 @@ pub const CutPasteRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The data execution status. A data execution is created to sync a data source object with the latest data from a DataSource. It is usually scheduled to run at background, you can check its state to tell if an execution completes There are several scenarios where a data execution is triggered to run: * Adding a data source creates an associated data source sheet as well as a data execution to sync the data from the data source to the sheet. * Updating a data source creates a data execution to refresh the associated data source sheet similarly. * You can send refresh request to explicitly refresh one or multiple data source objects.
 pub const DataExecutionStatusSchema = struct {
@@ -1213,7 +1133,6 @@ pub const DataExecutionStatusSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Filter that describes what data should be selected or returned from a request.
 pub const DataFilterSchema = struct {
@@ -1227,7 +1146,6 @@ pub const DataFilterSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A range of values whose location is specified by a DataFilter.
 pub const DataFilterValueRangeSchema = struct {
@@ -1241,7 +1159,6 @@ pub const DataFilterValueRangeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Settings for one set of data labels. Data labels are annotations that appear next to a set of data, such as the points on a line chart, and provide additional information about what the data represents, such as a text representation of the value behind that point on the graph.
 pub const DataLabelSchema = struct {
@@ -1257,7 +1174,6 @@ pub const DataLabelSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Information about an external data source in the spreadsheet.
 pub const DataSourceSchema = struct {
@@ -1273,7 +1189,6 @@ pub const DataSourceSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Properties of a data source chart.
 pub const DataSourceChartPropertiesSchema = struct {
@@ -1285,7 +1200,6 @@ pub const DataSourceChartPropertiesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A column in a data source.
 pub const DataSourceColumnSchema = struct {
@@ -1297,7 +1211,6 @@ pub const DataSourceColumnSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // An unique identifier that references a data source column.
 pub const DataSourceColumnReferenceSchema = struct {
@@ -1307,7 +1220,6 @@ pub const DataSourceColumnReferenceSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A data source formula.
 pub const DataSourceFormulaSchema = struct {
@@ -1319,7 +1231,6 @@ pub const DataSourceFormulaSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Reference to a data source object.
 pub const DataSourceObjectReferenceSchema = struct {
@@ -1337,7 +1248,6 @@ pub const DataSourceObjectReferenceSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A list of references to data source objects.
 pub const DataSourceObjectReferencesSchema = struct {
@@ -1347,7 +1257,6 @@ pub const DataSourceObjectReferencesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A parameter in a data source's query. The parameter allows the user to pass in values from the spreadsheet into a query.
 pub const DataSourceParameterSchema = struct {
@@ -1361,7 +1270,6 @@ pub const DataSourceParameterSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A schedule for data to refresh every day in a given time interval.
 pub const DataSourceRefreshDailyScheduleSchema = struct {
@@ -1371,7 +1279,6 @@ pub const DataSourceRefreshDailyScheduleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A monthly schedule for data to refresh on specific days in the month in a given time interval.
 pub const DataSourceRefreshMonthlyScheduleSchema = struct {
@@ -1383,7 +1290,6 @@ pub const DataSourceRefreshMonthlyScheduleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Schedule for refreshing the data source. Data sources in the spreadsheet are refreshed within a time interval. You can specify the start time by clicking the Scheduled Refresh button in the Sheets editor, but the interval is fixed at 4 hours. For example, if you specify a start time of 8am , the refresh will take place between 8am and 12pm every day.
 pub const DataSourceRefreshScheduleSchema = struct {
@@ -1403,7 +1309,6 @@ pub const DataSourceRefreshScheduleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A weekly schedule for data to refresh on specific days in a given time interval.
 pub const DataSourceRefreshWeeklyScheduleSchema = struct {
@@ -1415,7 +1320,6 @@ pub const DataSourceRefreshWeeklyScheduleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A range along a single dimension on a DATA_SOURCE sheet.
 pub const DataSourceSheetDimensionRangeSchema = struct {
@@ -1427,7 +1331,6 @@ pub const DataSourceSheetDimensionRangeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Additional properties of a DATA_SOURCE sheet.
 pub const DataSourceSheetPropertiesSchema = struct {
@@ -1441,7 +1344,6 @@ pub const DataSourceSheetPropertiesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // This specifies the details of the data source. For example, for BigQuery, this specifies information about the BigQuery source.
 pub const DataSourceSpecSchema = struct {
@@ -1453,7 +1355,6 @@ pub const DataSourceSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A data source table, which allows the user to import a static table of data from the DataSource into Sheets. This is also known as "Extract" in the Sheets editor.
 pub const DataSourceTableSchema = struct {
@@ -1475,7 +1376,6 @@ pub const DataSourceTableSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A data validation rule.
 pub const DataValidationRuleSchema = struct {
@@ -1491,7 +1391,6 @@ pub const DataValidationRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Allows you to organize the date-time values in a source data column into buckets based on selected parts of their date or time values. For example, consider a pivot table showing sales transactions by date: +----------+--------------+ | Date | SUM of Sales | +----------+--------------+ | 1/1/2017 | $621.14 | | 2/3/2017 | $708.84 | | 5/8/2017 | $326.84 | ... +----------+--------------+ Applying a date-time group rule with a DateTimeRuleType of YEAR_MONTH results in the following pivot table. +--------------+--------------+ | Grouped Date | SUM of Sales | +--------------+--------------+ | 2017-Jan | $53,731.78 | | 2017-Feb | $83,475.32 | | 2017-Mar | $94,385.05 | ... +--------------+--------------+
 pub const DateTimeRuleSchema = struct {
@@ -1501,7 +1400,6 @@ pub const DateTimeRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Removes the banded range with the given ID from the spreadsheet.
 pub const DeleteBandingRequestSchema = struct {
@@ -1511,7 +1409,6 @@ pub const DeleteBandingRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Deletes a conditional format rule at the given index. All subsequent rules' indexes are decremented.
 pub const DeleteConditionalFormatRuleRequestSchema = struct {
@@ -1523,7 +1420,6 @@ pub const DeleteConditionalFormatRuleRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of deleting a conditional format rule.
 pub const DeleteConditionalFormatRuleResponseSchema = struct {
@@ -1533,7 +1429,6 @@ pub const DeleteConditionalFormatRuleResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Deletes a data source. The request also deletes the associated data source sheet, and unlinks all associated data source objects.
 pub const DeleteDataSourceRequestSchema = struct {
@@ -1543,7 +1438,6 @@ pub const DeleteDataSourceRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A request to delete developer metadata.
 pub const DeleteDeveloperMetadataRequestSchema = struct {
@@ -1553,7 +1447,6 @@ pub const DeleteDeveloperMetadataRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response from deleting developer metadata.
 pub const DeleteDeveloperMetadataResponseSchema = struct {
@@ -1563,7 +1456,6 @@ pub const DeleteDeveloperMetadataResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Deletes a group over the specified range by decrementing the depth of the dimensions in the range. For example, assume the sheet has a depth-1 group over B:E and a depth-2 group over C:D. Deleting a group over D:E leaves the sheet with a depth-1 group over B:D and a depth-2 group over C:C.
 pub const DeleteDimensionGroupRequestSchema = struct {
@@ -1573,7 +1465,6 @@ pub const DeleteDimensionGroupRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of deleting a group.
 pub const DeleteDimensionGroupResponseSchema = struct {
@@ -1583,7 +1474,6 @@ pub const DeleteDimensionGroupResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Deletes the dimensions from the sheet.
 pub const DeleteDimensionRequestSchema = struct {
@@ -1593,7 +1483,6 @@ pub const DeleteDimensionRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Removes rows within this range that contain values in the specified columns that are duplicates of values in any previous row. Rows with identical values but different letter cases, formatting, or formulas are considered to be duplicates. This request also removes duplicate rows hidden from view (for example, due to a filter). When removing duplicates, the first instance of each duplicate row scanning from the top downwards is kept in the resulting range. Content outside of the specified range isn't removed, and rows considered duplicates do not have to be adjacent to each other in the range.
 pub const DeleteDuplicatesRequestSchema = struct {
@@ -1605,7 +1494,6 @@ pub const DeleteDuplicatesRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of removing duplicates in a range.
 pub const DeleteDuplicatesResponseSchema = struct {
@@ -1615,7 +1503,6 @@ pub const DeleteDuplicatesResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Deletes the embedded object with the given ID.
 pub const DeleteEmbeddedObjectRequestSchema = struct {
@@ -1625,7 +1512,6 @@ pub const DeleteEmbeddedObjectRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Deletes a particular filter view.
 pub const DeleteFilterViewRequestSchema = struct {
@@ -1635,7 +1521,6 @@ pub const DeleteFilterViewRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Removes the named range with the given ID from the spreadsheet.
 pub const DeleteNamedRangeRequestSchema = struct {
@@ -1645,7 +1530,6 @@ pub const DeleteNamedRangeRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Deletes the protected range with the given ID.
 pub const DeleteProtectedRangeRequestSchema = struct {
@@ -1655,7 +1539,6 @@ pub const DeleteProtectedRangeRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Deletes a range of cells, shifting other cells into the deleted area.
 pub const DeleteRangeRequestSchema = struct {
@@ -1667,7 +1550,6 @@ pub const DeleteRangeRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Deletes the requested sheet.
 pub const DeleteSheetRequestSchema = struct {
@@ -1677,7 +1559,6 @@ pub const DeleteSheetRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Developer metadata associated with a location or object in a spreadsheet. Developer metadata may be used to associate arbitrary data with various parts of a spreadsheet and will remain associated at those locations as they move around and the spreadsheet is edited. For example, if developer metadata is associated with row 5 and another row is then subsequently inserted above row 5, that original metadata will still be associated with the row it was first associated with (what is now row 6). If the associated object is deleted its metadata is deleted too.
 pub const DeveloperMetadataSchema = struct {
@@ -1695,7 +1576,6 @@ pub const DeveloperMetadataSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A location where metadata may be associated in a spreadsheet.
 pub const DeveloperMetadataLocationSchema = struct {
@@ -1711,7 +1591,6 @@ pub const DeveloperMetadataLocationSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Selects DeveloperMetadata that matches all of the specified fields. For example, if only a metadata ID is specified this considers the DeveloperMetadata with that particular unique ID. If a metadata key is specified, this considers all developer metadata with that key. If a key, visibility, and location type are all specified, this considers all developer metadata with that key and visibility that are associated with a location of that type. In general, this selects all DeveloperMetadata that matches the intersection of all the specified fields; any field or combination of fields may be specified.
 pub const DeveloperMetadataLookupSchema = struct {
@@ -1733,7 +1612,6 @@ pub const DeveloperMetadataLookupSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A group over an interval of rows or columns on a sheet, which can contain or be contained within other groups. A group can be collapsed or expanded as a unit on the sheet.
 pub const DimensionGroupSchema = struct {
@@ -1747,7 +1625,6 @@ pub const DimensionGroupSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Properties about a dimension.
 pub const DimensionPropertiesSchema = struct {
@@ -1765,7 +1642,6 @@ pub const DimensionPropertiesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A range along a single dimension on a sheet. All indexes are zero-based. Indexes are half open: the start index is inclusive and the end index is exclusive. Missing indexes indicate the range is unbounded on that side.
 pub const DimensionRangeSchema = struct {
@@ -1781,7 +1657,6 @@ pub const DimensionRangeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Duplicates a particular filter view.
 pub const DuplicateFilterViewRequestSchema = struct {
@@ -1791,7 +1666,6 @@ pub const DuplicateFilterViewRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of a filter view being duplicated.
 pub const DuplicateFilterViewResponseSchema = struct {
@@ -1801,7 +1675,6 @@ pub const DuplicateFilterViewResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Duplicates the contents of a sheet.
 pub const DuplicateSheetRequestSchema = struct {
@@ -1817,7 +1690,6 @@ pub const DuplicateSheetRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of duplicating a sheet.
 pub const DuplicateSheetResponseSchema = struct {
@@ -1827,7 +1699,6 @@ pub const DuplicateSheetResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The editors of a protected range.
 pub const EditorsSchema = struct {
@@ -1841,7 +1712,6 @@ pub const EditorsSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A chart embedded in a sheet.
 pub const EmbeddedChartSchema = struct {
@@ -1857,7 +1727,6 @@ pub const EmbeddedChartSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A border along an embedded object.
 pub const EmbeddedObjectBorderSchema = struct {
@@ -1869,7 +1738,6 @@ pub const EmbeddedObjectBorderSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The position of an embedded object such as a chart.
 pub const EmbeddedObjectPositionSchema = struct {
@@ -1883,7 +1751,6 @@ pub const EmbeddedObjectPositionSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // An error in a cell.
 pub const ErrorValueSchema = struct {
@@ -1895,7 +1762,6 @@ pub const ErrorValueSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The kinds of value that a cell in a spreadsheet can have.
 pub const ExtendedValueSchema = struct {
@@ -1913,7 +1779,6 @@ pub const ExtendedValueSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Criteria for showing/hiding rows in a filter or filter view.
 pub const FilterCriteriaSchema = struct {
@@ -1933,7 +1798,6 @@ pub const FilterCriteriaSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The filter criteria associated with a specific column.
 pub const FilterSpecSchema = struct {
@@ -1947,7 +1811,6 @@ pub const FilterSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A filter view.
 pub const FilterViewSchema = struct {
@@ -1969,7 +1832,6 @@ pub const FilterViewSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Finds and replaces data in cells over a range, sheet, or all sheets.
 pub const FindReplaceRequestSchema = struct {
@@ -1995,7 +1857,6 @@ pub const FindReplaceRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of the find/replace.
 pub const FindReplaceResponseSchema = struct {
@@ -2013,7 +1874,6 @@ pub const FindReplaceResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The request for retrieving a Spreadsheet.
 pub const GetSpreadsheetByDataFilterRequestSchema = struct {
@@ -2025,7 +1885,6 @@ pub const GetSpreadsheetByDataFilterRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A rule that applies a gradient color scale format, based on the interpolation points listed. The format of a cell will vary based on its contents as compared to the values of the interpolation points.
 pub const GradientRuleSchema = struct {
@@ -2039,7 +1898,6 @@ pub const GradientRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A coordinate in a sheet. All indexes are zero-based.
 pub const GridCoordinateSchema = struct {
@@ -2053,7 +1911,6 @@ pub const GridCoordinateSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Data in the grid, as well as metadata about the dimensions.
 pub const GridDataSchema = struct {
@@ -2071,7 +1928,6 @@ pub const GridDataSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Properties of a grid.
 pub const GridPropertiesSchema = struct {
@@ -2093,7 +1949,6 @@ pub const GridPropertiesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A range on a sheet. All indexes are zero-based. Indexes are half open, i.e. the start index is inclusive and the end index is exclusive -- [start_index, end_index). Missing indexes indicate the range is unbounded on that side. For example, if `"Sheet1"` is sheet ID 123456, then: `Sheet1!A1:A1 == sheet_id: 123456, start_row_index: 0, end_row_index: 1, start_column_index: 0, end_column_index: 1` `Sheet1!A3:B4 == sheet_id: 123456, start_row_index: 2, end_row_index: 4, start_column_index: 0, end_column_index: 2` `Sheet1!A:B == sheet_id: 123456, start_column_index: 0, end_column_index: 2` `Sheet1!A5:B == sheet_id: 123456, start_row_index: 4, start_column_index: 0, end_column_index: 2` `Sheet1 == sheet_id: 123456` The start index must always be less than or equal to the end index. If the start index equals the end index, then the range is empty. Empty ranges are typically not meaningful and are usually rendered in the UI as `#REF!`.
 pub const GridRangeSchema = struct {
@@ -2111,7 +1966,6 @@ pub const GridRangeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A histogram chart. A histogram chart groups data items into bins, displaying each bin as a column of stacked items. Histograms are used to display the distribution of a dataset. Each column of items represents a range into which those items fall. The number of bins can be chosen automatically or specified explicitly.
 pub const HistogramChartSpecSchema = struct {
@@ -2129,7 +1983,6 @@ pub const HistogramChartSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Allows you to organize the numeric values in a source data column into buckets of a constant size. All values from HistogramRule.start to HistogramRule.end are placed into groups of size HistogramRule.interval. In addition, all values below HistogramRule.start are placed in one group, and all values above HistogramRule.end are placed in another. Only HistogramRule.interval is required, though if HistogramRule.start and HistogramRule.end are both provided, HistogramRule.start must be less than HistogramRule.end. For example, a pivot table showing average purchase amount by age that has 50+ rows: +-----+-------------------+ | Age | AVERAGE of Amount | +-----+-------------------+ | 16 | $27.13 | | 17 | $5.24 | | 18 | $20.15 | ... +-----+-------------------+ could be turned into a pivot table that looks like the one below by applying a histogram group rule with a HistogramRule.start of 25, an HistogramRule.interval of 20, and an HistogramRule.end of 65. +-------------+-------------------+ | Grouped Age | AVERAGE of Amount | +-------------+-------------------+ | < 25 | $19.34 | | 25-45 | $31.43 | | 45-65 | $35.87 | | > 65 | $27.55 | +-------------+-------------------+ | Grand Total | $29.12 | +-------------+-------------------+
 pub const HistogramRuleSchema = struct {
@@ -2143,7 +1996,6 @@ pub const HistogramRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A histogram series containing the series color and data.
 pub const HistogramSeriesSchema = struct {
@@ -2157,7 +2009,6 @@ pub const HistogramSeriesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Inserts rows or columns in a sheet at a particular index.
 pub const InsertDimensionRequestSchema = struct {
@@ -2169,7 +2020,6 @@ pub const InsertDimensionRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Inserts cells into a range, shifting the existing cells over or down.
 pub const InsertRangeRequestSchema = struct {
@@ -2181,7 +2031,6 @@ pub const InsertRangeRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A single interpolation point on a gradient conditional format. These pin the gradient color scale according to the color, type and value chosen.
 pub const InterpolationPointSchema = struct {
@@ -2197,7 +2046,6 @@ pub const InterpolationPointSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Represents a time interval, encoded as a Timestamp start (inclusive) and a Timestamp end (exclusive). The start must be less than or equal to the end. When the start equals the end, the interval is empty (matches no time). When both start and end are unspecified, the interval matches any time.
 pub const IntervalSchema = struct {
@@ -2209,7 +2057,6 @@ pub const IntervalSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Settings to control how circular dependencies are resolved with iterative calculation.
 pub const IterativeCalculationSettingsSchema = struct {
@@ -2221,7 +2068,6 @@ pub const IterativeCalculationSettingsSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Formatting options for key value.
 pub const KeyValueFormatSchema = struct {
@@ -2233,7 +2079,6 @@ pub const KeyValueFormatSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Properties that describe the style of a line.
 pub const LineStyleSchema = struct {
@@ -2245,7 +2090,6 @@ pub const LineStyleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // An external or local reference.
 pub const LinkSchema = struct {
@@ -2255,7 +2099,6 @@ pub const LinkSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Allows you to manually organize the values in a source data column into buckets with names of your choosing. For example, a pivot table that aggregates population by state: +-------+-------------------+ | State | SUM of Population | +-------+-------------------+ | AK | 0.7 | | AL | 4.8 | | AR | 2.9 | ... +-------+-------------------+ could be turned into a pivot table that aggregates population by time zone by providing a list of groups (for example, groupName = 'Central', items = ['AL', 'AR', 'IA', ...]) to a manual group rule. Note that a similar effect could be achieved by adding a time zone column to the source data and adjusting the pivot table. +-----------+-------------------+ | Time Zone | SUM of Population | +-----------+-------------------+ | Central | 106.3 | | Eastern | 151.9 | | Mountain | 17.4 | ... +-----------+-------------------+
 pub const ManualRuleSchema = struct {
@@ -2265,7 +2108,6 @@ pub const ManualRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A group name and a list of items from the source data that should be placed in the group with this name.
 pub const ManualRuleGroupSchema = struct {
@@ -2277,7 +2119,6 @@ pub const ManualRuleGroupSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A developer metadata entry and the data filters specified in the original request that matched it.
 pub const MatchedDeveloperMetadataSchema = struct {
@@ -2289,7 +2130,6 @@ pub const MatchedDeveloperMetadataSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A value range that was matched by one or more data filers.
 pub const MatchedValueRangeSchema = struct {
@@ -2301,7 +2141,6 @@ pub const MatchedValueRangeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Merges all cells in the range.
 pub const MergeCellsRequestSchema = struct {
@@ -2313,7 +2152,6 @@ pub const MergeCellsRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Moves one or more rows or columns.
 pub const MoveDimensionRequestSchema = struct {
@@ -2325,7 +2163,6 @@ pub const MoveDimensionRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A named range.
 pub const NamedRangeSchema = struct {
@@ -2339,7 +2176,6 @@ pub const NamedRangeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The number format of a cell.
 pub const NumberFormatSchema = struct {
@@ -2351,7 +2187,6 @@ pub const NumberFormatSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // An org chart. Org charts require a unique set of labels in labels and may optionally include parent_labels and tooltips. parent_labels contain, for each node, the label identifying the parent node. tooltips contain, for each node, an optional tooltip. For example, to describe an OrgChart with Alice as the CEO, Bob as the President (reporting to Alice) and Cathy as VP of Sales (also reporting to Alice), have labels contain "Alice", "Bob", "Cathy", parent_labels contain "", "Alice", "Alice" and tooltips contain "CEO", "President", "VP Sales".
 pub const OrgChartSpecSchema = struct {
@@ -2375,7 +2210,6 @@ pub const OrgChartSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The location an object is overlaid on top of a grid.
 pub const OverlayPositionSchema = struct {
@@ -2393,7 +2227,6 @@ pub const OverlayPositionSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The amount of padding around the cell, in pixels. When updating padding, every field must be specified.
 pub const PaddingSchema = struct {
@@ -2409,7 +2242,6 @@ pub const PaddingSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Inserts data into the spreadsheet starting at the specified coordinate.
 pub const PasteDataRequestSchema = struct {
@@ -2427,7 +2259,6 @@ pub const PasteDataRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A pie chart.
 pub const PieChartSpecSchema = struct {
@@ -2445,7 +2276,6 @@ pub const PieChartSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Criteria for showing/hiding rows in a pivot table.
 pub const PivotFilterCriteriaSchema = struct {
@@ -2459,7 +2289,6 @@ pub const PivotFilterCriteriaSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The pivot table filter criteria associated with a specific source column offset.
 pub const PivotFilterSpecSchema = struct {
@@ -2473,7 +2302,6 @@ pub const PivotFilterSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A single grouping (either row or column) in a pivot table.
 pub const PivotGroupSchema = struct {
@@ -2501,7 +2329,6 @@ pub const PivotGroupSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The count limit on rows or columns in the pivot group.
 pub const PivotGroupLimitSchema = struct {
@@ -2513,7 +2340,6 @@ pub const PivotGroupLimitSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // An optional setting on a PivotGroup that defines buckets for the values in the source data column rather than breaking out each individual value. Only one PivotGroup with a group rule may be added for each column in the source data, though on any given column you may add both a PivotGroup that has a rule and a PivotGroup that does not.
 pub const PivotGroupRuleSchema = struct {
@@ -2527,7 +2353,6 @@ pub const PivotGroupRuleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Information about which values in a pivot group should be used for sorting.
 pub const PivotGroupSortValueBucketSchema = struct {
@@ -2539,7 +2364,6 @@ pub const PivotGroupSortValueBucketSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Metadata about a value in a pivot grouping.
 pub const PivotGroupValueMetadataSchema = struct {
@@ -2551,7 +2375,6 @@ pub const PivotGroupValueMetadataSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A pivot table.
 pub const PivotTableSchema = struct {
@@ -2577,7 +2400,6 @@ pub const PivotTableSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The definition of how a value in a pivot table should be calculated.
 pub const PivotValueSchema = struct {
@@ -2597,7 +2419,6 @@ pub const PivotValueSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The style of a point on the chart.
 pub const PointStyleSchema = struct {
@@ -2609,7 +2430,6 @@ pub const PointStyleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A protected range.
 pub const ProtectedRangeSchema = struct {
@@ -2633,7 +2453,6 @@ pub const ProtectedRangeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Randomizes the order of the rows in a range.
 pub const RandomizeRangeRequestSchema = struct {
@@ -2643,7 +2462,6 @@ pub const RandomizeRangeRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The execution status of refreshing one data source object.
 pub const RefreshDataSourceObjectExecutionStatusSchema = struct {
@@ -2655,7 +2473,6 @@ pub const RefreshDataSourceObjectExecutionStatusSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Refreshes one or multiple data source objects in the spreadsheet by the specified references. The request requires an additional `bigquery.readonly` OAuth scope. If there are multiple refresh requests referencing the same data source objects in one batch, only the last refresh request is processed, and all those requests will have the same response accordingly.
 pub const RefreshDataSourceRequestSchema = struct {
@@ -2671,7 +2488,6 @@ pub const RefreshDataSourceRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response from refreshing one or multiple data source objects.
 pub const RefreshDataSourceResponseSchema = struct {
@@ -2681,7 +2497,6 @@ pub const RefreshDataSourceResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates all cells in the range to the values in the given Cell object. Only the fields listed in the fields field are updated; others are unchanged. If writing a cell with a formula, the formula's ranges will automatically increment for each field in the range. For example, if writing a cell with formula `=A1` into range B2:C4, B2 would be `=A1`, B3 would be `=A2`, B4 would be `=A3`, C2 would be `=B1`, C3 would be `=B2`, C4 would be `=B3`. To keep the formula's ranges static, use the `$` indicator. For example, use the formula `=$A$1` to prevent both the row and the column from incrementing.
 pub const RepeatCellRequestSchema = struct {
@@ -2695,7 +2510,6 @@ pub const RepeatCellRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A single kind of update to apply to a spreadsheet.
 pub const RequestSchema = struct {
@@ -2833,7 +2647,6 @@ pub const RequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A single response from an update.
 pub const ResponseSchema = struct {
@@ -2887,7 +2700,6 @@ pub const ResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Data about each cell in a row.
 pub const RowDataSchema = struct {
@@ -2897,7 +2709,6 @@ pub const RowDataSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A scorecard chart. Scorecard charts are used to highlight key performance indicators, known as KPIs, on the spreadsheet. A scorecard chart can represent things like total sales, average cost, or a top selling item. You can specify a single data value, or aggregate over a range of data. Percentage or absolute difference from a baseline value can be highlighted, like changes over time.
 pub const ScorecardChartSpecSchema = struct {
@@ -2921,7 +2732,6 @@ pub const ScorecardChartSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A request to retrieve all developer metadata matching the set of specified criteria.
 pub const SearchDeveloperMetadataRequestSchema = struct {
@@ -2931,7 +2741,6 @@ pub const SearchDeveloperMetadataRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A reply to a developer metadata search request.
 pub const SearchDeveloperMetadataResponseSchema = struct {
@@ -2941,7 +2750,6 @@ pub const SearchDeveloperMetadataResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Sets the basic filter associated with a sheet.
 pub const SetBasicFilterRequestSchema = struct {
@@ -2951,7 +2759,6 @@ pub const SetBasicFilterRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Sets a data validation rule to every cell in the range. To clear validation in a range, call this with no rule specified.
 pub const SetDataValidationRequestSchema = struct {
@@ -2963,7 +2770,6 @@ pub const SetDataValidationRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A sheet in a spreadsheet.
 pub const SheetSchema = struct {
@@ -2997,7 +2803,6 @@ pub const SheetSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Properties of a sheet.
 pub const SheetPropertiesSchema = struct {
@@ -3025,7 +2830,6 @@ pub const SheetPropertiesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A slicer in a sheet.
 pub const SlicerSchema = struct {
@@ -3039,7 +2843,6 @@ pub const SlicerSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The specifications of a slicer.
 pub const SlicerSpecSchema = struct {
@@ -3065,7 +2868,6 @@ pub const SlicerSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Sorts data in rows based on a sort order per column.
 pub const SortRangeRequestSchema = struct {
@@ -3077,7 +2879,6 @@ pub const SortRangeRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A sort order associated with a specific column or row.
 pub const SortSpecSchema = struct {
@@ -3099,7 +2900,6 @@ pub const SortSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A combination of a source range and how to extend that source.
 pub const SourceAndDestinationSchema = struct {
@@ -3113,7 +2913,6 @@ pub const SourceAndDestinationSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Resource that represents a spreadsheet.
 pub const SpreadsheetSchema = struct {
@@ -3137,7 +2936,6 @@ pub const SpreadsheetSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Properties of a spreadsheet.
 pub const SpreadsheetPropertiesSchema = struct {
@@ -3159,7 +2957,6 @@ pub const SpreadsheetPropertiesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Represents spreadsheet theme
 pub const SpreadsheetThemeSchema = struct {
@@ -3171,7 +2968,6 @@ pub const SpreadsheetThemeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The format of a run of text in a cell. Absent values indicate that the field isn't specified.
 pub const TextFormatSchema = struct {
@@ -3197,7 +2993,6 @@ pub const TextFormatSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A run of a text format. The format of this run continues until the start index of the next run. When updating, all fields must be set.
 pub const TextFormatRunSchema = struct {
@@ -3209,7 +3004,6 @@ pub const TextFormatRunSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Position settings for text.
 pub const TextPositionSchema = struct {
@@ -3219,7 +3013,6 @@ pub const TextPositionSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The rotation applied to text in a cell.
 pub const TextRotationSchema = struct {
@@ -3231,7 +3024,6 @@ pub const TextRotationSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Splits a column of text into multiple columns, based on a delimiter in each cell.
 pub const TextToColumnsRequestSchema = struct {
@@ -3245,7 +3037,6 @@ pub const TextToColumnsRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A pair mapping a spreadsheet theme color type to the concrete color it represents.
 pub const ThemeColorPairSchema = struct {
@@ -3257,7 +3048,6 @@ pub const ThemeColorPairSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`.
 pub const TimeOfDaySchema = struct {
@@ -3273,7 +3063,6 @@ pub const TimeOfDaySchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A color scale for a treemap chart.
 pub const TreemapChartColorScaleSchema = struct {
@@ -3297,7 +3086,6 @@ pub const TreemapChartColorScaleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A Treemap chart.
 pub const TreemapChartSpecSchema = struct {
@@ -3331,7 +3119,6 @@ pub const TreemapChartSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Trims the whitespace (such as spaces, tabs, or new lines) in every cell in the specified range. This request removes all whitespace from the start and end of each cell's text, and reduces any subsequence of remaining whitespace characters to a single space. If the resulting trimmed text starts with a '+' or '=' character, the text remains as a string value and isn't interpreted as a formula.
 pub const TrimWhitespaceRequestSchema = struct {
@@ -3341,7 +3128,6 @@ pub const TrimWhitespaceRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of trimming whitespace in cells.
 pub const TrimWhitespaceResponseSchema = struct {
@@ -3351,7 +3137,6 @@ pub const TrimWhitespaceResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Unmerges cells in the given range.
 pub const UnmergeCellsRequestSchema = struct {
@@ -3361,7 +3146,6 @@ pub const UnmergeCellsRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates properties of the supplied banded range.
 pub const UpdateBandingRequestSchema = struct {
@@ -3373,7 +3157,6 @@ pub const UpdateBandingRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates the borders of a range. If a field is not set in the request, that means the border remains as-is. For example, with two subsequent UpdateBordersRequest: 1. range: A1:A5 `{ top: RED, bottom: WHITE }` 2. range: A1:A5 `{ left: BLUE }` That would result in A1:A5 having a borders of `{ top: RED, bottom: WHITE, left: BLUE }`. If you want to clear a border, explicitly set the style to NONE.
 pub const UpdateBordersRequestSchema = struct {
@@ -3395,7 +3178,6 @@ pub const UpdateBordersRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates all cells in a range with new data.
 pub const UpdateCellsRequestSchema = struct {
@@ -3411,7 +3193,6 @@ pub const UpdateCellsRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates a chart's specifications. (This does not move or resize a chart. To move or resize a chart, use UpdateEmbeddedObjectPositionRequest.)
 pub const UpdateChartSpecRequestSchema = struct {
@@ -3423,7 +3204,6 @@ pub const UpdateChartSpecRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates a conditional format rule at the given index, or moves a conditional format rule to another index.
 pub const UpdateConditionalFormatRuleRequestSchema = struct {
@@ -3439,7 +3219,6 @@ pub const UpdateConditionalFormatRuleRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of updating a conditional format rule.
 pub const UpdateConditionalFormatRuleResponseSchema = struct {
@@ -3455,7 +3234,6 @@ pub const UpdateConditionalFormatRuleResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates a data source. After the data source is updated successfully, an execution is triggered to refresh the associated DATA_SOURCE sheet to read data from the updated data source. The request requires an additional `bigquery.readonly` OAuth scope.
 pub const UpdateDataSourceRequestSchema = struct {
@@ -3467,7 +3245,6 @@ pub const UpdateDataSourceRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response from updating data source.
 pub const UpdateDataSourceResponseSchema = struct {
@@ -3479,7 +3256,6 @@ pub const UpdateDataSourceResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A request to update properties of developer metadata. Updates the properties of the developer metadata selected by the filters to the values provided in the DeveloperMetadata resource. Callers must specify the properties they wish to update in the fields parameter, as well as specify at least one DataFilter matching the metadata they wish to update.
 pub const UpdateDeveloperMetadataRequestSchema = struct {
@@ -3493,7 +3269,6 @@ pub const UpdateDeveloperMetadataRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response from updating developer metadata.
 pub const UpdateDeveloperMetadataResponseSchema = struct {
@@ -3503,7 +3278,6 @@ pub const UpdateDeveloperMetadataResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates the state of the specified group.
 pub const UpdateDimensionGroupRequestSchema = struct {
@@ -3515,7 +3289,6 @@ pub const UpdateDimensionGroupRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates properties of dimensions within the specified range.
 pub const UpdateDimensionPropertiesRequestSchema = struct {
@@ -3531,7 +3304,6 @@ pub const UpdateDimensionPropertiesRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates an embedded object's border property.
 pub const UpdateEmbeddedObjectBorderRequestSchema = struct {
@@ -3545,7 +3317,6 @@ pub const UpdateEmbeddedObjectBorderRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Update an embedded object's position (such as a moving or resizing a chart or image).
 pub const UpdateEmbeddedObjectPositionRequestSchema = struct {
@@ -3559,7 +3330,6 @@ pub const UpdateEmbeddedObjectPositionRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The result of updating an embedded object's position.
 pub const UpdateEmbeddedObjectPositionResponseSchema = struct {
@@ -3569,7 +3339,6 @@ pub const UpdateEmbeddedObjectPositionResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates properties of the filter view.
 pub const UpdateFilterViewRequestSchema = struct {
@@ -3581,7 +3350,6 @@ pub const UpdateFilterViewRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates properties of the named range with the specified namedRangeId.
 pub const UpdateNamedRangeRequestSchema = struct {
@@ -3593,7 +3361,6 @@ pub const UpdateNamedRangeRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates an existing protected range with the specified protectedRangeId.
 pub const UpdateProtectedRangeRequestSchema = struct {
@@ -3605,7 +3372,6 @@ pub const UpdateProtectedRangeRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates properties of the sheet with the specified sheetId.
 pub const UpdateSheetPropertiesRequestSchema = struct {
@@ -3617,7 +3383,6 @@ pub const UpdateSheetPropertiesRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates a slicer's specifications. (This does not move or resize a slicer. To move or resize a slicer use UpdateEmbeddedObjectPositionRequest.
 pub const UpdateSlicerSpecRequestSchema = struct {
@@ -3631,7 +3396,6 @@ pub const UpdateSlicerSpecRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Updates properties of a spreadsheet.
 pub const UpdateSpreadsheetPropertiesRequestSchema = struct {
@@ -3643,7 +3407,6 @@ pub const UpdateSpreadsheetPropertiesRequestSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response when updating a range of values by a data filter in a spreadsheet.
 pub const UpdateValuesByDataFilterResponseSchema = struct {
@@ -3663,7 +3426,6 @@ pub const UpdateValuesByDataFilterResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The response when updating a range of values in a spreadsheet.
 pub const UpdateValuesResponseSchema = struct {
@@ -3683,7 +3445,6 @@ pub const UpdateValuesResponseSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Data within a range of the spreadsheet.
 pub const ValueRangeSchema = struct {
@@ -3697,7 +3458,6 @@ pub const ValueRangeSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // Styles for a waterfall chart column.
 pub const WaterfallChartColumnStyleSchema = struct {
@@ -3711,7 +3471,6 @@ pub const WaterfallChartColumnStyleSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A custom subtotal column for a waterfall chart series.
 pub const WaterfallChartCustomSubtotalSchema = struct {
@@ -3725,7 +3484,6 @@ pub const WaterfallChartCustomSubtotalSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // The domain of a waterfall chart.
 pub const WaterfallChartDomainSchema = struct {
@@ -3737,7 +3495,6 @@ pub const WaterfallChartDomainSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A single series of data for a waterfall chart.
 pub const WaterfallChartSeriesSchema = struct {
@@ -3759,7 +3516,6 @@ pub const WaterfallChartSeriesSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 // A waterfall chart.
 pub const WaterfallChartSpecSchema = struct {
@@ -3781,7 +3537,6 @@ pub const WaterfallChartSpecSchema = struct {
     pub fn deinit(self: Self, service: *Service) void {
         std.json.parseFree(Self, self, .{ .allocator = service.allocator });
     }
-
 };
 pub const Service = struct {
     @"allocator": Allocator,
@@ -3831,6 +3586,7 @@ pub const Service = struct {
             pub fn @"spreadsheetIdSet"(self: *@This(), val: []const u8) void {
                 self.@"spreadsheetId" = val;
             }
+
             // Returns the developer metadata with the specified ID. The caller must specify the spreadsheet ID and the developer metadata's unique metadataId.
             pub fn get(
                 self: *@This(),
@@ -3876,31 +3632,34 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.get(url.items, .{ .headers = headers.items() });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(DeveloperMetadataSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(DeveloperMetadataSchema, &tokens, .{ .allocator = service.allocator });
             }
             // Returns all developer metadata matching the specified DataFilter. If the provided DataFilter represents a DeveloperMetadataLookup object, this will return all DeveloperMetadata entries selected by it. If the DataFilter represents a location in a spreadsheet, this will return all developer metadata associated with locations intersecting that region.
             pub fn search(
                 self: *@This(),
                 service: *Service,
-                request: SearchDeveloperMetadataRequestSchema,
+                request: *SearchDeveloperMetadataRequestSchema,
             ) !SearchDeveloperMetadataResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -3941,33 +3700,33 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                try headers.append("Accept", "json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-                defer service.allocator.free(length);
-                try headers.append("Content-Length", length);
+                try headers.append("Accept", "application/json");
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
                 log.info("Body: {s}\n", .{body});
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(SearchDeveloperMetadataResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(SearchDeveloperMetadataResponseSchema, &tokens, .{ .allocator = service.allocator });
             }
             pub fn init(
                 metadataId: i32,
@@ -3990,11 +3749,12 @@ pub const Service = struct {
             pub fn @"spreadsheetIdSet"(self: *@This(), val: []const u8) void {
                 self.@"spreadsheetId" = val;
             }
+
             // Copies a single sheet from a spreadsheet to another spreadsheet. Returns the properties of the newly created sheet.
             pub fn copyTo(
                 self: *@This(),
                 service: *Service,
-                request: CopySheetToAnotherSpreadsheetRequestSchema,
+                request: *CopySheetToAnotherSpreadsheetRequestSchema,
             ) !SheetPropertiesSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4036,33 +3796,33 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                try headers.append("Accept", "json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-                defer service.allocator.free(length);
-                try headers.append("Content-Length", length);
+                try headers.append("Accept", "application/json");
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
                 log.info("Body: {s}\n", .{body});
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(SheetPropertiesSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(SheetPropertiesSchema, &tokens, .{ .allocator = service.allocator });
             }
             pub fn init(
                 sheetId: i32,
@@ -4130,11 +3890,12 @@ pub const Service = struct {
             pub fn @"valueRenderOptionSet"(self: *@This(), val: ?[]const u8) void {
                 self.@"valueRenderOption" = val;
             }
+
             // Appends values to a spreadsheet. The input range is used to search for existing data and find a "table" within that range. Values will be appended to the next row of the table, starting with the first column of the table. See the [guide](/sheets/api/guides/values#appending_values) and [sample code](/sheets/api/samples/writing#append_values) for specific details of how tables are detected and data is appended. The caller must specify the spreadsheet ID, range, and a valueInputOption. The `valueInputOption` only controls how the input data will be added to the sheet (column-wise or row-wise), it does not influence what cell the data starts being written to.
             pub fn append(
                 self: *@This(),
                 service: *Service,
-                request: ValueRangeSchema,
+                request: *ValueRangeSchema,
             ) !AppendValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4176,39 +3937,39 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                try headers.append("Accept", "json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-                defer service.allocator.free(length);
-                try headers.append("Content-Length", length);
+                try headers.append("Accept", "application/json");
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
                 log.info("Body: {s}\n", .{body});
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(AppendValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(AppendValuesResponseSchema, &tokens, .{ .allocator = service.allocator });
             }
             // Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges. Only values are cleared -- all other properties of the cell (such as formatting and data validation) are kept.
             pub fn batchClear(
                 self: *@This(),
                 service: *Service,
-                request: BatchClearValuesRequestSchema,
+                request: *BatchClearValuesRequestSchema,
             ) !BatchClearValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4249,39 +4010,39 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                try headers.append("Accept", "json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-                defer service.allocator.free(length);
-                try headers.append("Content-Length", length);
+                try headers.append("Accept", "application/json");
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
                 log.info("Body: {s}\n", .{body});
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(BatchClearValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(BatchClearValuesResponseSchema, &tokens, .{ .allocator = service.allocator });
             }
             // Clears one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges matching any of the specified data filters will be cleared. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept.
             pub fn batchClearByDataFilter(
                 self: *@This(),
                 service: *Service,
-                request: BatchClearValuesByDataFilterRequestSchema,
+                request: *BatchClearValuesByDataFilterRequestSchema,
             ) !BatchClearValuesByDataFilterResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4322,33 +4083,33 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                try headers.append("Accept", "json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-                defer service.allocator.free(length);
-                try headers.append("Content-Length", length);
+                try headers.append("Accept", "application/json");
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
                 log.info("Body: {s}\n", .{body});
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(BatchClearValuesByDataFilterResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(BatchClearValuesByDataFilterResponseSchema, &tokens, .{ .allocator = service.allocator });
             }
             // Returns one or more ranges of values from a spreadsheet. The caller must specify the spreadsheet ID and one or more ranges.
             pub fn batchGet(
@@ -4394,31 +4155,34 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.get(url.items, .{ .headers = headers.items() });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(BatchGetValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(BatchGetValuesResponseSchema, &tokens, .{ .allocator = service.allocator });
             }
             // Returns one or more ranges of values that match the specified data filters. The caller must specify the spreadsheet ID and one or more DataFilters. Ranges that match any of the data filters in the request will be returned.
             pub fn batchGetByDataFilter(
                 self: *@This(),
                 service: *Service,
-                request: BatchGetValuesByDataFilterRequestSchema,
+                request: *BatchGetValuesByDataFilterRequestSchema,
             ) !BatchGetValuesByDataFilterResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4459,39 +4223,39 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                try headers.append("Accept", "json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-                defer service.allocator.free(length);
-                try headers.append("Content-Length", length);
+                try headers.append("Accept", "application/json");
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
                 log.info("Body: {s}\n", .{body});
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(BatchGetValuesByDataFilterResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(BatchGetValuesByDataFilterResponseSchema, &tokens, .{ .allocator = service.allocator });
             }
             // Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more ValueRanges.
             pub fn batchUpdate(
                 self: *@This(),
                 service: *Service,
-                request: BatchUpdateValuesRequestSchema,
+                request: *BatchUpdateValuesRequestSchema,
             ) !BatchUpdateValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4532,39 +4296,39 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                try headers.append("Accept", "json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-                defer service.allocator.free(length);
-                try headers.append("Content-Length", length);
+                try headers.append("Accept", "application/json");
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
                 log.info("Body: {s}\n", .{body});
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(BatchUpdateValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(BatchUpdateValuesResponseSchema, &tokens, .{ .allocator = service.allocator });
             }
             // Sets values in one or more ranges of a spreadsheet. The caller must specify the spreadsheet ID, a valueInputOption, and one or more DataFilterValueRanges.
             pub fn batchUpdateByDataFilter(
                 self: *@This(),
                 service: *Service,
-                request: BatchUpdateValuesByDataFilterRequestSchema,
+                request: *BatchUpdateValuesByDataFilterRequestSchema,
             ) !BatchUpdateValuesByDataFilterResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4605,39 +4369,39 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                try headers.append("Accept", "json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-                defer service.allocator.free(length);
-                try headers.append("Content-Length", length);
+                try headers.append("Accept", "application/json");
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
                 log.info("Body: {s}\n", .{body});
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(BatchUpdateValuesByDataFilterResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(BatchUpdateValuesByDataFilterResponseSchema, &tokens, .{ .allocator = service.allocator });
             }
             // Clears values from a spreadsheet. The caller must specify the spreadsheet ID and range. Only values are cleared -- all other properties of the cell (such as formatting, data validation, etc..) are kept.
             pub fn clear(
                 self: *@This(),
                 service: *Service,
-                request: ClearValuesRequestSchema,
+                request: *ClearValuesRequestSchema,
             ) !ClearValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4679,33 +4443,33 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                try headers.append("Accept", "json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-                defer service.allocator.free(length);
-                try headers.append("Content-Length", length);
+                try headers.append("Accept", "application/json");
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
                 log.info("Body: {s}\n", .{body});
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(ClearValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(ClearValuesResponseSchema, &tokens, .{ .allocator = service.allocator });
             }
             // Returns a range of values from a spreadsheet. The caller must specify the spreadsheet ID and a range.
             pub fn get(
@@ -4752,31 +4516,34 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.get(url.items, .{ .headers = headers.items() });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(ValueRangeSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(ValueRangeSchema, &tokens, .{ .allocator = service.allocator });
             }
             // Sets values in a range of a spreadsheet. The caller must specify the spreadsheet ID, range, and a valueInputOption.
             pub fn update(
                 self: *@This(),
                 service: *Service,
-                request: ValueRangeSchema,
+                request: *ValueRangeSchema,
             ) !UpdateValuesResponseSchema {
                 var headers = Headers.init(service.allocator);
                 defer headers.deinit();
@@ -4818,33 +4585,33 @@ pub const Service = struct {
                     const opt = @typeInfo(field.field_type) == .Optional;
                     const f = @field(self, field.name);
                     if (opt) {
-                        if (f != null) {
+                        if (f) |val| {
                             if (!first) try url.append('&');
-                            try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                            try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                             first = false;
                         }
                     }
                 }
-                var idx: usize = 0;
-                while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                    try url.replaceRange(begin, 1, "%20");
+                var idx: usize = service.base_url.len;
+                const invalid = &[_]u8{ ':', ' ', '\'' };
+                const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+                while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                    const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                    try url.replaceRange(begin, 1, replacement[replacement_idx]);
                     idx = begin + 3;
                 }
                 const body = try std.json.stringifyAlloc(service.allocator, request, .{});
                 defer service.allocator.free(body);
                 try headers.append("Content-Type", "application/json");
-                try headers.append("Accept", "json");
-                const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-                defer service.allocator.free(length);
-                try headers.append("Content-Length", length);
+                try headers.append("Accept", "application/json");
+                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
                 log.info("Body: {s}\n", .{body});
+                log.info("Url: {s}\n", .{url.items});
                 var response = try service.client.put(url.items, .{ .headers = headers.items(), .content = body });
                 log.info("Response: {s}\n", .{response.body});
                 defer response.deinit();
                 var tokens = std.json.TokenStream.init(response.body);
-                for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-                log.info("Url: {s}\n", .{url.items});
-                return std.json.parse(UpdateValuesResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+                return std.json.parse(UpdateValuesResponseSchema, &tokens, .{ .allocator = service.allocator });
             }
             pub fn init(
                 range: []const u8,
@@ -4865,11 +4632,12 @@ pub const Service = struct {
         pub fn @"rangesSet"(self: *@This(), val: ?[]const u8) void {
             self.@"ranges" = val;
         }
+
         // Applies one or more updates to the spreadsheet. Each request is validated before being applied. If any request is not valid then the entire request will fail and nothing will be applied. Some requests have replies to give you some information about how they are applied. The replies will mirror the requests. For example, if you applied 4 updates and the 3rd one had a reply, then the response will have 2 empty replies, the actual reply, and another empty reply, in that order. Due to the collaborative nature of spreadsheets, it is not guaranteed that the spreadsheet will reflect exactly your changes after this completes, however it is guaranteed that the updates in the request will be applied together atomically. Your changes may be altered with respect to collaborator changes. If there are no collaborators, the spreadsheet should reflect your changes.
         pub fn batchUpdate(
             self: *@This(),
             service: *Service,
-            request: BatchUpdateSpreadsheetRequestSchema,
+            request: *BatchUpdateSpreadsheetRequestSchema,
         ) !BatchUpdateSpreadsheetResponseSchema {
             var headers = Headers.init(service.allocator);
             defer headers.deinit();
@@ -4910,39 +4678,39 @@ pub const Service = struct {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 const f = @field(self, field.name);
                 if (opt) {
-                    if (f != null) {
+                    if (f) |val| {
                         if (!first) try url.append('&');
-                        try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                        try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                         first = false;
                     }
                 }
             }
-            var idx: usize = 0;
-            while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                try url.replaceRange(begin, 1, "%20");
+            var idx: usize = service.base_url.len;
+            const invalid = &[_]u8{ ':', ' ', '\'' };
+            const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+            while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                try url.replaceRange(begin, 1, replacement[replacement_idx]);
                 idx = begin + 3;
             }
             const body = try std.json.stringifyAlloc(service.allocator, request, .{});
             defer service.allocator.free(body);
             try headers.append("Content-Type", "application/json");
-            try headers.append("Accept", "json");
-            const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-            defer service.allocator.free(length);
-            try headers.append("Content-Length", length);
+            try headers.append("Accept", "application/json");
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
             log.info("Body: {s}\n", .{body});
+            log.info("Url: {s}\n", .{url.items});
             var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
-            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-            log.info("Url: {s}\n", .{url.items});
-            return std.json.parse(BatchUpdateSpreadsheetResponseSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+            return std.json.parse(BatchUpdateSpreadsheetResponseSchema, &tokens, .{ .allocator = service.allocator });
         }
         // Creates a spreadsheet, returning the newly created spreadsheet.
         pub fn create(
             self: *@This(),
             service: *Service,
-            request: SpreadsheetSchema,
+            request: *SpreadsheetSchema,
         ) !SpreadsheetSchema {
             var headers = Headers.init(service.allocator);
             defer headers.deinit();
@@ -4975,40 +4743,39 @@ pub const Service = struct {
             var url = std.ArrayList(u8).init(service.allocator);
             defer url.deinit();
             try url.appendSlice(service.base_url);
-            try std.fmt.format(url.writer(), "v4/spreadsheets?", .{
-            });
+            try std.fmt.format(url.writer(), "v4/spreadsheets?", .{});
             var first = true;
             inline for (std.meta.fields(@This())) |field| {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 const f = @field(self, field.name);
                 if (opt) {
-                    if (f != null) {
+                    if (f) |val| {
                         if (!first) try url.append('&');
-                        try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                        try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                         first = false;
                     }
                 }
             }
-            var idx: usize = 0;
-            while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                try url.replaceRange(begin, 1, "%20");
+            var idx: usize = service.base_url.len;
+            const invalid = &[_]u8{ ':', ' ', '\'' };
+            const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+            while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                try url.replaceRange(begin, 1, replacement[replacement_idx]);
                 idx = begin + 3;
             }
             const body = try std.json.stringifyAlloc(service.allocator, request, .{});
             defer service.allocator.free(body);
             try headers.append("Content-Type", "application/json");
-            try headers.append("Accept", "json");
-            const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-            defer service.allocator.free(length);
-            try headers.append("Content-Length", length);
+            try headers.append("Accept", "application/json");
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
             log.info("Body: {s}\n", .{body});
+            log.info("Url: {s}\n", .{url.items});
             var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
-            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-            log.info("Url: {s}\n", .{url.items});
-            return std.json.parse(SpreadsheetSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+            return std.json.parse(SpreadsheetSchema, &tokens, .{ .allocator = service.allocator });
         }
         // Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. By default, data within grids is not returned. You can include grid data in one of 2 ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData URL parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, as a best practice, retrieve only the specific spreadsheet fields that you want. To retrieve only subsets of spreadsheet data, use the ranges URL parameter. Ranges are specified using [A1 notation](/sheets/api/guides/concepts#cell). You can define a single cell (for example, `A1`) or multiple cells (for example, `A1:D5`). You can also get cells from other sheets within the same spreadsheet (for example, `Sheet2!A1:C4`) or retrieve multiple ranges at once (for example, `?ranges=A1:D5&ranges=Sheet2!A1:C4`). Limiting the range returns only the portions of the spreadsheet that intersect the requested ranges.
         pub fn get(
@@ -5054,31 +4821,34 @@ pub const Service = struct {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 const f = @field(self, field.name);
                 if (opt) {
-                    if (f != null) {
+                    if (f) |val| {
                         if (!first) try url.append('&');
-                        try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                        try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                         first = false;
                     }
                 }
             }
-            var idx: usize = 0;
-            while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                try url.replaceRange(begin, 1, "%20");
+            var idx: usize = service.base_url.len;
+            const invalid = &[_]u8{ ':', ' ', '\'' };
+            const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+            while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                try url.replaceRange(begin, 1, replacement[replacement_idx]);
                 idx = begin + 3;
             }
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
+            log.info("Url: {s}\n", .{url.items});
             var response = try service.client.get(url.items, .{ .headers = headers.items() });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
-            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-            log.info("Url: {s}\n", .{url.items});
-            return std.json.parse(SpreadsheetSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+            return std.json.parse(SpreadsheetSchema, &tokens, .{ .allocator = service.allocator });
         }
         // Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. This method differs from GetSpreadsheet in that it allows selecting which subsets of spreadsheet data to return by specifying a dataFilters parameter. Multiple DataFilters can be specified. Specifying one or more data filters returns the portions of the spreadsheet that intersect ranges matched by any of the filters. By default, data within grids is not returned. You can include grid data one of 2 ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, as a best practice, retrieve only the specific spreadsheet fields that you want.
         pub fn getByDataFilter(
             self: *@This(),
             service: *Service,
-            request: GetSpreadsheetByDataFilterRequestSchema,
+            request: *GetSpreadsheetByDataFilterRequestSchema,
         ) !SpreadsheetSchema {
             var headers = Headers.init(service.allocator);
             defer headers.deinit();
@@ -5119,33 +4889,33 @@ pub const Service = struct {
                 const opt = @typeInfo(field.field_type) == .Optional;
                 const f = @field(self, field.name);
                 if (opt) {
-                    if (f != null) {
+                    if (f) |val| {
                         if (!first) try url.append('&');
-                        try std.fmt.format(url.writer(), "{s}={s}", .{field.name, f});
+                        try std.fmt.format(url.writer(), "{s}={s}", .{ field.name, val });
                         first = false;
                     }
                 }
             }
-            var idx: usize = 0;
-            while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {
-                try url.replaceRange(begin, 1, "%20");
+            var idx: usize = service.base_url.len;
+            const invalid = &[_]u8{ ':', ' ', '\'' };
+            const replacement = [_][]const u8{ "%3A", "%20", "%27" };
+            while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {
+                const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+                try url.replaceRange(begin, 1, replacement[replacement_idx]);
                 idx = begin + 3;
             }
             const body = try std.json.stringifyAlloc(service.allocator, request, .{});
             defer service.allocator.free(body);
             try headers.append("Content-Type", "application/json");
-            try headers.append("Accept", "json");
-            const length = try std.fmt.allocPrint(service.allocator, "{}", .{body.len});
-            defer service.allocator.free(length);
-            try headers.append("Content-Length", length);
+            try headers.append("Accept", "application/json");
+            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{ header.name.value, header.value });
             log.info("Body: {s}\n", .{body});
+            log.info("Url: {s}\n", .{url.items});
             var response = try service.client.post(url.items, .{ .headers = headers.items(), .content = body });
             log.info("Response: {s}\n", .{response.body});
             defer response.deinit();
             var tokens = std.json.TokenStream.init(response.body);
-            for (headers.items()) |header| log.info("Header:\n    Name: {s}, Value: {s}\n", .{header.name.value, header.value});
-            log.info("Url: {s}\n", .{url.items});
-            return std.json.parse(SpreadsheetSchema, &tokens, .{ .allocator = service.allocator, .ignore_unknown_fields = false });
+            return std.json.parse(SpreadsheetSchema, &tokens, .{ .allocator = service.allocator });
         }
         pub fn init(
             spreadsheetId: []const u8,
@@ -5209,6 +4979,7 @@ pub const Service = struct {
     pub fn @"upload_protocolSet"(self: *@This(), val: ?[]const u8) void {
         self.@"upload_protocol" = val;
     }
+
     pub fn init(
         allocator: Allocator,
         client: *requestz.Client,

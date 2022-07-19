@@ -63,6 +63,7 @@ pub fn main() !void {
         \\test "static analysis" {
         \\    std.testing.refAllDecls(@This());
         \\}
+        \\
     );
 }
 

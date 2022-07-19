@@ -11,10 +11,17 @@ pub fn build(b: *std.build.Builder) void {
     lib.setBuildMode(mode);
     lib.install();
 
-    const main_tests = b.addTest("src/main.zig");
-    pkgs.addAllTo(main_tests);
-    main_tests.setBuildMode(mode);
+    const exe = b.addExecutable("zheets", "src/main.zig");
+    pkgs.addAllTo(exe);
+    exe.setBuildMode(mode);
+    exe.install();
 
-    const test_step = b.step("test", "Run library tests");
-    test_step.dependOn(&main_tests.step);
+    const run_cmd = exe.run();
+    run_cmd.step.dependOn(b.getInstallStep());
+    if (b.args) |args| {
+        run_cmd.addArgs(args);
+    }
+
+    const run_step = b.step("run", "Run the app");
+    run_step.dependOn(&run_cmd.step);
 }

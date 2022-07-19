@@ -87,6 +87,7 @@ pub const Method = struct {
         var pre = try std.ArrayList(u8).initCapacity(allocator, indent);
         defer pre.deinit();
         pre.appendNTimesAssumeCapacity(' ', indent);
+        try std.fmt.format(writer, "\n", .{});
         if (self.desc) |d|
             try std.fmt.format(writer,
                 \\{[pre]s}// {[desc]s}
@@ -103,7 +104,7 @@ pub const Method = struct {
         , .{ .pre = pre.items, .name = self.name });
         if (self.request_ty) |ty| {
             try std.fmt.format(writer,
-                \\{s}    request: {s}Schema,
+                \\{s}    request: *{s}Schema,
                 \\
             , .{ pre.items, ty });
         }
@@ -141,26 +142,29 @@ pub const Method = struct {
             \\{[pre]s}    defer url.deinit();
             \\{[pre]s}    try url.appendSlice(service.base_url);
             \\{[pre]s}    try std.fmt.format(url.writer(), "{[path]s}?", .{{
-            \\
         , .{ .pre = pre.items, .path = self.path, .ret = self.return_ty });
-        for (self.param_order) |param| try std.fmt.format(writer, "{s}        self.{s},\n", .{ pre.items, param });
+        for (self.param_order) |param| try std.fmt.format(writer, "\n{s}        self.{s},", .{ pre.items, param });
+        if (self.param_order.len > 0) try std.fmt.format(writer, "\n{s}    ", .{pre.items});
         try std.fmt.format(writer,
-            \\{[pre]s}    }});
+            \\}});
             \\{[pre]s}    var first = true;
             \\{[pre]s}    inline for (std.meta.fields(@This())) |field| {{
             \\{[pre]s}        const opt = @typeInfo(field.field_type) == .Optional;
             \\{[pre]s}        const f = @field(self, field.name);
             \\{[pre]s}        if (opt) {{
-            \\{[pre]s}            if (f != null) {{
+            \\{[pre]s}            if (f) |val| {{
             \\{[pre]s}                if (!first) try url.append('&');
-            \\{[pre]s}                try std.fmt.format(url.writer(), "{{s}}={{s}}", .{{field.name, f}});
+            \\{[pre]s}                try std.fmt.format(url.writer(), "{{s}}={{s}}", .{{ field.name, val }});
             \\{[pre]s}                first = false;
             \\{[pre]s}            }}
             \\{[pre]s}        }}
             \\{[pre]s}    }}
-            \\{[pre]s}    var idx: usize = 0;
-            \\{[pre]s}    while (std.mem.indexOfScalarPos(u8, url.items, idx, ' ')) |begin| {{
-            \\{[pre]s}        try url.replaceRange(begin, 1, "%20");
+            \\{[pre]s}    var idx: usize = service.base_url.len;
+            \\{[pre]s}    const invalid = &[_]u8{{ ':', ' ', '\'' }};
+            \\{[pre]s}    const replacement = [_][]const u8{{ "%3A", "%20", "%27" }};
+            \\{[pre]s}    while (std.mem.indexOfAnyPos(u8, url.items, idx, invalid)) |begin| {{
+            \\{[pre]s}        const replacement_idx = std.mem.indexOfScalar(u8, invalid, url.items[begin]).?;
+            \\{[pre]s}        try url.replaceRange(begin, 1, replacement[replacement_idx]);
             \\{[pre]s}        idx = begin + 3;
             \\{[pre]s}    }}
             \\
@@ -170,16 +174,17 @@ pub const Method = struct {
                 \\{[pre]s}    const body = try std.json.stringifyAlloc(service.allocator, request, .{{}});
                 \\{[pre]s}    defer service.allocator.free(body);
                 \\{[pre]s}    try headers.append("Content-Type", "application/json");
-                \\{[pre]s}    try headers.append("Accept", "json");
-                \\{[pre]s}    const length = try std.fmt.allocPrint(service.allocator, "{{}}", .{{body.len}});
-                \\{[pre]s}    defer service.allocator.free(length);
-                \\{[pre]s}    try headers.append("Content-Length", length);
+                \\{[pre]s}    try headers.append("Accept", "application/json");
+                \\{[pre]s}    for (headers.items()) |header| log.info("Header:\n    Name: {{s}}, Value: {{s}}\n", .{{ header.name.value, header.value }});
                 \\{[pre]s}    log.info("Body: {{s}}\n", .{{body}});
+                \\{[pre]s}    log.info("Url: {{s}}\n", .{{url.items}});
                 \\{[pre]s}    var response = try service.client.{[method]s}(url.items, .{{ .headers = headers.items(), .content = body }});
                 \\
             , .{ .pre = pre.items, .method = @tagName(self.method) });
         } else {
             try std.fmt.format(writer,
+                \\{[pre]s}    for (headers.items()) |header| log.info("Header:\n    Name: {{s}}, Value: {{s}}\n", .{{ header.name.value, header.value }});
+                \\{[pre]s}    log.info("Url: {{s}}\n", .{{url.items}});
                 \\{[pre]s}    var response = try service.client.{[method]s}(url.items, .{{ .headers = headers.items() }});
                 \\
             , .{ .pre = pre.items, .method = @tagName(self.method) });
@@ -188,14 +193,9 @@ pub const Method = struct {
             \\{[pre]s}    log.info("Response: {{s}}\n", .{{response.body}});
             \\{[pre]s}    defer response.deinit();
             \\{[pre]s}    var tokens = std.json.TokenStream.init(response.body);
-            \\{[pre]s}    for (headers.items()) |header| log.info("Header:\n    Name: {{s}}, Value: {{s}}\n", .{{header.name.value, header.value}});
-            \\{[pre]s}    log.info("Url: {{s}}\n", .{{url.items}});
-            \\{[pre]s}    return std.json.parse({[ret]s}, &tokens, .{{ .allocator = service.allocator, .ignore_unknown_fields = false }});
+            \\{[pre]s}    return std.json.parse({[ret]s}, &tokens, .{{ .allocator = service.allocator }});
             \\{[pre]s}}}
-            \\
         , .{ .pre = pre.items, .ret = self.return_ty });
-        // try std.fmt.format(writer, "{s}    @panic(\"TODO: {s}\");\n", .{ pre.items, self.name });
-        // try std.fmt.format(writer, "{s}}}\n", .{pre.items});
     }
 
     fn deinit(self: *Self) void {
@@ -394,7 +394,7 @@ pub const Resource = struct {
         var pre = try std.ArrayList(u8).initCapacity(allocator, indent);
         defer pre.deinit();
         pre.appendNTimesAssumeCapacity(' ', indent);
-        try std.fmt.format(writer, "{s}pub fn init(\n", .{pre.items});
+        try std.fmt.format(writer, "\n{s}pub fn init(\n", .{pre.items});
         var field_iter = self.fields.iterator();
         while (field_iter.next()) |field| {
             if (field.key_ptr.default == null and !field.key_ptr.optional)
@@ -585,7 +585,6 @@ pub fn genSchemas(values: json.ObjectMap, allocator: Allocator, writer: anytype)
             \\    pub fn deinit(self: Self, service: *Service) void {{
             \\        std.json.parseFree(Self, self, .{{ .allocator = service.allocator }});
             \\    }}
-            \\
             \\}};
             \\
         , .{});
